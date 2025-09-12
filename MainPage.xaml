@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Chess.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:m="clr-namespace:Chess.Models"
+    xmlns:vm="clr-namespace:Chess.ViewModel"
+    x:DataType="vm:MainPageVm">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+        <Frame>
+            <BoxView BackgroundColor="Red" />
+        </Frame>
+        <Frame Grid.Row="1">
+            <BoxView BackgroundColor="Yellow" />
+        </Frame>
+        <Frame Grid.Row="2">
+            <BoxView BackgroundColor="Green" />
+        </Frame>
+        <Button
+            Grid.Row="3"
+            Command="{Binding ChangeLightCommand}"
+            Text="{x:Static m:Strings.ChaneLightText}" />
+        <Button Style="{x:StaticResource MyButtonStyle}" Text="aaa" />
+        <Button
+            Grid.Column="1"
+            Style="{x:StaticResource MySpButtonStyle}"
+            Text="aaa" />
+
+    </Grid>
+</ContentPage>
