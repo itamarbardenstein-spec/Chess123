@@ -1,4 +1,5 @@
-﻿namespace Chess
+﻿
+namespace Chess
 {
     public partial class App : Application
     {
@@ -6,6 +7,11 @@
         {
             InitializeComponent();
             MainPage = new AppShell();
+        }
+
+        private void InitializeComponent()
+        {
+            
         }
     }
 }
