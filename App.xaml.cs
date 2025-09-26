@@ -1,4 +1,8 @@
 ﻿
+using Chess.ModelsLogic;
+using Chess.NewFolder;
+using Chess.Views;
+
 namespace Chess
 {
     public partial class App : Application
@@ -6,7 +10,9 @@ namespace Chess
         public App()
         {
             InitializeComponent();
-            MainPage = new AppShell();
+            User user = new();
+            Page page=user.IsRegistered? new LoginPage(): new RegisterPage();
+            MainPage =page;
         }
 
         private void InitializeComponent()

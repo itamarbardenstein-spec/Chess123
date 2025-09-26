@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Chess.Views.RegisterPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:m="clr-namespace:Chess.Models"
+    xmlns:vm="clr-namespace:Chess.ViewModel"
+    x:DataType="vm:RegisterPageVM"
+    Title="RegisterPage">
+
+    <VerticalStackLayout>
+        <Entry Placeholder="{x:Static m:Strings.UserName}" Text="{Binding UserName}" /> <!--אולי לעשות כותרת במקום Placeholder-->
+        <Entry Placeholder="{x:Static m:Strings.Password}" Text="{Binding Password}" />
+        <Entry Placeholder="{x:Static m:Strings.Email}" Text="{Binding Email}" />
+        <Entry Placeholder="{x:Static m:Strings.Age}" Text="{Binding Age}" />
+        <Button Command="{Binding RegisterCommand}" Text="{x:Static m:Strings.Register}" />
+    </VerticalStackLayout>
+</ContentPage>
