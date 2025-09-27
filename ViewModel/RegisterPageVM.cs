@@ -1,19 +1,28 @@
-﻿using Chess.ModelsLogic;
-using System.Windows.Input;
+﻿using System.Windows.Input;
+using Chess.Models;
+using Chess.ModelsLogic;
 
 namespace Chess.ViewModel
 {
-    internal class RegisterPageVM
+    internal partial class RegisterPageVM: ObservableObject
     {
+        public ICommand ToggleIsPasswordCommand { get; }
+        public bool IsPassword { get; set; } = true;
         public ICommand RegisterCommand { get; }
         private readonly User user = new();
         public bool CanRegister()
         {
-            return (!string.IsNullOrWhiteSpace(user.UserName) && !string.IsNullOrWhiteSpace(user.Password) && !string.IsNullOrWhiteSpace(user.Email) && !string.IsNullOrWhiteSpace(user.Age));
+            return user.CanRegister();
         }
         public RegisterPageVM()
         {
             RegisterCommand=new Command(Register, CanRegister);
+            ToggleIsPasswordCommand = new Command(ToggleIsPassword);
+        }
+        private void ToggleIsPassword()
+        {
+            IsPassword = !IsPassword;
+            OnPropertyChanged(nameof(IsPassword));
         }
         private void Register()
         {

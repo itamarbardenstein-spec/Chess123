@@ -7,5 +7,7 @@
         public const string Password = "Password";
         public const string Email = "Email";
         public const string Age = "Age";
+        public const string Login = "Login";
+        
     }
 }

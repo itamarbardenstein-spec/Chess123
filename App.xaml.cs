@@ -15,9 +15,5 @@ namespace Chess
             MainPage =page;
         }
 
-        private void InitializeComponent()
-        {
-            
-        }
     }
 }

@@ -10,9 +10,34 @@
 
     <VerticalStackLayout>
         <Entry Placeholder="{x:Static m:Strings.UserName}" Text="{Binding UserName}" /> <!--אולי לעשות כותרת במקום Placeholder-->
-        <Entry Placeholder="{x:Static m:Strings.Password}" Text="{Binding Password}" />
-        <Entry Placeholder="{x:Static m:Strings.Email}" Text="{Binding Email}" />
-        <Entry Placeholder="{x:Static m:Strings.Age}" Text="{Binding Age}" />
-        <Button Command="{Binding RegisterCommand}" Text="{x:Static m:Strings.Register}" />
+        <Grid
+            Padding="10"
+            ColumnDefinitions="*,Auto"
+            VerticalOptions="Center">
+            <Entry 
+                Placeholder="{x:Static m:Strings.Password}" 
+                Text="{Binding Password}" 
+                IsPassword="{Binding IsPassword}" />
+            <Button
+                BackgroundColor="Transparent"         
+                BorderWidth="0"          
+                Command="{Binding ToggleIsPasswordCommand}"           
+                FontFamily="MaterialSymbols"           
+                FontSize="24"           
+                Style="{StaticResource IconButtonStyle}"
+                HorizontalOptions="End"
+                Text="{Binding IsPassword, Converter={StaticResource passwordIconConvert}}"
+                TextColor="Olive"
+                VerticalOptions="Center" />
+        </Grid>
+        <Entry 
+            Placeholder="{x:Static m:Strings.Email}" 
+            Text="{Binding Email}" />
+        <Entry 
+            Placeholder="{x:Static m:Strings.Age}" 
+            Text="{Binding Age}" />
+        <Button 
+            Command="{Binding RegisterCommand}" 
+            Text="{x:Static m:Strings.Register}" />
     </VerticalStackLayout>
 </ContentPage>
