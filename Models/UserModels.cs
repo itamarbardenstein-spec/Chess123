@@ -10,6 +10,6 @@
         public abstract void Login();
         public abstract bool CanLogin();
         public abstract bool CanRegister();
-        public bool IsRegistered => false;
+        public bool IsRegistered => (!string.IsNullOrWhiteSpace(UserName)&& !string.IsNullOrWhiteSpace(Password)&& !string.IsNullOrWhiteSpace(Email)&& !string.IsNullOrWhiteSpace(Age));
     }
 }
