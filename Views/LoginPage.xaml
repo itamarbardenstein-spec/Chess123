@@ -20,7 +20,7 @@
         <Label 
             FontAttributes="Bold"             
             FontFamily="MaterialSymbols"            
-            FontSize="40"             
+            FontSize="45"             
             TextColor="DarkCyan"        
             HorizontalOptions="Center"
             Text="{StaticResource IconSecurity}" />
