@@ -22,7 +22,8 @@ namespace Chess.ModelsLogic
                     await Application.Current.MainPage.DisplayAlert(
                         "Registration Failed",
                         "An error occurred while creating your account. Please try again.",
-                        "OK");
+                        "OK"
+                    );
                 }
             });
         }
