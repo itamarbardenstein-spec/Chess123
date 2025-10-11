@@ -1,7 +1,10 @@
-﻿namespace Chess.Models
+﻿using Chess.ModelsLogic;
+
+namespace Chess.Models
 {
     internal abstract class UserModels
     {
+        protected FbData fbd = new();
         public string UserName { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
