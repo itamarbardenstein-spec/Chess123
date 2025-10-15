@@ -18,11 +18,11 @@ namespace Chess.ModelsLogic
                     SaveToPreferences();
                 }
                 else
-                {
+                {                 
                     await Application.Current.MainPage.DisplayAlert(
-                        "Registration Failed",
-                        "An error occurred while creating your account. Please try again.",
-                        "OK"
+                       Strings.RegistrationFailed,
+                        Strings.Error,
+                        Strings.Ok
                     );
                 }
             });
