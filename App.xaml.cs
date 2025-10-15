@@ -11,7 +11,7 @@ namespace Chess
         {
             InitializeComponent();
             User user = new();
-            Page page=new RegisterPage();
+            Page page=user.IsRegistered? new LoginPage():new RegisterPage();
             MainPage =page;
         }
 
