@@ -1,6 +1,8 @@
 ﻿using System.Windows.Input;
 using Chess.Models;
 using Chess.ModelsLogic;
+using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
 
 namespace Chess.ViewModel
 {
@@ -18,6 +20,7 @@ namespace Chess.ViewModel
         {
             RegisterCommand=new Command(Register, CanRegister);
             ToggleIsPasswordCommand = new Command(ToggleIsPassword);
+            
         }
         private void ToggleIsPassword()
         {
@@ -26,6 +29,7 @@ namespace Chess.ViewModel
         }
         private void Register()
         {
+            Toast.Make("Test", ToastDuration.Long).Show();
             user.Register();
         }        
         public string UserName

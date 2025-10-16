@@ -61,6 +61,13 @@ namespace Chess.ViewModel
             }
 
         }
+        public bool RememberMe
+        {
+            get => user.RememberMe;
+            set => user.RememberMe = value;
+        }      
         
+
+
     }
 }

@@ -8,6 +8,7 @@ namespace Chess.ModelsLogic
         {
             fbd.CreateUserWithEmailAndPasswordAsync(Email, Password, UserName, OnComplete);
         }
+        
 
         private void OnComplete(Task task)
         {
@@ -16,6 +17,7 @@ namespace Chess.ModelsLogic
                 if (task.IsCompletedSuccessfully)
                 {
                     SaveToPreferences();
+
                 }
                 else
                 {                 
@@ -33,13 +35,23 @@ namespace Chess.ModelsLogic
             Preferences.Set(Keys.PasswordKey, Password);
             Preferences.Set(Keys.EmailKey, Email);
             Preferences.Set(Keys.AgeKey, Age);
+          
         }
 
         public override void Login()
         {
-            Preferences.Set(Keys.UserNameKey, UserName);
-            Preferences.Set(Keys.PasswordKey, Password);
-            Preferences.Set(Keys.EmailKey, Email);
+            if(RememberMe)
+            {
+                Preferences.Set(Keys.UserNameKey, UserName);
+                Preferences.Set(Keys.PasswordKey, Password);
+                Preferences.Set(Keys.EmailKey, Email);
+            }
+            else
+            {
+                Preferences.Clear();
+            }
+           
+            
         }
         public override bool CanLogin()
         {
