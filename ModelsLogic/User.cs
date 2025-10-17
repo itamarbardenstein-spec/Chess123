@@ -11,7 +11,10 @@ namespace Chess.ModelsLogic
         {
             fbd.CreateUserWithEmailAndPasswordAsync(Email, Password, UserName, OnComplete);
         }
-        
+        public override void Login()
+        {
+            fbd.SignInWithEmailAndPasswordAsync(Email, Password,OnComplete);           
+        }
 
         private void OnComplete(Task task)
         {
@@ -21,8 +24,7 @@ namespace Chess.ModelsLogic
                 OnAuthCompleted?.Invoke(this, EventArgs.Empty);
             }
             else if (task.Exception != null)
-            {
-                
+            {                
                 string msg = task.Exception.Message;
                 ShowAlert(GetFirebaseErrorMessage(msg));
             }
@@ -58,12 +60,7 @@ namespace Chess.ModelsLogic
             Preferences.Set(Keys.AgeKey, Age);          
         }
 
-        public override void Login()
-        {         
-            Preferences.Set(Keys.UserNameKey, UserName);
-            Preferences.Set(Keys.PasswordKey, Password);
-            Preferences.Set(Keys.EmailKey, Email);         
-        }
+        
         public override bool CanLogin()
         {
             return (!string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Email));
