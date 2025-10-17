@@ -18,18 +18,30 @@ namespace Chess.ViewModel
         }
         public RegisterPageVM()
         {
-            RegisterCommand=new Command(Register, CanRegister);
+            RegisterCommand = new Command(Register, CanRegister);
             ToggleIsPasswordCommand = new Command(ToggleIsPassword);
-            
+            user.OnAuthCompleted += OnAuthComplete;
         }
+
+        private void OnAuthComplete(object? sender, EventArgs e)
+        {
+            MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                if (Application.Current != null)
+                {
+                    Application.Current.MainPage = new AppShell();
+
+                }
+            });
+        }
+
         private void ToggleIsPassword()
         {
             IsPassword = !IsPassword;
             OnPropertyChanged(nameof(IsPassword));
         }
         private void Register()
-        {
-            Toast.Make("Test", ToastDuration.Long).Show();
+        {            
             user.Register();
         }        
         public string UserName

@@ -72,10 +72,7 @@
                 Placeholder="{x:Static m:Strings.Email}"
                 Text="{Binding Email}" />
         </Border>
-        <HorizontalStackLayout Spacing="10">
-            <CheckBox IsChecked="{Binding RememberMe}" />
-            <Label Text="זכור אותי" VerticalOptions="Center" />
-        </HorizontalStackLayout>
+    
         <Button 
             Command="{Binding LoginCommand}" 
             Text="{x:Static m:Strings.Login}"
