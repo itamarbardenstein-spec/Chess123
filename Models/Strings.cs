@@ -9,7 +9,6 @@
         public const string Age = "Age";
         public const string Login = "Login";
         public const string RegistrationFailed = "Registration Failed";
-        public const string Error = "An error occurred while creating your account. Please try again.";
         public const string Ok = "OK";
         public const string UnknownErrorMessage = "Unknown Error";
         public const string WeakPassword = "WeakPassword";
