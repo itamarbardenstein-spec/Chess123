@@ -18,6 +18,8 @@
         public const string EmailExists = "EmailExists";
         public const string InvalidEmailAddress = "InvalidEmailAddress";
         public const string EmailExistsErrMsg = "This email is already in use";
+        public const string InvalidLogin = "INVALID_LOGIN_CREDENTIALS";
+        public const string InvalidLoginErrMsg = "Email or password is incorrect";
 
     }
 }

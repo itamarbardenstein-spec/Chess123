@@ -13,7 +13,7 @@ namespace Chess.ModelsLogic
         }
         public override void Login()
         {
-            fbd.SignInWithEmailAndPasswordAsync(Email, Password,OnComplete);           
+            fbd.SignInWithEmailAndPasswordAsync(Email, Password, OnComplete);           
         }
 
         private void OnComplete(Task task)
@@ -41,6 +41,8 @@ namespace Chess.ModelsLogic
                     return Strings.InvalidEmailErrMessage;
                 if (msg.Contains(Strings.WeakPassword))
                     return Strings.WeakPasswordErrMessage;
+                if(msg.Contains(Strings.InvalidLogin))
+                    return Strings.InvalidLoginErrMsg;
             }                                        
             return Strings.UnknownErrorMessage;
         }

@@ -19,6 +19,17 @@ namespace Chess.ViewModel
         {
             LoginCommand = new Command(Login, CanLogin);
             ToggleIsPasswordCommand = new Command(ToggleIsPassword);
+            user.OnAuthCompleted += OnAuthComplete;
+        }
+        private void OnAuthComplete(object? sender, EventArgs e)
+        {
+            MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                if (Application.Current != null)
+                {
+                    Application.Current.MainPage = new AppShell();
+                }
+            });
         }
         private void Login()
         {

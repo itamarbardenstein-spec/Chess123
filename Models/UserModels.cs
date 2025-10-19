@@ -15,6 +15,6 @@ namespace Chess.Models
         public abstract bool CanLogin();
         public abstract bool CanRegister();
         public abstract string GetFirebaseErrorMessage(string msg);
-        public bool IsRegistered => (!string.IsNullOrWhiteSpace(UserName)&&!string.IsNullOrWhiteSpace(Password)&& !string.IsNullOrWhiteSpace(Email)&& !string.IsNullOrWhiteSpace(Age));
+        public bool IsRegistered => (!string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Age));
     }
 }
