@@ -5,5 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:m="clr-namespace:Chess.Models"
     xmlns:vm="clr-namespace:Chess.ViewModel"
-    x:DataType="vm:MainPageVm" />
-    
+    x:DataType="vm:MainPageVm">
+    <Grid>
+        <Button Text="play" />
+    </Grid>
+
+</ContentPage>

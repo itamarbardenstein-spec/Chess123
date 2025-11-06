@@ -20,6 +20,8 @@
         public const string EmailExistsErrMsg = "This email is already in use";
         public const string InvalidLogin = "INVALID_LOGIN_CREDENTIALS";
         public const string InvalidLoginErrMsg = "Email or password is incorrect";
+        public const string Play = "Play";
+        public const string Instructions = "Instructions";
 
     }
 }

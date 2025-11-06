@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
 using Chess.Models;
 using Chess.ModelsLogic;
+using Chess.Views;
 
 namespace Chess.ViewModel
 {
@@ -27,7 +28,7 @@ namespace Chess.ViewModel
             {
                 if (Application.Current != null)
                 {
-                    Application.Current.MainPage = new AppShell();
+                    Application.Current.MainPage = new HomePage();
                 }
             });
         }
