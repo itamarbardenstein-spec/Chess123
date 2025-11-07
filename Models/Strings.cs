@@ -22,6 +22,6 @@
         public const string InvalidLoginErrMsg = "Email or password is incorrect";
         public const string Play = "Play";
         public const string Instructions = "Instructions";
-
+        public static string JoinGameErr = "Error in joining game";
     }
 }

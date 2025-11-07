@@ -5,7 +5,7 @@ using System.Windows.Input;
 
 namespace Chess.ViewModel
 {
-    internal class HomePageVM
+    public class HomePageVM
     {
         private readonly User user = new();
         public ICommand PlayCommand { get; }
@@ -28,7 +28,7 @@ namespace Chess.ViewModel
             {
                 if (Application.Current != null)
                 {
-                    Application.Current.MainPage = new PlayPage();
+                    Application.Current.MainPage = new AppShell();
                 }
             });
         }

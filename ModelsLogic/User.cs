@@ -5,7 +5,7 @@ using Firebase.Auth;
 
 namespace Chess.ModelsLogic
 {
-    internal class User : UserModels
+    public class User : UserModels
     {
         public override void Register()
         {

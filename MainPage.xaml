@@ -5,9 +5,37 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:m="clr-namespace:Chess.Models"
     xmlns:vm="clr-namespace:Chess.ViewModel"
-    x:DataType="vm:MainPageVm">
-    <Grid>
-        <Button Text="play" />
-    </Grid>
+    x:DataType="vm:MainPageVm"
+    IsBusy="{Binding IsBusy}">
+    <VerticalStackLayout>
+        <Button
+            Grid.Column="1"
+            Margin="10"
+            Command="{Binding AddGameCommand}"
+            FontSize="Body"
+            HorizontalOptions="Fill"
+            Text="CreateGame" />
+        <ListView ItemsSource="{Binding GamesList}" SelectedItem="{Binding SelectedItem}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="m:GameModel">
+                    <ViewCell>
+                        <Grid ColumnDefinitions="*,2*">
+                            <Label
+                                Grid.Column="0"
+                                Margin="20,0,0,0"
+                                FontAttributes="Bold"
+                                FontSize="20"
+                                HorizontalTextAlignment="Start"
+                                Text="{Binding HostName}" />
+                            <Label
+                                Grid.Column="1"
+                                FontSize="20"
+                                Text="{Binding Created}" />
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </VerticalStackLayout>
 
 </ContentPage>

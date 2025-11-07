@@ -2,7 +2,7 @@
 
 namespace Chess.Models
 {
-    internal abstract class UserModels
+    public abstract class UserModels
     {
         protected FbData fbd = new();
         public EventHandler? OnAuthCompleted;

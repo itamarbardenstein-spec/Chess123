@@ -1,16 +1,33 @@
 ﻿using Chess.Models;
 using Chess.ModelsLogic;
+using Chess.Views;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace Chess.ViewModel
 {
-    internal partial class PlayPageVM:ObservableObject
+    public partial class PlayPageVM:ObservableObject
     {
         private readonly Games games = new();
         public ICommand AddGameCommand => new Command(AddGame);
         public bool IsBusy => games.IsBusy;
         public ObservableCollection<Game>? GamesList => games.GamesList;
+        public Game? SelectedItem 
+        {
+            get => games.CurrentGame;
+            set
+            {
+                if(value != null)
+                {
+                    games.CurrentGame = value;
+
+                    MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        Shell.Current.Navigation.PushAsync(new GamePage(value),true);
+                    });
+                }
+            }
+        }
 
         private void AddGame()
         {
@@ -29,16 +46,20 @@ namespace Chess.ViewModel
             OnPropertyChanged(nameof(GamesList));
         }
 
-        private void OnGameAdded(object? sender, bool e)
+        private void OnGameAdded(object? sender,Game game)
         {
             OnPropertyChanged(nameof(IsBusy));
+            MainThread.InvokeOnMainThreadAsync(() =>
+            {
+               Shell.Current.Navigation.PushAsync(new GamePage(game),true);
+            });
         }
-        internal void AddSnapshotListener()
+        public void AddSnapshotListener()
         {
             games.AddSnapshotListener();
         }
 
-        internal void RemoveSnapshotListener()
+        public void RemoveSnapshotListener()
         {
             games.RemoveSnapshotListener();
         }

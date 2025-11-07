@@ -1,16 +1,11 @@
 ﻿using Chess.Models;
-using Microsoft.Maui.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Chess.ModelsLogic
 {
-    internal class Game:GameModel
+    public class Game:GameModel
     {
-        internal Game()
+        public override string OpponentName => IsHost ? GuestName : HostName;
+        public Game()
         {
             HostName = new User().UserName;            
             Created = DateTime.Now;

@@ -1,11 +1,13 @@
-﻿namespace Chess
+﻿using Chess.ViewModel;
+
+namespace Chess
 {
     public partial class MainPage : ContentPage
     {
         public MainPage()
         {
             InitializeComponent();
-            BindingContext = new MainPageVM();
+            BindingContext = new MainPageVm();
         }       
     }
 }

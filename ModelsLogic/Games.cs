@@ -3,18 +3,19 @@ using Plugin.CloudFirestore;
 
 namespace Chess.ModelsLogic
 {
-    internal class Games:GamesModel
+    public class Games:GamesModel
     {
-        internal void AddGame()
+        public void AddGame()
         {
             IsBusy = true;
-            Game game = new();
-            game.SetDocument(OnComplete);
+            currentGame = new();
+            currentGame.IsHost= true;
+            currentGame.SetDocument(OnComplete);
         }
         private void OnComplete(Task task)
         {
             IsBusy = false;
-            OnGameAdded?.Invoke(this, task.IsCompletedSuccessfully);
+            OnGameAdded?.Invoke(this, currentGame!);
         }
         public Games()
         {

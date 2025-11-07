@@ -3,7 +3,7 @@ using Firebase.Auth.Providers;
 using Plugin.CloudFirestore;
 namespace Chess.Models
 {
-    abstract class FbDataModel
+    public abstract partial class FbDataModel
     {
         protected FirebaseAuthClient facl;
         protected IFirestore fs;

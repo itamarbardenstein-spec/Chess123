@@ -8,6 +8,13 @@
     Title="HomePage"
     x:DataType="vm:HomePageVM">
     <VerticalStackLayout Spacing="20">
+        <Button HorizontalOptions="End" BackgroundColor="Transparent">
+            <Button.ImageSource>
+                <FontImageSource Glyph="{StaticResource IconSettings}" Size="40" Color="Gray">
+                    <FontImageSource.FontFamily>MaterialSymbols</FontImageSource.FontFamily>
+                </FontImageSource>
+            </Button.ImageSource>
+        </Button>
         <Label
             FontSize="30"
             HorizontalOptions="Center"
@@ -15,12 +22,6 @@
             TextColor="Black" />
         <Button Command="{Binding PlayCommand}"  Text="{x:Static m:Strings.Play}" />
         <Button Text="{x:Static m:Strings.Instructions}"/>
-        <Button>
-            <Button.ImageSource>
-                <FontImageSource Glyph="{StaticResource IconSettings}" Size="40">
-                    <FontImageSource.FontFamily>MaterialSymbols</FontImageSource.FontFamily>
-                </FontImageSource>
-            </Button.ImageSource>
-        </Button>
+        
     </VerticalStackLayout>
 </ContentPage>
