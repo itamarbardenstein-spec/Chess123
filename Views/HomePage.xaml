@@ -6,11 +6,12 @@
     xmlns:m="clr-namespace:Chess.Models"
     xmlns:vm="clr-namespace:Chess.ViewModel"
     Title="HomePage"
-    x:DataType="vm:HomePageVM">
+    x:DataType="vm:HomePageVM"
+    BackgroundImageSource="homepagebackgroud.jpg">
     <VerticalStackLayout Spacing="20">
         <Button HorizontalOptions="End" BackgroundColor="Transparent">
             <Button.ImageSource>
-                <FontImageSource Glyph="{StaticResource IconSettings}" Size="40" Color="Gray">
+                <FontImageSource Glyph="{StaticResource IconSettings}" Size="40" Color="DarkSlateGray">
                     <FontImageSource.FontFamily>MaterialSymbols</FontImageSource.FontFamily>
                 </FontImageSource>
             </Button.ImageSource>
