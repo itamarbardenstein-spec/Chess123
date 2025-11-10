@@ -23,5 +23,6 @@
         public const string Play = "Play";
         public const string Instructions = "Instructions";
         public static string JoinGameErr = "Error in joining game";
+        public static string GameDeleted ="Game has been deleted";
     }
 }

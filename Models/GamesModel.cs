@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 
 namespace Chess.Models
 {
-    public class GamesModel
+    public abstract class GamesModel
     {
         protected FbData fbd = new();
         protected Game? currentGame;
@@ -14,5 +14,7 @@ namespace Chess.Models
         public ObservableCollection<Game>? GamesList { get; set; } = [];
         public EventHandler<Game>? OnGameAdded;
         public EventHandler? OnGamesChanged;
+        public abstract void AddSnapshotListener();
+        public abstract void RemoveSnapshotListener();
     }
 }

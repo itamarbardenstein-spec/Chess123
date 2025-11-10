@@ -1,5 +1,6 @@
 ﻿
 using Chess.ModelsLogic;
+using Plugin.CloudFirestore;
 using Plugin.CloudFirestore.Attributes;
 
 namespace Chess.Models
@@ -7,6 +8,11 @@ namespace Chess.Models
     public abstract class GameModel
     {
         protected FbData fbd = new();
+        protected IListenerRegistration? ilr;
+        [Ignored]
+        public EventHandler? OnGameChanged;
+        [Ignored]
+        public EventHandler? OnGameDeleted;
         public string HostName { get; set; } = string.Empty;   
         public string GuestName { get; set; } = string.Empty;         
         public DateTime Created { get; set; }       
@@ -18,8 +24,11 @@ namespace Chess.Models
         [Ignored]
         public string Id { get; set; } = string.Empty;
         [Ignored]
-        public bool IsHost { get; set; }
+        public bool IsHostUser { get; set; }
         public abstract void SetDocument(Action<System.Threading.Tasks.Task> OnComplete);
+        public abstract void AddSnapshotListener();
+        public abstract void RemoveSnapshotListener();
+        public abstract void DeleteDocument(Action<System.Threading.Tasks.Task> OnComplete);
 
     }
 }

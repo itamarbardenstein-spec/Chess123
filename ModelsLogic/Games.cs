@@ -1,4 +1,6 @@
 ﻿using Chess.Models;
+using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
 using Plugin.CloudFirestore;
 
 namespace Chess.ModelsLogic
@@ -8,10 +10,23 @@ namespace Chess.ModelsLogic
         public void AddGame()
         {
             IsBusy = true;
-            currentGame = new();
-            currentGame.IsHost= true;
+            currentGame = new()
+            {
+                IsHostUser = true
+            };
+            currentGame.OnGameDeleted += OnGameDeleted;
             currentGame.SetDocument(OnComplete);
         }
+
+        private void OnGameDeleted(object? sender, EventArgs e)
+        {
+            MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Toast.Make(Strings.GameDeleted, ToastDuration.Long).Show();
+            });
+            
+        }
+
         private void OnComplete(Task task)
         {
             IsBusy = false;
@@ -21,11 +36,11 @@ namespace Chess.ModelsLogic
         {
 
         }
-        public void AddSnapshotListener()
+        public override void AddSnapshotListener()
         {
             ilr = fbd.AddSnapshotListener(Keys.GamesCollection, OnChange!);
         }
-        public void RemoveSnapshotListener()
+        public override void RemoveSnapshotListener()
         {
             ilr?.Remove();
         }
