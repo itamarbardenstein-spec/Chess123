@@ -15,8 +15,11 @@ namespace Chess.Models
         public EventHandler? OnGameDeleted;
         public string HostName { get; set; } = string.Empty;   
         public string GuestName { get; set; } = string.Empty;         
-        public DateTime Created { get; set; }       
+        public int Time {  get; set; }
+        public DateTime Created { get; set; }
         public bool IsFull { get; set; }
+        [Ignored]
+        public string TimeName => $"{Time} min";       
         [Ignored]
         public abstract string OpponentName { get;}
         [Ignored]

@@ -1,16 +1,19 @@
-﻿    using Chess.Models;
+﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
+    using Chess.Models;
 using Chess.ModelsLogic;
 using Chess.Views;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
+using Microsoft.Maui.Controls;
 
 namespace Chess.ViewModel
 {
-    class MainPageVm: ObservableObject
+    public partial class MainPageVm: ObservableObject
     {
         private readonly Games games = new();
         public ICommand AddGameCommand => new Command(AddGame);
         public bool IsBusy => games.IsBusy;
+        public ObservableCollection<GameTime>? GameTimes { get => games.GameTimes; set => games.GameTimes = value; }
+        public GameTime SelectedGameTime { get => games.SelectedGameTime; set => games.SelectedGameTime = value; }
         public ObservableCollection<Game>? GamesList => games.GamesList;
         public Game? SelectedItem
         {

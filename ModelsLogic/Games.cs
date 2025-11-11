@@ -10,7 +10,7 @@ namespace Chess.ModelsLogic
         public void AddGame()
         {
             IsBusy = true;
-            currentGame = new()
+            currentGame = new(SelectedGameTime)
             {
                 IsHostUser = true
             };

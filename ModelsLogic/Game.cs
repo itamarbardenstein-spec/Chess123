@@ -1,4 +1,5 @@
-﻿using Chess.Models;
+﻿ using Chess.Models;
+using Microsoft.Maui.Controls;
 using Plugin.CloudFirestore;
 
 namespace Chess.ModelsLogic
@@ -6,9 +7,10 @@ namespace Chess.ModelsLogic
     public class Game:GameModel
     {
         public override string OpponentName => IsHostUser ? GuestName : HostName;
-        public Game()
+        public Game(GameTime selectedGameTime)
         {
-            HostName = new User().UserName;            
+            HostName = new User().UserName;
+            Time = selectedGameTime.Time;
             Created = DateTime.Now;
         }
         
@@ -16,7 +18,9 @@ namespace Chess.ModelsLogic
         {
             Id = fbd.SetDocument(this, Keys.GamesCollection, Id, OnComplete);
         }
-
+        public Game()
+        {
+        }
         public void UpdateGuestUser(Action<Task> OnComplete)
         {
             GuestName = MyName;
