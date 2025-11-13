@@ -19,5 +19,6 @@ namespace Chess.Models
         public EventHandler? OnGamesChanged;
         public abstract void AddSnapshotListener();
         public abstract void RemoveSnapshotListener();
+        
     }
 }

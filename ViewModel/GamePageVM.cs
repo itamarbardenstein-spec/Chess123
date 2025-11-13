@@ -10,12 +10,13 @@ namespace Chess.ViewModel
         private readonly Game game;
         public string MyName => game.MyName;
         public string OpponentName=> game.OpponentName;
-        public GamePageVM(Game game)
+        public GamePageVM(Game game, Grid board)
         {
             game.OnGameChanged += OnGameChanged;
+            game.InitGrid(board);
             this.game = game;
             if (!game.IsHostUser)
-                game.UpdateGuestUser(OnComplete);          
+                game.UpdateGuestUser(OnComplete);           
         }
 
         private void OnGameChanged(object? sender, EventArgs e)
