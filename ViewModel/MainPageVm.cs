@@ -1,9 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-    using Chess.Models;
+using Chess.Models;
 using Chess.ModelsLogic;
 using Chess.Views;
-using Microsoft.Maui.Controls;
 
 namespace Chess.ViewModel
 {

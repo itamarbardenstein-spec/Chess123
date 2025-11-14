@@ -9,6 +9,7 @@ namespace Chess.ViewModel
     {
         private readonly Game game;
         public string MyName => game.MyName;
+        public string StatusMessage => game.StatusMessage;
         public string OpponentName=> game.OpponentName;
         public GamePageVM(Game game, Grid board)
         {

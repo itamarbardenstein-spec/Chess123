@@ -13,11 +13,17 @@ namespace Chess.Models
         public EventHandler? OnGameChanged;
         [Ignored]
         public EventHandler? OnGameDeleted;
+        protected abstract GameStatus Status { get; }
+        [Ignored]
+        public string StatusMessage => Status.StatusMessage;
+        [Ignored]
+       
         public string HostName { get; set; } = string.Empty;   
         public string GuestName { get; set; } = string.Empty;         
         public int Time {  get; set; }
         public DateTime Created { get; set; }
         public bool IsFull { get; set; }
+        public bool IsHostTurn { get; set; } = false;
         [Ignored]
         public string TimeName => $"{Time} min";       
         [Ignored]
