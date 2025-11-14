@@ -16,7 +16,7 @@
             IsWhite = isWhite;
             HeightRequest = 45;
             WidthRequest = 45;
-            Source = Strings.Robash;
+            Source = image;
         }
         public Piece()
         {
