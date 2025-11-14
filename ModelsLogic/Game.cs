@@ -94,83 +94,20 @@ namespace Chess.ModelsLogic
             {
                 for(int j = 0;j<8; j++)
                 {
-                    Piece piece = new ();
-                    if(i == 0||i==1)
-                    {
-                        piece.IsWhite = false;
-                        if(i==1)
-                        {
-                            piece.CurrentPieceType = Piece.PieceType.Pawn;
-                        }
-                        else
-                        {
-                            switch (j)
-                            {
-                                case 0:
-                                case 7:
-                                    piece.CurrentPieceType = Piece.PieceType.Rook;
-                                    break;
-                                case 1:
-                                case 6:
-                                    piece.CurrentPieceType = Piece.PieceType.Knight;
-                                    break;
-                                case 2:
-                                case 5:
-                                    piece.CurrentPieceType = Piece.PieceType.Bishop;
-                                    break;
-                                case 3:
-                                    piece.CurrentPieceType = Piece.PieceType.Queen;
-                                    break;
-                                case 4:
-                                    piece.CurrentPieceType = Piece.PieceType.King;
-                                    break;
-                            }
-                        }
-                    }
-                    else if(i==6||i==7)
-                    {
-                        piece.IsWhite = true;
-                        if (i == 6)
-                        {
-                            piece.CurrentPieceType = Piece.PieceType.Pawn;
-                        }
-                        else
-                        {
-                            switch (j)
-                            {
-                                case 0:
-                                case 7:
-                                    piece.CurrentPieceType = Piece.PieceType.Rook;
-                                    break;
-                                case 1:
-                                case 6:
-                                    piece.CurrentPieceType = Piece.PieceType.Knight;
-                                    break;
-                                case 2:
-                                case 5:
-                                    piece.CurrentPieceType = Piece.PieceType.Bishop;
-                                    break;
-                                case 3:
-                                    piece.CurrentPieceType = Piece.PieceType.Queen;
-                                    break;
-                                case 4:
-                                    piece.CurrentPieceType = Piece.PieceType.King;
-                                    break;
-                            }
-                        }
-                    }
+                    Piece p = new();                   
                     if ((i + j) % 2 == 0)
                     {
-                        piece.BackgroundColor = Color.FromArgb("#F0D9B5");
+                        p.BackgroundColor = Color.FromArgb("#F0D9B5");
                     }                       
                     else
                     {
-                        piece.BackgroundColor = Color.FromArgb("#B58863");
-                    }                        
-                    board.Add(piece, j, i);
+                        p.BackgroundColor = Color.FromArgb("#B58863");
+                    }
+                                                        
+                    board.Add(p, j, i);
                 }
             }
-
+            Pieces pieces = new(board);
         }
        
     }
