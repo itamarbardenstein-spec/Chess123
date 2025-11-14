@@ -12,7 +12,7 @@
         public const string Ok = "OK";
         public const string UnknownErrorMessage = "Unknown Error";
         public const string WeakPassword = "WeakPassword";
-        public const string WeakPasswordErrMessage = "Password needs to be at least 6 charecters long";
+        public const string WeakPasswordErrMessage = "Password needs to be at least six charecters long";
         public const string InvalidEmailErrMessage = "Invalid Email address";
         public const string ErrMessageReason = "Reason";
         public const string EmailExists = "EmailExists";
