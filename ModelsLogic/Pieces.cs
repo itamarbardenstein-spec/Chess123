@@ -15,41 +15,34 @@ namespace Chess.ModelsLogic
         {
             for(int i=0; i< Pieces.GetLength(0); i++)
             {
-                if(i==0 || i==7)
+                Pieces[1, i] = new Piece(1, i, Piece.PieceType.Pawn, false, Strings.BlackPawn);
+                Pieces[6, i] = new Piece(6, i, Piece.PieceType.Pawn, true, Strings.WhitePawn);
+                if (i==0 || i==7)
                 {
-                    Pieces[0, i] = new Piece(i, 0, Piece.PieceType.Rook, false, Strings.BlackRook);
-                    Pieces[7, i] = new Piece(i, 0, Piece.PieceType.Rook, true, Strings.WhiteRook);
+                    Pieces[0, i] = new Piece(0, i, Piece.PieceType.Rook, false, Strings.BlackRook);
+                    Pieces[7, i] = new Piece(7, i, Piece.PieceType.Rook, true, Strings.WhiteRook);
                 }
                 else if(i==1 || i==6)
                 {
-                    Pieces[0, i] = new Piece(i, 0, Piece.PieceType.Knight, false, Strings.BlackKnight);
-                    Pieces[7, i] = new Piece(i, 0, Piece.PieceType.Knight, true, Strings.WhiteKnight);
+                    Pieces[0, i] = new Piece(0, i, Piece.PieceType.Knight, false, Strings.BlackKnight);
+                    Pieces[7, i] = new Piece(7, i, Piece.PieceType.Knight, true, Strings.WhiteKnight);
                 }
                 else if(i==2 || i==5)
                 {
-                    Pieces[0, i] = new Piece(i, 0, Piece.PieceType.Bishop, false, Strings.BlackBishop);
-                    Pieces[7, i] = new Piece(i, 0, Piece.PieceType.Bishop, true, Strings.WhiteBishop);
+                    Pieces[0, i] = new Piece(0, i, Piece.PieceType.Bishop, false, Strings.BlackBishop);
+                    Pieces[7, i] = new Piece(7, i, Piece.PieceType.Bishop, true, Strings.WhiteBishop);
                 }
                 else if(i==3)
                 {
-                    Pieces[0, i] = new Piece(i, 0, Piece.PieceType.Queen, false, Strings.BlackQueen);
-                    Pieces[7, i] = new Piece(i, 0, Piece.PieceType.Queen, true, Strings.WhiteQueen);
+                    Pieces[0, i] = new Piece(0, i, Piece.PieceType.Queen, false, Strings.BlackQueen);
+                    Pieces[7, i] = new Piece(7, i, Piece.PieceType.Queen, true, Strings.WhiteQueen);
                 }
                 else
                 {
-                    Pieces[0, i] = new Piece(i, 0, Piece.PieceType.King, false, Strings.BlackKing);
-                    Pieces[7, i] = new Piece(i, 0, Piece.PieceType.King, true, Strings.WhiteKing);
+                    Pieces[0, i] = new Piece(0, i, Piece.PieceType.King, false, Strings.BlackKing);
+                    Pieces[7, i] = new Piece(7, i, Piece.PieceType.King, true, Strings.WhiteKing);
                 }                               
-            }
-            for (int i = 0; i < Pieces.GetLength(0); i++)
-            {
-                Pieces[1, i] = new Piece(i, 0, Piece.PieceType.Pawn, false, Strings.BlackPawn);
-            }
-            for (int i = 0; i < Pieces.GetLength(0); i++)
-            {
-                Pieces[6, i] = new Piece(i, 0, Piece.PieceType.Pawn, true, Strings.WhitePawn);
-            }
-            
+            }        
             for (int i = 0; i < Pieces.GetLength(0); i++)
             {
                 for (int j = 0; j < Pieces.GetLength(1); j++)
