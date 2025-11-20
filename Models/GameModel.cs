@@ -9,6 +9,7 @@ namespace Chess.Models
     {
         protected FbData fbd = new();
         protected IListenerRegistration? ilr;
+        public Piece[,] PiecesBoard = new Piece[8, 8];
         [Ignored]
         public EventHandler? OnGameChanged;
         [Ignored]
@@ -16,8 +17,6 @@ namespace Chess.Models
         protected abstract GameStatus Status { get; }
         [Ignored]
         public string StatusMessage => Status.StatusMessage;
-        [Ignored]
-       
         public string HostName { get; set; } = string.Empty;   
         public string GuestName { get; set; } = string.Empty;         
         public int Time {  get; set; }

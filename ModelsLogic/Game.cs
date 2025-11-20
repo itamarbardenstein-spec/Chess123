@@ -9,7 +9,7 @@ namespace Chess.ModelsLogic
     {
         public override string OpponentName => IsHostUser ? GuestName : HostName;
         protected override GameStatus Status => IsHostUser && IsHostTurn || !IsHostUser && !IsHostTurn ?
-            new GameStatus { CurrentStatus = GameStatus.Status.Play } :
+            new GameStatus { CurrentStatus = GameStatus.Status.Play }:
             new GameStatus { CurrentStatus = GameStatus.Status.Wait };
 
         public Game(GameTime selectedGameTime)
@@ -102,8 +102,7 @@ namespace Chess.ModelsLogic
                     else
                     {
                         p.BackgroundColor = Color.FromArgb("#B58863");
-                    }
-                                                        
+                    }                                                        
                     board.Add(p, j, i);
                 }
             }
