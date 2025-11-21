@@ -108,36 +108,29 @@ namespace Chess.ModelsLogic
             {
                 for(int j = 0;j<8; j++)
                 {
-                    Piece p = new();
+                    Piece p;
+                    if (BoardPieces[i, j] != null)
+                       p = BoardPieces[i, j];
+                    else
+                        p = new();
                     if ((i + j) % 2 == 0)
                     {
                         p.BackgroundColor = Color.FromArgb("#F0D9B5");
-                    }                       
+                    }
                     else
                     {
                         p.BackgroundColor = Color.FromArgb("#B58863");
                     }                                                        
                     board.Add(p, j, i);
                 }
-            }
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    if (BoardPieces[i, j] != null)
-                    {
-                        BoardPieces[i, j].Clicked += OnButtonClicked;
-                        board.Add(BoardPieces[i, j], j, i);
-                    }
-                }
-            }
+            }           
         }
         protected override void OnButtonClicked(object? sender, EventArgs e)
         {
             if (_status.CurrentStatus == GameStatus.Statuses.Play)
             {
                 Piece? p = sender as Piece;
-                Play(p!.RowIndex, p.ColumnIndex, true);
+                Play(p!.RowIndex, p.ColumnIndex, true);     
             }
         }
         protected override void Play(int rowIndex, int columnIndex, bool MyMove)
