@@ -3,8 +3,13 @@
     public class GameStatus
     {
         private readonly string[] msgs = [Strings.WaitMessage, Strings.PlayMessage];
-        public enum Status { Wait, Play }
-        public Status CurrentStatus { get; set; } = Status.Wait;
+        public enum Statuses { Wait, Play }
+        public Statuses CurrentStatus { get; set; } = Statuses.Wait;
         public string StatusMessage => msgs[(int)CurrentStatus];
+
+        public void UpdateStatus()
+        {
+            CurrentStatus = CurrentStatus == Statuses.Play ? Statuses.Wait : Statuses.Play;
+        }
     }
 }

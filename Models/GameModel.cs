@@ -14,6 +14,7 @@ namespace Chess.Models
         public EventHandler? OnGameChanged;
         [Ignored]
         public EventHandler? OnGameDeleted;
+        protected GameStatus _status = new();
         protected abstract GameStatus Status { get; }
         [Ignored]
         public string StatusMessage => Status.StatusMessage;
@@ -33,11 +34,15 @@ namespace Chess.Models
         public string Id { get; set; } = string.Empty;
         [Ignored]
         public bool IsHostUser { get; set; }
+        protected abstract void UpdateStatus();
+        protected abstract void OnButtonClicked(object? sender, EventArgs e);
+        protected abstract void Play(int rowIndex, int columnIndex, bool MyMove);
         public abstract void SetDocument(Action<System.Threading.Tasks.Task> OnComplete);
         public abstract void AddSnapshotListener();
         public abstract void RemoveSnapshotListener();
         public abstract void DeleteDocument(Action<System.Threading.Tasks.Task> OnComplete);
         public abstract void InitGrid(Grid board);
+        protected abstract void UpdateFbMove();
 
     }
 }

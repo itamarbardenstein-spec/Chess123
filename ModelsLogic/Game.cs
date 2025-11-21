@@ -8,15 +8,15 @@ namespace Chess.ModelsLogic
     public class Game:GameModel
     {
         public override string OpponentName => IsHostUser ? GuestName : HostName;
-        protected override GameStatus Status => IsHostUser && IsHostTurn || !IsHostUser && !IsHostTurn ?
-            new GameStatus { CurrentStatus = GameStatus.Status.Play }:
-            new GameStatus { CurrentStatus = GameStatus.Status.Wait };
+        protected override GameStatus Status => _status;
 
         public Game(GameTime selectedGameTime)
         {
             HostName = new User().UserName;
+            IsHostUser = true;
             Time = selectedGameTime.Time;
             Created = DateTime.Now;
+            UpdateStatus();
         }
         
         public override void SetDocument(Action<Task> OnComplete)
@@ -25,6 +25,12 @@ namespace Chess.ModelsLogic
         }
         public Game()
         {
+            UpdateStatus();
+        }
+        protected override void UpdateStatus()
+        {
+            _status.CurrentStatus = IsHostUser && IsHostTurn || !IsHostUser && !IsHostTurn ?
+                GameStatus.Statuses.Play : GameStatus.Statuses.Wait;
         }
         public void UpdateGuestUser(Action<Task> OnComplete)
         {
@@ -58,26 +64,6 @@ namespace Chess.ModelsLogic
             if(task.IsCompletedSuccessfully)
                 OnGameDeleted?.Invoke(this, EventArgs.Empty);
         }
-
-        private void OnChange(IDocumentSnapshot? snapshot, Exception? error)
-        {
-            Game? updatedGame = snapshot?.ToObject<Game>();
-            if (updatedGame != null)
-            {
-                GuestName = updatedGame.GuestName;
-                IsFull = updatedGame.IsFull;
-                OnGameChanged?.Invoke(this, EventArgs.Empty);
-            }
-            else
-            {
-                MainThread.InvokeOnMainThreadAsync(() =>
-                {
-                    Shell.Current.Navigation.PopAsync();
-                    Toast.Make(Strings.GameDeleted, ToastDuration.Long).Show(); 
-                });
-            }
-        }
-
         public override void DeleteDocument(Action<Task> OnComplete)
         {
             fbd.DeleteDocument(Keys.GamesCollection, Id, OnComplete);
@@ -140,11 +126,55 @@ namespace Chess.ModelsLogic
                 {
                     if (BoardPieces[i, j] != null)
                     {
+                        BoardPieces[i, j].Clicked += OnButtonClicked;
                         board.Add(BoardPieces[i, j], j, i);
                     }
                 }
             }
         }
-       
+        protected override void OnButtonClicked(object? sender, EventArgs e)
+        {
+            if (_status.CurrentStatus == GameStatus.Statuses.Play)
+            {
+                Piece? p = sender as Piece;
+                Play(p!.RowIndex, p.ColumnIndex, true);
+            }
+        }
+        protected override void Play(int rowIndex, int columnIndex, bool MyMove)
+        {
+            if (MyMove)
+            {             
+                _status.UpdateStatus();
+                IsHostTurn = !IsHostTurn;
+                UpdateFbMove();
+            }
+        }
+        protected override void UpdateFbMove()
+        {
+            Dictionary<string, object> dict = new()
+            {
+                
+                { nameof(IsHostTurn), IsHostTurn }
+            };
+            fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
+        }
+        private void OnChange(IDocumentSnapshot? snapshot, Exception? error)
+        {
+            Game? updatedGame = snapshot?.ToObject<Game>();
+            if (updatedGame != null)
+            {
+                GuestName = updatedGame.GuestName;
+                IsFull = updatedGame.IsFull;
+                OnGameChanged?.Invoke(this, EventArgs.Empty);
+            }
+            else
+            {
+                MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    Shell.Current.Navigation.PopAsync();
+                    Toast.Make(Strings.GameDeleted, ToastDuration.Long).Show();
+                });
+            }
+        }
     }
 }
