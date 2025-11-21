@@ -9,7 +9,7 @@ namespace Chess.Models
     {
         protected FbData fbd = new();
         protected IListenerRegistration? ilr;
-        public Piece[,] PiecesBoard = new Piece[8, 8];
+        public Piece[,] BoardPieces = new Piece[8, 8];
         [Ignored]
         public EventHandler? OnGameChanged;
         [Ignored]

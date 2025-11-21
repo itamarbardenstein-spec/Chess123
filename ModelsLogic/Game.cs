@@ -89,12 +89,39 @@ namespace Chess.ModelsLogic
             {
                 board.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto } );
                 board.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                BoardPieces[1, i] = new Piece(1, i, Piece.PieceType.Pawn, false, Strings.BlackPawn);
+                BoardPieces[6, i] = new Piece(6, i, Piece.PieceType.Pawn, true, Strings.WhitePawn);
+                if (i == 0 || i == 7)
+                {
+                    BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Rook, false, Strings.BlackRook);
+                    BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Rook, true, Strings.WhiteRook);
+                }
+                else if (i == 1 || i == 6)
+                {
+                    BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Knight, false, Strings.BlackKnight);
+                    BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Knight, true, Strings.WhiteKnight);
+                }
+                else if (i == 2 || i == 5)
+                {
+                    BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Bishop, false, Strings.BlackBishop);
+                    BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Bishop, true, Strings.WhiteBishop);
+                }
+                else if (i == 3)
+                {
+                    BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Queen, false, Strings.BlackQueen);
+                    BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Queen, true, Strings.WhiteQueen);
+                }
+                else
+                {
+                    BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.King, false, Strings.BlackKing);
+                    BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.King, true, Strings.WhiteKing);
+                }
             }
             for(int i = 0;i<8; i++)
             {
                 for(int j = 0;j<8; j++)
                 {
-                    Piece p = new();                   
+                    Piece p = BoardPieces[i, j];
                     if ((i + j) % 2 == 0)
                     {
                         p.BackgroundColor = Color.FromArgb("#F0D9B5");
@@ -106,7 +133,6 @@ namespace Chess.ModelsLogic
                     board.Add(p, j, i);
                 }
             }
-            Pieces pieces = new(board);
         }
        
     }
