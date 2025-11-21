@@ -1,7 +1,6 @@
-﻿using System.Collections.ObjectModel;
-using Chess.ModelsLogic;
-using Microsoft.Maui.Controls;
+﻿using Chess.ModelsLogic;
 using Plugin.CloudFirestore;
+using System.Collections.ObjectModel;
 
 namespace Chess.Models
 {

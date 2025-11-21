@@ -85,7 +85,8 @@ namespace Chess.ModelsLogic
 
         public override void InitGrid(Grid board)
         {
-            for(int i = 0;i< 8; i++)
+            BoardPieces=new Piece[8,8];
+            for (int i = 0;i< 8; i++)
             {
                 board.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto } );
                 board.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -117,11 +118,11 @@ namespace Chess.ModelsLogic
                     BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.King, true, Strings.WhiteKing);
                 }
             }
-            for(int i = 0;i<8; i++)
+            for (int i = 0;i<8; i++)
             {
                 for(int j = 0;j<8; j++)
                 {
-                    Piece p = BoardPieces[i, j];
+                    Piece p = new();
                     if ((i + j) % 2 == 0)
                     {
                         p.BackgroundColor = Color.FromArgb("#F0D9B5");
@@ -131,6 +132,16 @@ namespace Chess.ModelsLogic
                         p.BackgroundColor = Color.FromArgb("#B58863");
                     }                                                        
                     board.Add(p, j, i);
+                }
+            }
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    if (BoardPieces[i, j] != null)
+                    {
+                        board.Add(BoardPieces[i, j], j, i);
+                    }
                 }
             }
         }
