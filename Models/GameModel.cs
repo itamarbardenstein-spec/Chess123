@@ -7,6 +7,9 @@ namespace Chess.Models
 {
     public abstract class GameModel
     {
+        protected int ClickCount = 0;
+        protected enum Actions { Changed, Deleted }
+        protected Actions action = Actions.Changed;
         protected FbData fbd = new();
         protected IListenerRegistration? ilr;
         protected Piece[,]? BoardPieces;
@@ -24,6 +27,8 @@ namespace Chess.Models
         public DateTime Created { get; set; }
         public bool IsFull { get; set; }
         public bool IsHostTurn { get; set; } = false;
+        public List<int> MoveFrom { get; set; } = [Keys.NoMove, Keys.NoMove];
+        public List<int> MoveTo { get; set; } = [Keys.NoMove, Keys.NoMove];
         [Ignored]
         public string TimeName => $"{Time} min";       
         [Ignored]

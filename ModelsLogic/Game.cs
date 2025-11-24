@@ -43,9 +43,10 @@ namespace Chess.ModelsLogic
         {
             Dictionary<string, object> dict = new()
             {
-                { nameof(GuestName), GuestName },
-                { nameof(IsFull), IsFull }
+                { nameof(IsFull), IsFull },
+                { nameof(GuestName), GuestName }
             };
+            action = Actions.Changed;
             fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
         }
 
@@ -56,13 +57,17 @@ namespace Chess.ModelsLogic
         public override void RemoveSnapshotListener()
         {
             ilr?.Remove();
+            action = Actions.Deleted;
             DeleteDocument(OnComplete);
         }
 
         private void OnComplete(Task task)
         {
-            if(task.IsCompletedSuccessfully)
-                OnGameDeleted?.Invoke(this, EventArgs.Empty);
+            if (task.IsCompletedSuccessfully)
+                if (action == Actions.Deleted)
+                    OnGameDeleted?.Invoke(this, EventArgs.Empty);
+                else
+                    OnGameChanged?.Invoke(this, EventArgs.Empty);
         }
         public override void DeleteDocument(Action<Task> OnComplete)
         {
@@ -120,33 +125,57 @@ namespace Chess.ModelsLogic
                     else
                     {
                         p.BackgroundColor = Color.FromArgb("#B58863");
-                    }                                                        
+                    }                 
+                    p.Clicked += OnButtonClicked;
                     board.Add(p, j, i);
                 }
             }           
         }
         protected override void OnButtonClicked(object? sender, EventArgs e)
         {
+            Piece? p = sender as Piece;
             if (_status.CurrentStatus == GameStatus.Statuses.Play)
             {
-                Piece? p = sender as Piece;
-                Play(p!.RowIndex, p.ColumnIndex, true);     
-            }
+                if (ClickCount == 0)
+                {
+                    ClickCount++;
+                    MoveFrom[0] = p!.RowIndex;
+                    MoveFrom[1] = p.ColumnIndex;
+                }
+                else
+                {
+                    if (p == null || p.IsWhite != BoardPieces?[MoveFrom[0], MoveFrom[1]].IsWhite)
+                    {
+                        //IsMoveValid()
+                        Play(p!.RowIndex, p.ColumnIndex, true);
+                    }
+                    ClickCount = 0;
+                }
+            }            
         }
         protected override void Play(int rowIndex, int columnIndex, bool MyMove)
         {
+            Piece PieceToMove = BoardPieces![MoveFrom[0], MoveFrom[1]];
+            //לנסות לשנות להצבעה = במקום ליצור חדש
+            BoardPieces![rowIndex, columnIndex] =new Piece(MoveFrom[0], MoveFrom[1], PieceToMove.CurrentPieceType, PieceToMove.IsWhite, PieceToMove.StringImageSource);
+            PieceToMove = new();
             if (MyMove)
-            {             
+            {
+                MoveTo[0] = rowIndex;
+                MoveTo[1] = columnIndex;
                 _status.UpdateStatus();
                 IsHostTurn = !IsHostTurn;
                 UpdateFbMove();
             }
+            else
+                OnGameChanged?.Invoke(this, EventArgs.Empty);
         }
         protected override void UpdateFbMove()
         {
             Dictionary<string, object> dict = new()
             {
-                
+                { nameof(MoveFrom), MoveFrom },
+                { nameof(MoveTo), MoveTo },
                 { nameof(IsHostTurn), IsHostTurn }
             };
             fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
@@ -156,17 +185,24 @@ namespace Chess.ModelsLogic
             Game? updatedGame = snapshot?.ToObject<Game>();
             if (updatedGame != null)
             {
-                GuestName = updatedGame.GuestName;
                 IsFull = updatedGame.IsFull;
+                GuestName = updatedGame.GuestName;
                 OnGameChanged?.Invoke(this, EventArgs.Empty);
+                IsHostTurn = updatedGame.IsHostTurn;
+                MoveFrom = updatedGame.MoveFrom;
+                MoveTo = updatedGame.MoveTo;
+                UpdateStatus();
+                if (_status.CurrentStatus == GameStatus.Statuses.Play && updatedGame.MoveFrom[0] != Keys.NoMove)
+                    Play(updatedGame.MoveTo[0], updatedGame.MoveTo[1], false);
             }
             else
             {
                 MainThread.InvokeOnMainThreadAsync(() =>
                 {
                     Shell.Current.Navigation.PopAsync();
-                    Toast.Make(Strings.GameDeleted, ToastDuration.Long).Show();
+                    Toast.Make(Strings.GameDeleted, ToastDuration.Long, 14).Show();
                 });
+
             }
         }
     }
