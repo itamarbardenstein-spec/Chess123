@@ -1,6 +1,7 @@
 ﻿namespace Chess.Models
 {
-    internal class MoveModel
+    public abstract class MoveModel
     {
+
     }
 }

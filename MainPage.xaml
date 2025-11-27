@@ -6,36 +6,37 @@
     xmlns:m="clr-namespace:Chess.Models"
     xmlns:vm="clr-namespace:Chess.ViewModel"
     x:DataType="vm:MainPageVm"
-    IsBusy="{Binding IsBusy}"
-    BackgroundImageSource="homepagebackgroud.jpg">
+    BackgroundImageSource="homepagebackgroud.jpg"
+    IsBusy="{Binding IsBusy}">
     <Shell.TitleView>
-    <HorizontalStackLayout FlowDirection="LeftToRight">
-        <Label
-            FontAttributes="Bold"
-            FontSize="Medium"
-            Text="{x:Static m:Strings.AppTitle}"
-            VerticalTextAlignment="Center" />
-    </HorizontalStackLayout>
-</Shell.TitleView>
+        <HorizontalStackLayout FlowDirection="LeftToRight">
+            <Label
+                FontAttributes="Bold"
+                FontSize="Medium"
+                Text="{x:Static m:Strings.AppTitle}"
+                VerticalTextAlignment="Center" />
+        </HorizontalStackLayout>
+    </Shell.TitleView>
     <VerticalStackLayout>
-        <Grid Padding="5"
-              ColumnDefinitions="*,1.4*"
-              ColumnSpacing="5">
+        <Grid
+            Padding="5"
+            ColumnDefinitions="*,1.4*"
+            ColumnSpacing="5">
             <Picker
-    Title="{x:Static m:Strings.SelectGameTime}"
-    FontSize="20"
-    HorizontalTextAlignment="Center"
-    ItemDisplayBinding="{Binding DisplayName}"
-    ItemsSource="{Binding GameTimes}"
-    SelectedItem="{Binding SelectedGameTime}" />
+                Title="{x:Static m:Strings.SelectGameTime}"
+                FontSize="20"
+                HorizontalTextAlignment="Center"
+                ItemDisplayBinding="{Binding DisplayName}"
+                ItemsSource="{Binding GameTimes}"
+                SelectedItem="{Binding SelectedGameTime}" />
             <Button
-Grid.Column="1"
-Margin="10"
-Command="{Binding AddGameCommand}"
-FontSize="Body"
-HorizontalOptions="Fill"
-Text="CreateGame" />
-            
+                Grid.Column="1"
+                Margin="10"
+                Command="{Binding AddGameCommand}"
+                FontSize="Body"
+                HorizontalOptions="Fill"
+                Text="CreateGame" />
+
         </Grid>
 
         <ListView ItemsSource="{Binding GamesList}" SelectedItem="{Binding SelectedItem}">
@@ -44,21 +45,21 @@ Text="CreateGame" />
                     <ViewCell>
                         <Grid ColumnDefinitions="*,2*,0.5*">
                             <Label
-                        Grid.Column="0"
-                        Margin="20,0,0,0"
-                        FontAttributes="Bold"
-                        FontSize="20"
-                        HorizontalTextAlignment="Start"
-                        Text="{Binding HostName}" />
+                                Grid.Column="0"
+                                Margin="20,0,0,0"
+                                FontAttributes="Bold"
+                                FontSize="20"
+                                HorizontalTextAlignment="Start"
+                                Text="{Binding HostName}" />
                             <Label
-                        Grid.Column="1"
-                        FontSize="20"
-                        Text="{Binding Created}" />
+                                Grid.Column="1"
+                                FontSize="20"
+                                Text="{Binding Created}" />
                             <Label
-                        Grid.Column="2"
-                        FontSize="20"
-                        HorizontalOptions="Center"
-                        Text="{Binding TimeName}" />
+                                Grid.Column="2"
+                                FontSize="20"
+                                HorizontalOptions="Center"
+                                Text="{Binding TimeName}" />
                         </Grid>
                     </ViewCell>
                 </DataTemplate>

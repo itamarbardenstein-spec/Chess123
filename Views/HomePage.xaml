@@ -9,9 +9,16 @@
     x:DataType="vm:HomePageVM"
     BackgroundImageSource="homepagebackgroud.jpg">
     <VerticalStackLayout Spacing="20">
-        <Button HorizontalOptions="End" BackgroundColor="Transparent">
+        <Button
+            BackgroundColor="Transparent"
+            Command="{Binding OpenSettingsCommand}"
+            HorizontalOptions="End"
+            Text="Settings">
             <Button.ImageSource>
-                <FontImageSource Glyph="{StaticResource IconSettings}" Size="40" Color="DarkSlateGray">
+                <FontImageSource
+                    Glyph="{StaticResource IconSettings}"
+                    Size="40"
+                    Color="DarkSlateGray">
                     <FontImageSource.FontFamily>MaterialSymbols</FontImageSource.FontFamily>
                 </FontImageSource>
             </Button.ImageSource>
@@ -21,10 +28,12 @@
             HorizontalOptions="Center"
             Text="{Binding UserName, StringFormat='Hello {0}!'}"
             TextColor="Black" />
-        <Button Command="{Binding PlayCommand}"  Text="{x:Static m:Strings.Play}" />
-        <Label Text="First time playing?" FontSize="30" HorizontalOptions="Center" />
-        <Button Text="{x:Static m:Strings.Instructions}"
-                Command="{Binding InstructionsCommand}"/> 
-        
+        <Button Command="{Binding PlayCommand}" Text="{x:Static m:Strings.Play}" />
+        <Label
+            FontSize="30"
+            HorizontalOptions="Center"
+            Text="First time playing?" />
+        <Button Command="{Binding InstructionsCommand}" Text="{x:Static m:Strings.Instructions}" />
+
     </VerticalStackLayout>
 </ContentPage>

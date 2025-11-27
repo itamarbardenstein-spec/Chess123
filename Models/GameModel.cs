@@ -12,7 +12,8 @@ namespace Chess.Models
         protected Actions action = Actions.Changed;
         protected FbData fbd = new();
         protected IListenerRegistration? ilr;
-        protected Piece[,]? BoardPieces;
+        [Ignored]
+        public Piece[,]? BoardPieces;
         [Ignored]
         public EventHandler? OnGameChanged;
         [Ignored]
@@ -21,6 +22,10 @@ namespace Chess.Models
         protected abstract GameStatus Status { get; }
         [Ignored]
         public string StatusMessage => Status.StatusMessage;
+        [Ignored]
+        protected Grid? GameBoard;
+        [Ignored]
+        protected Dictionary<(int row, int col), Piece> BoardUIMap = new();
         public string HostName { get; set; } = string.Empty;   
         public string GuestName { get; set; } = string.Empty;         
         public int Time {  get; set; }

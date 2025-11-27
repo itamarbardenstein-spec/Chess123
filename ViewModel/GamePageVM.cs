@@ -17,7 +17,7 @@ namespace Chess.ViewModel
             game.InitGrid(board);
             this.game = game;
             if (!game.IsHostUser)
-                game.UpdateGuestUser(OnComplete);           
+                game.UpdateGuestUser(OnComplete);
         }
 
         private void OnGameChanged(object? sender, EventArgs e)

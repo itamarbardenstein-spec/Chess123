@@ -1,4 +1,4 @@
-﻿ using Chess.Models;
+﻿using Chess.Models;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using Plugin.CloudFirestore;
@@ -76,8 +76,9 @@ namespace Chess.ModelsLogic
 
         public override void InitGrid(Grid board)
         {
-            BoardPieces=new Piece[8,8];
-            for (int i = 0;i< 8; i++)
+            GameBoard = board;
+            BoardPieces =new Piece[8,8];
+            for (int i = 0;i< 8; i++)   
             {
                 board.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto } );
                 board.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -113,11 +114,7 @@ namespace Chess.ModelsLogic
             {
                 for(int j = 0;j<8; j++)
                 {
-                    Piece p;
-                    if (BoardPieces[i, j] != null)
-                       p = BoardPieces[i, j];
-                    else
-                        p = new();
+                    Piece p = BoardPieces[i, j] ?? new Piece(i, j, null, false, null);
                     if ((i + j) % 2 == 0)
                     {
                         p.BackgroundColor = Color.FromArgb("#F0D9B5");
@@ -128,6 +125,7 @@ namespace Chess.ModelsLogic
                     }                 
                     p.Clicked += OnButtonClicked;
                     board.Add(p, j, i);
+                    BoardUIMap[(i, j)] = p;
                 }
             }           
         }
@@ -145,20 +143,20 @@ namespace Chess.ModelsLogic
                 else
                 {
                     if (p == null || p.IsWhite != BoardPieces?[MoveFrom[0], MoveFrom[1]].IsWhite)
-                    {
-                        //IsMoveValid()
-                        Play(p!.RowIndex, p.ColumnIndex, true);
-                    }
+                    {                       
+                        Play(p!.RowIndex, p.ColumnIndex, true); 
+                    }                   
                     ClickCount = 0;
-                }
+                }                                     
             }            
         }
         protected override void Play(int rowIndex, int columnIndex, bool MyMove)
         {
             Piece PieceToMove = BoardPieces![MoveFrom[0], MoveFrom[1]];
-            //לנסות לשנות להצבעה = במקום ליצור חדש
-            BoardPieces![rowIndex, columnIndex] =new Piece(MoveFrom[0], MoveFrom[1], PieceToMove.CurrentPieceType, PieceToMove.IsWhite, PieceToMove.StringImageSource);
-            PieceToMove = new();
+            BoardPieces[rowIndex, columnIndex] = PieceToMove;
+            BoardPieces[MoveFrom[0], MoveFrom[1]] = null;
+            UpdateCellUI(MoveFrom[0], MoveFrom[1]);
+            UpdateCellUI(rowIndex, columnIndex);          
             if (MyMove)
             {
                 MoveTo[0] = rowIndex;
@@ -168,7 +166,9 @@ namespace Chess.ModelsLogic
                 UpdateFbMove();
             }
             else
+            {
                 OnGameChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
         protected override void UpdateFbMove()
         {
@@ -203,6 +203,26 @@ namespace Chess.ModelsLogic
                     Toast.Make(Strings.GameDeleted, ToastDuration.Long, 14).Show();
                 });
 
+            }
+        }
+        private void UpdateCellUI(int row, int col)
+        {
+            if (!BoardUIMap.TryGetValue((row, col), out Piece? uiPiece))
+                return;
+
+            Piece modelPiece = BoardPieces![row, col];
+
+            if (modelPiece == null)
+            {
+                uiPiece.Source = null;
+                uiPiece.CurrentPieceType = null;
+                uiPiece.IsWhite = false;
+            }
+            else
+            {
+                uiPiece.Source = modelPiece.StringImageSource;
+                uiPiece.CurrentPieceType = modelPiece.CurrentPieceType;
+                uiPiece.IsWhite = modelPiece.IsWhite;
             }
         }
     }
