@@ -82,32 +82,80 @@ namespace Chess.ModelsLogic
             {
                 board.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto } );
                 board.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-                BoardPieces[1, i] = new Piece(1, i, Piece.PieceType.Pawn, false, Strings.BlackPawn);
-                BoardPieces[6, i] = new Piece(6, i, Piece.PieceType.Pawn, true, Strings.WhitePawn);
-                if (i == 0 || i == 7)
+                if (IsHostUser)
                 {
-                    BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Rook, false, Strings.BlackRook);
-                    BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Rook, true, Strings.WhiteRook);
-                }
-                else if (i == 1 || i == 6)
-                {
-                    BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Knight, false, Strings.BlackKnight);
-                    BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Knight, true, Strings.WhiteKnight);
-                }
-                else if (i == 2 || i == 5)
-                {
-                    BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Bishop, false, Strings.BlackBishop);
-                    BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Bishop, true, Strings.WhiteBishop);
-                }
-                else if (i == 3)
-                {
-                    BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Queen, false, Strings.BlackQueen);
-                    BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Queen, true, Strings.WhiteQueen);
+                    BoardPieces[1, i] = new Piece(1, i, Piece.PieceType.Pawn, false, Strings.WhitePawn);
+                    BoardPieces[6, i] = new Piece(6, i, Piece.PieceType.Pawn, true, Strings.BlackPawn);
                 }
                 else
                 {
-                    BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.King, false, Strings.BlackKing);
-                    BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.King, true, Strings.WhiteKing);
+                    BoardPieces[1, i] = new Piece(1, i, Piece.PieceType.Pawn, false, Strings.BlackPawn);
+                    BoardPieces[6, i] = new Piece(6, i, Piece.PieceType.Pawn, true, Strings.WhitePawn);
+                }
+                if (i == 0 || i == 7)
+                {
+                    if (IsHostUser)
+                    {
+                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Rook, false, Strings.WhiteRook);
+                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Rook, true, Strings.BlackRook);
+                    }
+                    else
+                    {
+                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Rook, false, Strings.BlackRook);
+                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Rook, true, Strings.WhiteRook);
+                    }
+                }                       
+                else if (i == 1 || i == 6)
+                {
+                    if (IsHostUser)
+                    {
+                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Knight, false,Strings.WhiteKnight);
+                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Knight, true, Strings.BlackKnight);
+                    }
+                    else
+                    {
+                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Knight, false, Strings.BlackKnight);
+                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Knight, true, Strings.WhiteKnight);
+                    }                       
+                }
+                else if (i == 2 || i == 5)
+                {
+                    if (IsHostUser)
+                    {
+                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Bishop, false,Strings.WhiteBishop);
+                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Bishop, true, Strings.BlackBishop);
+                    }
+                    else
+                    {
+                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Bishop, false, Strings.BlackBishop);
+                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Bishop, true, Strings.WhiteBishop);
+                    }                 
+                }
+                else if (i == 3)
+                {
+                    if (IsHostUser)
+                    {
+                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Queen, false,Strings.WhiteQueen);
+                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Queen, true, Strings.BlackQueen);
+                    }
+                    else
+                    {
+                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Queen, false, Strings.BlackQueen);
+                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Queen, true, Strings.WhiteQueen);
+                    }                  
+                }
+                else
+                {
+                    if(IsHostUser)
+                    {
+                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.King, false, Strings.WhiteKing);
+                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.King, true, Strings.BlackKing);
+                    }
+                    else
+                    {
+                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.King, false, Strings.BlackKing);
+                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.King, true, Strings.WhiteKing);
+                    }                    
                 }
             }
             for (int i = 0;i<8; i++)
@@ -193,8 +241,12 @@ namespace Chess.ModelsLogic
                 MoveTo = updatedGame.MoveTo;
                 UpdateStatus();
                 if (_status.CurrentStatus == GameStatus.Statuses.Play && updatedGame.MoveFrom[0] != Keys.NoMove)
-                    Play(updatedGame.MoveTo[0], updatedGame.MoveTo[1], false);
-            }
+                {
+                    MoveFrom[0] = 7 - MoveFrom[0];
+                    MoveTo[0] = 7 - MoveTo[0];
+                    Play(MoveTo[0],MoveTo[1], false);
+                }
+            }                  
             else
             {
                 MainThread.InvokeOnMainThreadAsync(() =>
