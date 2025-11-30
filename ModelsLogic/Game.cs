@@ -1,4 +1,5 @@
-﻿using Chess.Models;
+﻿using System.Runtime.Intrinsics.X86;
+using Chess.Models;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using Plugin.CloudFirestore;
@@ -78,10 +79,13 @@ namespace Chess.ModelsLogic
         {
             GameBoard = board;
             BoardPieces =new Piece[8,8];
-            for (int i = 0;i< 8; i++)   
+            for (int i = 0; i < 8; i++)
             {
-                board.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto } );
+                board.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
                 board.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            }
+            for (int i = 0; i < 8; i++)
+            {
                 if (IsHostUser)
                 {
                     BoardPieces[1, i] = new Piece(1, i, Piece.PieceType.Pawn, false, Strings.WhitePawn);
@@ -104,49 +108,49 @@ namespace Chess.ModelsLogic
                         BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Rook, false, Strings.BlackRook);
                         BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Rook, true, Strings.WhiteRook);
                     }
-                }                       
+                }
                 else if (i == 1 || i == 6)
                 {
                     if (IsHostUser)
                     {
-                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Knight, false,Strings.WhiteKnight);
+                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Knight, false, Strings.WhiteKnight);
                         BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Knight, true, Strings.BlackKnight);
                     }
                     else
                     {
                         BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Knight, false, Strings.BlackKnight);
                         BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Knight, true, Strings.WhiteKnight);
-                    }                       
+                    }
                 }
                 else if (i == 2 || i == 5)
                 {
                     if (IsHostUser)
                     {
-                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Bishop, false,Strings.WhiteBishop);
+                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Bishop, false, Strings.WhiteBishop);
                         BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Bishop, true, Strings.BlackBishop);
                     }
                     else
                     {
                         BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Bishop, false, Strings.BlackBishop);
                         BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Bishop, true, Strings.WhiteBishop);
-                    }                 
+                    }
                 }
                 else if (i == 3)
                 {
                     if (IsHostUser)
                     {
-                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Queen, false,Strings.WhiteQueen);
+                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Queen, false, Strings.WhiteQueen);
                         BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Queen, true, Strings.BlackQueen);
                     }
                     else
                     {
                         BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Queen, false, Strings.BlackQueen);
                         BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Queen, true, Strings.WhiteQueen);
-                    }                  
+                    }
                 }
                 else
                 {
-                    if(IsHostUser)
+                    if (IsHostUser)
                     {
                         BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.King, false, Strings.WhiteKing);
                         BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.King, true, Strings.BlackKing);
@@ -155,12 +159,12 @@ namespace Chess.ModelsLogic
                     {
                         BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.King, false, Strings.BlackKing);
                         BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.King, true, Strings.WhiteKing);
-                    }                    
+                    }
                 }
             }
-            for (int i = 0;i<8; i++)
+            for (int i = 0; i < 8; i++)
             {
-                for(int j = 0;j<8; j++)
+                for (int j = 0; j < 8; j++)
                 {
                     Piece p = BoardPieces[i, j] ?? new Piece(i, j, null, false, null);
                     if ((i + j) % 2 == 0)
@@ -170,12 +174,12 @@ namespace Chess.ModelsLogic
                     else
                     {
                         p.BackgroundColor = Color.FromArgb("#B58863");
-                    }                 
+                    }
                     p.Clicked += OnButtonClicked;
                     board.Add(p, j, i);
                     BoardUIMap[(i, j)] = p;
                 }
-            }           
+            }
         }
         protected override void OnButtonClicked(object? sender, EventArgs e)
         {
@@ -191,9 +195,17 @@ namespace Chess.ModelsLogic
                 else
                 {
                     if (p == null || p.IsWhite != BoardPieces?[MoveFrom[0], MoveFrom[1]].IsWhite)
-                    {                       
-                        Play(p!.RowIndex, p.ColumnIndex, true); 
-                    }                   
+                    {
+                        if (Move.IsMoveValid(BoardPieces!,MoveFrom[0],MoveFrom[1],p!.RowIndex,p.ColumnIndex))
+                        Play(p!.RowIndex, p.ColumnIndex, true);
+                        else
+                        {
+                            MainThread.InvokeOnMainThreadAsync(() =>
+                            {
+                                Toast.Make(Strings.InvalidMove, ToastDuration.Long, 14).Show();
+                            });
+                        }
+                    }                    
                     ClickCount = 0;
                 }                                     
             }            
