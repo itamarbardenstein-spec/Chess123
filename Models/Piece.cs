@@ -8,6 +8,7 @@
         public enum PieceType { Pawn, Rook, Knight, Bishop, Queen, King }
         public PieceType? CurrentPieceType { get; set; }
         public bool IsWhite { get; set; }
+        public bool HasMoved { get; set; } = false;
         public Piece(int row, int column, PieceType? pieceType, bool isWhite, string? image)
         {
             RowIndex = row;

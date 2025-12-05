@@ -5,7 +5,7 @@ namespace Chess.ModelsLogic
 {
     public class Move : MoveModel
     {
-        public static bool IsMoveValid(Piece[,] board, int rFrom, int cFrom, int rTo, int cTo)
+        public override bool IsMoveValid(Piece[,] board, int rFrom, int cFrom, int rTo, int cTo)
         {
             if (!Inside(rTo, cTo)) return false;
 
@@ -21,6 +21,39 @@ namespace Chess.ModelsLogic
             int dr = rTo - rFrom;
             int dc = cTo - cFrom;
 
+            // ✅ הוספת הצרחה למלך
+            if (piece.CurrentPieceType == Piece.PieceType.King)
+            {
+                // הצרחה: 2 משבצות ימינה או שמאלה
+                if (!piece.HasMoved && dr == 0 && Math.Abs(dc) == 2)
+                {
+                    int row = rFrom;
+
+                    if (dc == 2) // short castle (מלך צד ימין)
+                    {
+                        Piece rook = board[row, 7];
+                        if (rook != null && rook.CurrentPieceType == Piece.PieceType.Rook && !rook.HasMoved)
+                        {
+                            if (board[row, 5] == null && board[row, 6] == null)
+                                return true;
+                        }
+                    }
+                    else if (dc == -2) // long castle (מלך צד שמאל)
+                    {
+                        Piece rook = board[row, 0];
+                        if (rook != null && rook.CurrentPieceType == Piece.PieceType.Rook && !rook.HasMoved)
+                        {
+                            if (board[row, 1] == null && board[row, 2] == null && board[row, 3] == null)
+                                return true;
+                        }
+                    }
+                }
+
+                // תזוזה רגילה של המלך
+                return Math.Abs(dr) <= 1 && Math.Abs(dc) <= 1 && (empty || enemy);
+            }
+
+            // שאר הכללים נשארים ללא שינוי
             return piece.CurrentPieceType switch
             {
                 Piece.PieceType.Pawn => Pawn(rFrom, cFrom, rTo, cTo, white, board),
@@ -30,63 +63,48 @@ namespace Chess.ModelsLogic
                                           Diagonal(board, rFrom, cFrom, rTo, cTo),
                 Piece.PieceType.Knight => (Math.Abs(dr), Math.Abs(dc)) is (2, 1) or (1, 2)
                                           && (empty || enemy),
-                Piece.PieceType.King => Math.Abs(dr) <= 1 && Math.Abs(dc) <= 1
-                                          && (empty || enemy),
                 _ => false
             };
+        }
+        protected override bool Pawn(int fr, int fc, int tr, int tc, bool w, Piece[,] b)
+        {
+            int dir = w ? -1 : 1;
+            if (fc == tc && b[tr, tc] == null && tr == fr + dir)
+                return true;
+            if (fc == tc && b[tr, tc] == null && b[fr + dir, fc] == null &&
+               ((w && fr == 6) || (!w && fr == 1)) && tr == fr + 2 * dir)
+                return true;
+            if (Math.Abs(tc - fc) == 1 && tr == fr + dir && b[tr, tc] != null && b[tr, tc].IsWhite != w)
+                return true;
 
-
-            bool Pawn(int fr, int fc, int tr, int tc, bool w, Piece[,] b)
+            return false;
+        }
+        protected override bool Straight(Piece[,] b, int r, int c, int r2, int c2)
+        {
+            if (r != r2 && c != c2) return false;
+            int dr = Math.Sign(r2 - r), dc = Math.Sign(c2 - c);
+            return PathClear(b, r, c, r2, c2, dr, dc);
+        }
+        protected override bool Diagonal(Piece[,] b, int r, int c, int r2, int c2)
+        {
+            if (Math.Abs(r2 - r) != Math.Abs(c2 - c)) return false;
+            int dr = Math.Sign(r2 - r), dc = Math.Sign(c2 - c);
+            return PathClear(b, r, c, r2, c2, dr, dc);
+        }
+        protected override bool PathClear(Piece[,] board, int startRow, int startCollomn, int endRow, int endCollomn, int directionRow, int directionCollomn)
+        {
+            int x = startRow + directionRow, y = startCollomn + directionCollomn;
+            while (x != endRow || y != endCollomn)
             {
-                int dir = w ? -1 : 1;
-
-                // צעד רגיל קדימה
-                if (fc == tc && b[tr, tc] == null && tr == fr + dir)
-                    return true;
-
-                // שתי צעדים מהשורה הראשונה
-                if (fc == tc && b[tr, tc] == null && b[fr + dir, fc] == null &&
-                   ((w && fr == 6) || (!w && fr == 1)) && tr == fr + 2 * dir)
-                    return true;
-
-                // אכילה באלכסון
-                if (Math.Abs(tc - fc) == 1 && tr == fr + dir && b[tr, tc] != null && b[tr, tc].IsWhite != w)
-                    return true;
-
-                return false;
+                if (board[x, y] != null) return false;
+                x += directionRow; y += directionCollomn;
             }
-
-
-            // ============== קו ישר צריח/מלכה ==============
-            bool Straight(Piece[,] b, int r, int c, int r2, int c2)
-            {
-                if (r != r2 && c != c2) return false;
-                int dr = Math.Sign(r2 - r), dc = Math.Sign(c2 - c);
-                return PathClear(b, r, c, r2, c2, dr, dc);
-            }
-
-            // ============== אלכסון רץ/מלכה ==============
-            bool Diagonal(Piece[,] b, int r, int c, int r2, int c2)
-            {
-                if (Math.Abs(r2 - r) != Math.Abs(c2 - c)) return false;
-                int dr = Math.Sign(r2 - r), dc = Math.Sign(c2 - c);
-                return PathClear(b, r, c, r2, c2, dr, dc);
-            }
-
-            // בודק שהדרך פנויה (ללא קפיצה)
-            bool PathClear(Piece[,] b, int sr, int sc, int er, int ec, int dr, int dc)
-            {
-                int x = sr + dr, y = sc + dc;
-                while (x != er || y != ec)
-                {
-                    if (b[x, y] != null) return false;
-                    x += dr; y += dc;
-                }
-                return b[er, ec] == null || b[er, ec].IsWhite != b[sr, sc].IsWhite;
-            }
-
-            // גבולות לוח
-            bool Inside(int r, int c) => r >= 0 && r < 8 && c >= 0 && c < 8;
+            return board[endRow, endCollomn] == null || board[endRow, endCollomn].IsWhite != board[startRow, startCollomn].IsWhite;
+        }
+     
+        protected override bool Inside(int r, int c)
+        {
+            return r >= 0 && r < 8 && c >= 0 && c < 8;           
         }
     }
 }
