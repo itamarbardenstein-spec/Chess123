@@ -1,4 +1,4 @@
-﻿using System.Runtime.Intrinsics.X86;
+﻿    using System.Runtime.Intrinsics.X86;
 using Chess.Models;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
@@ -88,77 +88,77 @@ namespace Chess.ModelsLogic
             {
                 if (IsHostUser)
                 {
-                    BoardPieces[1, i] = new Piece(1, i, Piece.PieceType.Pawn, false, Strings.WhitePawn);
-                    BoardPieces[6, i] = new Piece(6, i, Piece.PieceType.Pawn, true, Strings.BlackPawn);
+                    BoardPieces[1, i] = new Pawn(1, i, false, Strings.WhitePawn);
+                    BoardPieces[6, i] = new Pawn(6, i, true, Strings.BlackPawn);
                 }
                 else
                 {
-                    BoardPieces[1, i] = new Piece(1, i, Piece.PieceType.Pawn, false, Strings.BlackPawn);
-                    BoardPieces[6, i] = new Piece(6, i, Piece.PieceType.Pawn, true, Strings.WhitePawn);
+                    BoardPieces[1, i] = new Pawn(1, i, false, Strings.BlackPawn);
+                    BoardPieces[6, i] = new Pawn(6, i, true, Strings.WhitePawn);
                 }
                 if (i == 0 || i == 7)
                 {
                     if (IsHostUser)
                     {
-                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Rook, false, Strings.WhiteRook);
-                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Rook, true, Strings.BlackRook);
+                        BoardPieces[0, i] = new Rook(0, i, false, Strings.WhiteRook);
+                        BoardPieces[7, i] = new Rook(7, i, true, Strings.BlackRook);
                     }
                     else
                     {
-                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Rook, false, Strings.BlackRook);
-                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Rook, true, Strings.WhiteRook);
+                        BoardPieces[0, i] = new Rook(0, i, false, Strings.BlackRook);
+                        BoardPieces[7, i] = new Rook(7, i, true, Strings.WhiteRook);
                     }
                 }
                 else if (i == 1 || i == 6)
                 {
                     if (IsHostUser)
                     {
-                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Knight, false, Strings.WhiteKnight);
-                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Knight, true, Strings.BlackKnight);
+                        BoardPieces[0, i] = new Knight(0, i, false, Strings.WhiteKnight);
+                        BoardPieces[7, i] = new Knight(7, i, true, Strings.BlackKnight);
                     }
                     else
                     {
-                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Knight, false, Strings.BlackKnight);
-                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Knight, true, Strings.WhiteKnight);
+                        BoardPieces[0, i] = new Knight(0, i, false, Strings.BlackKnight);
+                        BoardPieces[7, i] = new Knight(7, i, true, Strings.WhiteKnight);
                     }
                 }
                 else if (i == 2 || i == 5)
                 {
                     if (IsHostUser)
                     {
-                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Bishop, false, Strings.WhiteBishop);
-                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Bishop, true, Strings.BlackBishop);
+                        BoardPieces[0, i] = new Bishop(0, i, false, Strings.WhiteBishop);
+                        BoardPieces[7, i] = new Bishop(7, i, true, Strings.BlackBishop);
                     }
                     else
                     {
-                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Bishop, false, Strings.BlackBishop);
-                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Bishop, true, Strings.WhiteBishop);
+                        BoardPieces[0, i] = new Bishop(0, i, false, Strings.BlackBishop);
+                        BoardPieces[7, i] = new Bishop(7, i, true, Strings.WhiteBishop);
                     }
                 }
                 else if (i == 3)
                 {
                     if (IsHostUser)
                     {
-                        BoardPieces[0, i+1] = new Piece(0, i, Piece.PieceType.Queen, false, Strings.WhiteQueen);
-                        BoardPieces[7, i+1] = new Piece(7, i, Piece.PieceType.Queen, true, Strings.BlackQueen);
+                        BoardPieces[0, i+1] = new Queen(0, i, false, Strings.WhiteQueen);
+                        BoardPieces[7, i+1] = new Queen(7, i, true, Strings.BlackQueen);
                     }
                     else
                     {
-                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.Queen, false, Strings.BlackQueen);
-                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.Queen, true, Strings.WhiteQueen);
+                        BoardPieces[0, i] = new Queen(0, i, false, Strings.BlackQueen);
+                        BoardPieces[7, i] = new Queen(7, i, true, Strings.WhiteQueen);
                     }
                 }
                 else
                 {
                     if (IsHostUser)
                     {
-                        BoardPieces[0, i-1] = new Piece(0, i, Piece.PieceType.King, false, Strings.WhiteKing);
-                        BoardPieces[7, i-1] = new Piece(7, i, Piece.PieceType.King, true, Strings.BlackKing);
+                        BoardPieces[0, i-1] = new King(0, i, false, Strings.WhiteKing);
+                        BoardPieces[7, i-1] = new King(7, i, true, Strings.BlackKing);
                     }
                     else
                     {
-                        BoardPieces[0, i] = new Piece(0, i, Piece.PieceType.King, false, Strings.BlackKing);
-                        BoardPieces[7, i] = new Piece(7, i, Piece.PieceType.King, true, Strings.WhiteKing);
+                        BoardPieces[0, i] = new King(0, i, false, Strings.BlackKing);
+                        BoardPieces[7, i] = new King(7, i, true, Strings.WhiteKing);
                     }
                 }
             }
@@ -166,18 +166,25 @@ namespace Chess.ModelsLogic
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    Piece p = BoardPieces[i, j] ?? new Piece(i, j, null, false, null);
+                    Piece p = BoardPieces[i, j];
+                    if(p == null)
+                    {
+                        p= new Pawn(0,0,false,null);
+                    }
                     if ((i + j) % 2 == 0)
                     {
-                        p.BackgroundColor = Color.FromArgb("#F0D9B5");
+                        p!.BackgroundColor = Color.FromArgb("#F0D9B5");
                     }
                     else
                     {
-                        p.BackgroundColor = Color.FromArgb("#B58863");
+                        p!.BackgroundColor = Color.FromArgb("#B58863");
                     }
                     p.Clicked += OnButtonClicked;
-                    board.Add(p, j, i);
-                    BoardUIMap[(i, j)] = p;
+                    if(p != null)
+                    {
+                        board.Add(p, j, i);
+                        BoardUIMap[(i, j)] = p;
+                    }                   
                 }
             }
         }
@@ -188,7 +195,7 @@ namespace Chess.ModelsLogic
             {
                 if (ClickCount == 0)
                 {
-                    if (p!.CurrentPieceType!=null)
+                    if (p!=null)
                     {
                         ClickCount++;
                         MoveFrom[0] = p!.RowIndex;
@@ -196,20 +203,16 @@ namespace Chess.ModelsLogic
                     }                   
                 }
                 else
-                {
-                    if (p == null || p.IsWhite != BoardPieces?[MoveFrom[0], MoveFrom[1]].IsWhite)
+                {                  
+                    if (p!.IsMoveValid(BoardPieces!,MoveFrom[0],MoveFrom[1],p!.RowIndex,p.ColumnIndex))
+                    Play(p!.RowIndex, p.ColumnIndex, true);
+                    else
                     {
-                        Move move = new();
-                        if (move.IsMoveValid(BoardPieces!,MoveFrom[0],MoveFrom[1],p!.RowIndex,p.ColumnIndex))
-                        Play(p!.RowIndex, p.ColumnIndex, true);
-                        else
+                        MainThread.InvokeOnMainThreadAsync(() =>
                         {
-                            MainThread.InvokeOnMainThreadAsync(() =>
-                            {
-                                Toast.Make(Strings.InvalidMove, ToastDuration.Long, 14).Show();
-                            });
-                        }
-                    }                    
+                            Toast.Make(Strings.InvalidMove, ToastDuration.Long, 14).Show();
+                        });
+                    }                   
                     ClickCount = 0;
                 }                                     
             }            
@@ -217,46 +220,33 @@ namespace Chess.ModelsLogic
         protected override void Play(int rowIndex, int columnIndex, bool MyMove)
         {
             Piece PieceToMove = BoardPieces![MoveFrom[0], MoveFrom[1]];
-
-            bool isCastling = PieceToMove.CurrentPieceType == Piece.PieceType.King && Math.Abs(columnIndex - MoveFrom[1]) == 2;
-            BoardPieces[rowIndex, columnIndex] = new Piece(rowIndex,columnIndex,PieceToMove.CurrentPieceType,PieceToMove.IsWhite,PieceToMove.StringImageSource)
-            {
-                HasMoved = true
-            };
+            bool isCastling = PieceToMove is King && Math.Abs(columnIndex - MoveFrom[1]) == 2;
+            BoardPieces[rowIndex, columnIndex] = CreatePiece(PieceToMove, rowIndex, columnIndex);
+            //BoardPieces[rowIndex, columnIndex].HasMoved = true;
             BoardPieces[MoveFrom[0], MoveFrom[1]] = null;
-
-            // עדכון UI של המלך
-            UpdateCellUI(MoveFrom[0], MoveFrom[1]); // משבצת ישנה
-            UpdateCellUI(rowIndex, columnIndex);     // משבצת חדשה
-
-            // אם הצרחה, מזיזים גם את הרוק
+            UpdateCellUI(MoveFrom[0], MoveFrom[1]);
+            UpdateCellUI(rowIndex, columnIndex);
             if (isCastling)
             {
-                if (columnIndex == 6) // short castle (מלך צד ימין)
+                if (columnIndex == 6)
                 {
                     Piece rook = BoardPieces[rowIndex, 7];
-                    BoardPieces[rowIndex, 5] = new Piece(rowIndex,5,rook.CurrentPieceType,rook.IsWhite,rook.StringImageSource)
-                    {
-                        HasMoved = true
-                    };
-                    BoardPieces[rowIndex, 7] = null;
-
-                    // עדכון UI של הרוק
-                    UpdateCellUI(rowIndex, 7); // משבצת הרוק הישנה
-                    UpdateCellUI(rowIndex, 5); // משבצת הרוק החדשה
+                    BoardPieces[rowIndex, 5] =CreatePiece(rook, rowIndex, 5);
+                    //BoardPieces[rowIndex, 5].HasMoved = true;
+                    //BoardPieces[rowIndex, 7] = null;
+                    //BoardPieces[rowIndex, 7] = null;
+                    UpdateCellUI(rowIndex, 7);
+                    UpdateCellUI(rowIndex, 5);
                 }
-                else if (columnIndex == 2) // long castle (מלך צד שמאל)
+                else if (columnIndex == 2)
                 {
                     Piece rook = BoardPieces[rowIndex, 0];
-                    BoardPieces[rowIndex, 3] = new Piece(rowIndex,3,rook.CurrentPieceType,rook.IsWhite,rook.StringImageSource)
-                    {
-                        HasMoved = true
-                    };
-                    BoardPieces[rowIndex, 0] = null;
-
-                    // עדכון UI של הרוק
-                    UpdateCellUI(rowIndex, 0); // משבצת הרוק הישנה
-                    UpdateCellUI(rowIndex, 3); // משבצת הרוק החדשה
+                    BoardPieces[rowIndex, 3] =CreatePiece(rook, rowIndex, 3);
+                    //BoardPieces[rowIndex, 3].HasMoved = true;
+                    //BoardPieces[rowIndex, 0] = null;
+                    //BoardPieces[rowIndex, 0] = null;
+                    UpdateCellUI(rowIndex, 0);
+                    UpdateCellUI(rowIndex, 3);
                 }
             }
             if (MyMove)
@@ -313,9 +303,26 @@ namespace Chess.ModelsLogic
 
             }
         }
+        public static Piece CreatePiece(Piece original, int row, int col)
+        {
+            bool isWhite = original.IsWhite;
+            string? img = original.StringImageSource;
+
+            return original switch
+            {
+                Pawn => new Pawn(row, col, isWhite, img),
+                Rook => new Rook(row, col, isWhite, img),
+                Knight => new Knight(row, col, isWhite, img),
+                Bishop => new Bishop(row, col, isWhite, img),
+                Queen => new Queen(row, col, isWhite, img),
+                King => new King(row, col, isWhite, img),
+
+                _ => throw new Exception()
+            };
+        }
         private void UpdateCellUI(int row, int col)
         {
-            if (!BoardUIMap.TryGetValue((row, col), out Piece? uiPiece))
+            if (!BoardUIMap.TryGetValue((row, col), out PieceModel? uiPiece))
                 return;
 
             Piece modelPiece = BoardPieces![row, col];
@@ -323,13 +330,11 @@ namespace Chess.ModelsLogic
             if (modelPiece == null)
             {
                 uiPiece.Source = null;
-                uiPiece.CurrentPieceType = null;
                 uiPiece.IsWhite = false;
             }
             else
             {
                 uiPiece.Source = modelPiece.StringImageSource;
-                uiPiece.CurrentPieceType = modelPiece.CurrentPieceType;
                 uiPiece.IsWhite = modelPiece.IsWhite;
             }
         }

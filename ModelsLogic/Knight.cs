@@ -1,0 +1,23 @@
+﻿using Chess.Models;
+
+namespace Chess.ModelsLogic
+{
+    public class Knight:Piece
+    {
+        public Knight(int row, int column, bool isWhite, string? image) : base(row, column, isWhite, image) { }
+        public override bool IsMoveValid(Piece[,] board, int rFrom, int cFrom, int rTo, int cTo)
+        {
+            if (!Inside(rTo, cTo)) return false;
+
+            int dr = Math.Abs(rTo - rFrom);
+            int dc = Math.Abs(cTo - cFrom);
+            if (!((dr == 2 && dc == 1) || (dr == 1 && dc == 2)))
+                return false;
+
+            Piece start = board[rFrom, cFrom];
+            Piece target = board[rTo, cTo];
+
+            return target == null || start.IsWhite != target.IsWhite;
+        }
+    }
+}

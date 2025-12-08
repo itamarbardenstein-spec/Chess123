@@ -10,7 +10,7 @@ namespace Chess.Models
         protected abstract GameStatus Status { get; }
         protected int ClickCount = 0;
         protected enum Actions { Changed, Deleted }
-        protected Dictionary<(int row, int col), Piece> BoardUIMap = [];
+        protected Dictionary<(int row, int col), PieceModel> BoardUIMap = [];
         protected Actions action = Actions.Changed;
         protected FbData fbd = new();
         protected IListenerRegistration? ilr;

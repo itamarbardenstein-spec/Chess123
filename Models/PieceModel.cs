@@ -1,31 +1,32 @@
-﻿namespace Chess.Models
+﻿using Chess.ModelsLogic;
+
+namespace Chess.Models
 {
-    public partial class Piece: ImageButton
+    public abstract partial class PieceModel: ImageButton
     {
         public int RowIndex { get; set; }
         public int ColumnIndex { get; set; }
         public string ?StringImageSource { get; set; }   
-        public enum PieceType { Pawn, Rook, Knight, Bishop, Queen, King }
-        public PieceType? CurrentPieceType { get; set; }
         public bool IsWhite { get; set; }
-        public bool HasMoved { get; set; } = false;
-        public Piece(int row, int column, PieceType? pieceType, bool isWhite, string? image)
+        public PieceModel(int row, int column, bool isWhite, string? image)
         {
             RowIndex = row;
             ColumnIndex = column;
-            CurrentPieceType = pieceType;
             IsWhite = isWhite;
             HeightRequest = 45;
             WidthRequest = 45;
             StringImageSource= image;
             Source = image;
         }
-        public Piece()
+        public PieceModel()
         {
             HeightRequest = 45;
             WidthRequest = 45;
         }
-
+        public abstract bool IsMoveValid(Piece[,] board,int rFrom, int cFrom, int rTo, int cTo);
+        protected abstract bool PathClear(Piece[,] board, int r, int c, int r2, int c2, int dr, int dc);
+        protected bool Inside(int r, int c)
+        => r >= 0 && r < 8 && c >= 0 && c < 8;
         
     }
 }
