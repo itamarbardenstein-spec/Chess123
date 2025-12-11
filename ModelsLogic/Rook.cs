@@ -2,9 +2,8 @@
 
 namespace Chess.ModelsLogic
 {
-    public class Rook:Piece
+    public partial class Rook(int row, int column, bool isWhite, string? image) : Piece(row, column, isWhite, image)
     {
-        public Rook(int row, int column, bool isWhite, string? image) : base(row, column, isWhite, image) { }
         public bool rookHasMoved = false;
         public override bool IsMoveValid(Piece[,] board, int rFrom, int cFrom, int rTo, int cTo)
         {

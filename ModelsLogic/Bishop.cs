@@ -2,9 +2,8 @@
 
 namespace Chess.ModelsLogic
 {
-    public class Bishop:Piece
+    public partial class Bishop(int row, int column, bool isWhite, string? image) : Piece(row, column, isWhite, image)
     {
-        public Bishop(int row, int column, bool isWhite, string? image) : base(row, column, isWhite, image) { }
         public override bool IsMoveValid(Piece[,] board, int rFrom, int cFrom, int rTo, int cTo)
         {
             if (!Inside(rTo, cTo)) return false;
