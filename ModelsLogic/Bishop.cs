@@ -6,7 +6,6 @@ namespace Chess.ModelsLogic
     {
         public override bool IsMoveValid(Piece[,] board, int rFrom, int cFrom, int rTo, int cTo)
         {
-            if (!Inside(rTo, cTo)) return false;
             if (Math.Abs(rTo - rFrom) != Math.Abs(cTo - cFrom))
                 return false;
             int dr = Math.Sign(rTo - rFrom);

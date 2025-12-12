@@ -17,7 +17,6 @@ namespace Chess.ModelsLogic
             currentGame.OnGameDeleted += OnGameDeleted;
             currentGame.SetDocument(OnComplete);
         }
-
         private void OnGameDeleted(object? sender, EventArgs e)
         {
             MainThread.InvokeOnMainThreadAsync(() =>
@@ -26,7 +25,6 @@ namespace Chess.ModelsLogic
             });
             
         }
-
         private void OnComplete(Task task)
         {
             IsBusy = false;
@@ -48,7 +46,6 @@ namespace Chess.ModelsLogic
         {
             fbd.GetDocumentsWhereEqualTo(Keys.GamesCollection, nameof(GameModel.IsFull), false, OnComplete);
         }
-
         private void OnComplete(IQuerySnapshot qs)
         {
             GamesList!.Clear();

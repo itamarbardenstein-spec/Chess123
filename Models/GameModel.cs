@@ -36,6 +36,8 @@ namespace Chess.Models
         public string Id { get; set; } = string.Empty;
         [Ignored]
         public bool IsHostUser { get; set; }
+        public int HostTimeMs { get; set; }
+        public int GuestTimeMs { get; set; }
         public string GuestName { get; set; } = string.Empty;         
         public int Time {  get; set; }
         public DateTime Created { get; set; }

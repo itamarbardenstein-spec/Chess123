@@ -12,15 +12,13 @@ namespace Chess.ModelsLogic
             int y = startCol + dc;
             while (x != endRow || y != endCol)
             {
-                if (board[x, y] != null)
+                if (board[x, y].StringImageSource!= null)
                     return false;
-
                 x += dr;
                 y += dc;
             }
             Piece start = board[startRow, startCol];
             Piece end = board[endRow, endCol];
-
             return end.StringImageSource == null || end.IsWhite != start.IsWhite;
         }
         

@@ -24,9 +24,6 @@ namespace Chess.Models
             WidthRequest = 45;
         }
         public abstract bool IsMoveValid(Piece[,] board,int rFrom, int cFrom, int rTo, int cTo);
-        protected abstract bool PathClear(Piece[,] board, int r, int c, int r2, int c2, int dr, int dc);
-        protected bool Inside(int r, int c)
-        => r >= 0 && r < 8 && c >= 0 && c < 8;
-        
+        protected abstract bool PathClear(Piece[,] board, int r, int c, int r2, int c2, int dr, int dc);        
     }
 }
