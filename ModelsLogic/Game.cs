@@ -5,19 +5,18 @@ using Plugin.CloudFirestore;
 
 namespace Chess.ModelsLogic
 {
-    public class Game:GameModel
+    public class Game : GameModel
     {
         public override string OpponentName => IsHostUser ? GuestName : HostName;
         protected override GameStatus Status => _status;
-
         public Game(GameTime selectedGameTime)
         {
-            HostName = new User().UserName; 
+            HostName = new User().UserName;
             IsHostUser = true;
             Time = selectedGameTime.Time;
             Created = DateTime.Now;
-            UpdateStatus();            
-        }        
+            UpdateStatus();
+        }
         public override void SetDocument(Action<Task> OnComplete)
         {
             Id = fbd.SetDocument(this, Keys.GamesCollection, Id, OnComplete);
@@ -49,7 +48,7 @@ namespace Chess.ModelsLogic
         }
         public override void AddSnapshotListener()
         {
-           ilr = fbd.AddSnapshotListener(Keys.GamesCollection, Id, OnChange);
+            ilr = fbd.AddSnapshotListener(Keys.GamesCollection, Id, OnChange);
         }
         public override void RemoveSnapshotListener()
         {
@@ -133,8 +132,8 @@ namespace Chess.ModelsLogic
                 {
                     if (IsHostUser)
                     {
-                        BoardPieces[0, i+1] = new Queen(0, i+1, true, Strings.WhiteQueen);
-                        BoardPieces[7, i+1] = new Queen(7, i+1, false, Strings.BlackQueen);
+                        BoardPieces[0, i + 1] = new Queen(0, i + 1, true, Strings.WhiteQueen);
+                        BoardPieces[7, i + 1] = new Queen(7, i + 1, false, Strings.BlackQueen);
                     }
                     else
                     {
@@ -146,8 +145,8 @@ namespace Chess.ModelsLogic
                 {
                     if (IsHostUser)
                     {
-                        BoardPieces[0, i-1] = new King(0, i-1, true, Strings.WhiteKing);
-                        BoardPieces[7, i-1] = new King(7, i-1, false, Strings.BlackKing);
+                        BoardPieces[0, i - 1] = new King(0, i - 1, true, Strings.WhiteKing);
+                        BoardPieces[7, i - 1] = new King(7, i - 1, false, Strings.BlackKing);
                     }
                     else
                     {
@@ -160,7 +159,7 @@ namespace Chess.ModelsLogic
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if(BoardPieces[i, j]==null)
+                    if (BoardPieces[i, j] == null)
                         BoardPieces[i, j] = new Pawn(i, j, false, null);
                     Piece p = BoardPieces[i, j];
                     if ((i + j) % 2 == 0)
@@ -171,9 +170,9 @@ namespace Chess.ModelsLogic
                     {
                         p!.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
                     }
-                    p.Clicked += OnButtonClicked;                   
+                    p.Clicked += OnButtonClicked;
                     board.Add(p, j, i);
-                    BoardUIMap[(i, j)] = p;                                      
+                    BoardUIMap[(i, j)] = p;
                 }
             }
         }
@@ -184,35 +183,35 @@ namespace Chess.ModelsLogic
             {
                 if (ClickCount == 0)
                 {
-                    if (p.StringImageSource!=null&&(IsHostUser?(!p.IsWhite):p.IsWhite))
+                    if (p.StringImageSource != null && (IsHostUser ? (!p.IsWhite) : p.IsWhite))
                     {
                         ClickCount++;
                         MoveFrom[0] = p.RowIndex;
                         MoveFrom[1] = p.ColumnIndex;
-                    }                   
+                    }
                 }
                 else
-                {                  
-                    if (BoardPieces![MoveFrom[0],MoveFrom[1]].IsMoveValid(BoardPieces!,MoveFrom[0],MoveFrom[1],p.RowIndex,p.ColumnIndex))
-                    Play(p.RowIndex, p.ColumnIndex, true);
+                {
+                    if (BoardPieces![MoveFrom[0], MoveFrom[1]].IsMoveValid(BoardPieces!, MoveFrom[0], MoveFrom[1], p.RowIndex, p.ColumnIndex))
+                        Play(p.RowIndex, p.ColumnIndex, true);
                     else
                     {
                         MainThread.InvokeOnMainThreadAsync(() =>
                         {
                             Toast.Make(Strings.InvalidMove, ToastDuration.Long, 14).Show();
                         });
-                    }                   
+                    }
                     ClickCount = 0;
-                }                                     
-            }            
+                }
+            }
         }
         protected override void Play(int rowIndex, int columnIndex, bool MyMove)
         {
-            Piece PieceToMove = BoardPieces![MoveFrom[0], MoveFrom[1]];    
-            BoardPieces[rowIndex, columnIndex] = CreatePiece(PieceToMove, rowIndex, columnIndex);                        
+            Piece PieceToMove = BoardPieces![MoveFrom[0], MoveFrom[1]];
+            BoardPieces[rowIndex, columnIndex] = CreatePiece(PieceToMove, rowIndex, columnIndex);
             BoardPieces[MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
             UpdateCellUI(MoveFrom[0], MoveFrom[1]);
-            UpdateCellUI(rowIndex, columnIndex);           
+            UpdateCellUI(rowIndex, columnIndex);        
             if (MyMove)
             {
                 MoveTo[0] = rowIndex;
@@ -224,6 +223,24 @@ namespace Chess.ModelsLogic
             else
             {
                 OnGameChanged?.Invoke(this, EventArgs.Empty);
+            }
+            bool nextPlayerIsWhite = !IsHostTurn;
+            if (IsCheckmate(nextPlayerIsWhite))
+            {
+                if (MyMove)
+                {
+                    MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        Toast.Make(Strings.Win, ToastDuration.Long, 16).Show();
+                    });
+                }
+                else
+                {
+                    MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        Toast.Make(Strings.Lose, ToastDuration.Long, 16).Show();
+                    });
+                }
             }
         }
         public static Piece CreatePiece(Piece original, int row, int col)
@@ -269,11 +286,12 @@ namespace Chess.ModelsLogic
                 {
                     MoveFrom[0] = 7 - MoveFrom[0];
                     MoveTo[0] = 7 - MoveTo[0];
-                    MoveFrom[1] = 7 - MoveFrom[1];  
+                    MoveFrom[1] = 7 - MoveFrom[1];
                     MoveTo[1] = 7 - MoveTo[1];
-                    Play(MoveTo[0],MoveTo[1], false);
+                    Play(MoveTo[0], MoveTo[1], false);
                 }
-            }                  
+
+            }
             else
             {
                 MainThread.InvokeOnMainThreadAsync(() =>
@@ -284,16 +302,16 @@ namespace Chess.ModelsLogic
 
             }
         }
-        
+
         private void UpdateCellUI(int row, int col)
         {
             if (!BoardUIMap.TryGetValue((row, col), out PieceModel? uiPiece))
                 return;
             Piece modelPiece = BoardPieces![row, col];
-            if (modelPiece.StringImageSource== null)
+            if (modelPiece.StringImageSource == null)
             {
                 uiPiece.StringImageSource = null;
-                uiPiece.Source = null;  
+                uiPiece.Source = null;
                 uiPiece.IsWhite = false;
             }
             else
@@ -303,5 +321,86 @@ namespace Chess.ModelsLogic
                 uiPiece.IsWhite = modelPiece.IsWhite;
             }
         }
+        private bool IsKingInCheck(bool isWhite)
+        {
+            int kingRow = -1, kingCol = -1;
+
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                    if (BoardPieces![i, j] is King k && k.IsWhite == isWhite)
+                    {
+                        kingRow = i;
+                        kingCol = j;
+                        break;
+                    }
+
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                {
+                    if (BoardPieces![i, j].StringImageSource != null && BoardPieces![i, j].IsWhite != isWhite)
+                    {
+                        if (BoardPieces![i, j].IsMoveValid(BoardPieces!, i, j, kingRow, kingCol))
+                            return true;
+                    }
+                }
+
+            return false;
+        }
+        private bool HasAnyLegalMove(bool isWhite)
+        {
+            for (int rFrom = 0; rFrom < 8; rFrom++)
+            {
+                for (int cFrom = 0; cFrom < 8; cFrom++)
+                {
+                    Piece piece = BoardPieces![rFrom, cFrom];
+                    if (piece.StringImageSource == null || piece.IsWhite != isWhite)
+                        continue;
+
+                    for (int rTo = 0; rTo < 8; rTo++)
+                    {
+                        for (int cTo = 0; cTo < 8; cTo++)
+                        {
+                            if (!piece.IsMoveValid(BoardPieces!, rFrom, cFrom, rTo, cTo))
+                                continue;
+
+                            // גיבוי של הכלים
+                            Piece fromBackup = BoardPieces[rFrom, cFrom];
+                            Piece toBackup = BoardPieces[rTo, cTo];
+                            int oldRow = piece.RowIndex;
+                            int oldCol = piece.ColumnIndex;
+
+                            // סימולציה
+                            BoardPieces[rTo, cTo] = piece;
+                            BoardPieces[rFrom, cFrom] = new Pawn(rFrom, cFrom, false, null);
+                            piece.RowIndex = rTo;
+                            piece.ColumnIndex = cTo;
+
+                            // בדיקת שח
+                            bool kingStillInCheck = IsKingInCheck(isWhite);
+
+                            // שחזור
+                            BoardPieces[rFrom, cFrom] = fromBackup;
+                            BoardPieces[rTo, cTo] = toBackup;
+                            piece.RowIndex = oldRow;
+                            piece.ColumnIndex = oldCol;
+
+                            if (!kingStillInCheck)
+                                return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+        private bool IsCheckmate(bool isWhite)
+        {
+            if (IsKingInCheck(isWhite))
+                if (!HasAnyLegalMove(isWhite))
+                    return true;
+            return false;
+            
+        }
+    
     }
 }
