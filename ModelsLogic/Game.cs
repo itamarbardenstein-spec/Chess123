@@ -219,29 +219,42 @@ namespace Chess.ModelsLogic
                 _status.UpdateStatus();
                 IsHostTurn = !IsHostTurn;
                 UpdateFbMove();
+                if (!IsGameOver)
+                {
+                    bool opponentIsWhite = !PieceToMove.IsWhite;
+                    if (IsCheckmate(opponentIsWhite, FlipBoard(BoardPieces)))
+                    {
+                        IsGameOver = true;
+                        WinnerIsWhite = PieceToMove.IsWhite;
+                            
+                        Dictionary<string, object> dict = new()
+                        {
+                            { nameof(IsGameOver), true },
+                            { nameof(WinnerIsWhite), WinnerIsWhite }
+                        };
+                        fbd.UpdateFields(Keys.GamesCollection, Id, dict, _ => { });
+                        MainThread.InvokeOnMainThreadAsync(() =>
+                        {
+                            bool iWon = WinnerIsWhite == (!IsHostUser);
+
+                            Toast.Make(iWon ? Strings.Win : Strings.Lose,
+                                       ToastDuration.Long, 16).Show();
+                        });
+                    }
+                }
             }
             else
             {
                 OnGameChanged?.Invoke(this, EventArgs.Empty);
             }
-            bool nextPlayerIsWhite = !IsHostTurn;
-            if (IsCheckmate(nextPlayerIsWhite))
-            {
-                if (MyMove)
-                {
-                    MainThread.InvokeOnMainThreadAsync(() =>
-                    {
-                        Toast.Make(Strings.Win, ToastDuration.Long, 16).Show();
-                    });
-                }
-                else
-                {
-                    MainThread.InvokeOnMainThreadAsync(() =>
-                    {
-                        Toast.Make(Strings.Lose, ToastDuration.Long, 16).Show();
-                    });
-                }
-            }
+        }
+        private bool IsCheckmate(bool isWhite, Piece[,] board)
+        {
+            if (IsKingInCheck(isWhite, board))
+                if (!HasAnyLegalMove(isWhite, board))
+                    return true;
+            return false;
+
         }
         public static Piece CreatePiece(Piece original, int row, int col)
         {
@@ -290,7 +303,18 @@ namespace Chess.ModelsLogic
                     MoveTo[1] = 7 - MoveTo[1];
                     Play(MoveTo[0], MoveTo[1], false);
                 }
+                if (updatedGame.IsGameOver && !IsGameOver)
+                {
+                    IsGameOver = true;
+                    WinnerIsWhite = updatedGame.WinnerIsWhite;
+                    MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        bool iWon = WinnerIsWhite == (!IsHostUser);
 
+                        Toast.Make(iWon ? Strings.Win : Strings.Lose,
+                                   ToastDuration.Long, 16).Show();
+                    });
+                }
             }
             else
             {
@@ -321,38 +345,48 @@ namespace Chess.ModelsLogic
                 uiPiece.IsWhite = modelPiece.IsWhite;
             }
         }
-        private bool IsKingInCheck(bool isWhite)
+        private bool IsKingInCheck(bool isWhite, Piece[,] board)
         {
             int kingRow = -1, kingCol = -1;
+            bool found = false;
 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 8 && !found; i++)
+            {
                 for (int j = 0; j < 8; j++)
-                    if (BoardPieces![i, j] is King k && k.IsWhite == isWhite)
+                {
+                    if (board![i, j] is King k && k.IsWhite == isWhite)
                     {
                         kingRow = i;
                         kingCol = j;
+                        found = true;
                         break;
                     }
-
+                }
+            }
+            if (!found)
+                return false;
             for (int i = 0; i < 8; i++)
+            {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (BoardPieces![i, j].StringImageSource != null && BoardPieces![i, j].IsWhite != isWhite)
+                    Piece p = board![i, j];
+                    if (p.StringImageSource != null && p.IsWhite != isWhite)
                     {
-                        if (BoardPieces![i, j].IsMoveValid(BoardPieces!, i, j, kingRow, kingCol))
+                        if (p.IsMoveValid(board!, i, j, kingRow, kingCol))
                             return true;
                     }
                 }
+            }
 
             return false;
         }
-        private bool HasAnyLegalMove(bool isWhite)
+        private bool HasAnyLegalMove(bool isWhite, Piece[,] board)
         {
-            for (int rFrom = 0; rFrom < 8; rFrom++)
+            for (int i = 0; i < 8; i++)
             {
-                for (int cFrom = 0; cFrom < 8; cFrom++)
+                for (int j = 0; j < 8; j++)
                 {
-                    Piece piece = BoardPieces![rFrom, cFrom];
+                    Piece piece = board![i, j];
                     if (piece.StringImageSource == null || piece.IsWhite != isWhite)
                         continue;
 
@@ -360,27 +394,25 @@ namespace Chess.ModelsLogic
                     {
                         for (int cTo = 0; cTo < 8; cTo++)
                         {
-                            if (!piece.IsMoveValid(BoardPieces!, rFrom, cFrom, rTo, cTo))
+                            if (!piece.IsMoveValid(board!, i, j, rTo, cTo))
                                 continue;
 
-                            // גיבוי של הכלים
-                            Piece fromBackup = BoardPieces[rFrom, cFrom];
-                            Piece toBackup = BoardPieces[rTo, cTo];
+                            // גיבוי
+                            Piece fromBackup = board[i, j];
+                            Piece toBackup = board[rTo, cTo];
                             int oldRow = piece.RowIndex;
                             int oldCol = piece.ColumnIndex;
 
-                            // סימולציה
-                            BoardPieces[rTo, cTo] = piece;
-                            BoardPieces[rFrom, cFrom] = new Pawn(rFrom, cFrom, false, null);
-                            piece.RowIndex = rTo;
-                            piece.ColumnIndex = cTo;
+                            // סימולציה אמיתית
+                            board[rTo, cTo] = CreatePiece(piece, rTo, cTo);
+                            board[i, j] = new Pawn(i, j, false, null);
 
                             // בדיקת שח
-                            bool kingStillInCheck = IsKingInCheck(isWhite);
+                            bool kingStillInCheck = IsKingInCheck(isWhite, board);
 
                             // שחזור
-                            BoardPieces[rFrom, cFrom] = fromBackup;
-                            BoardPieces[rTo, cTo] = toBackup;
+                            board[i, j] = fromBackup;
+                            board[rTo, cTo] = toBackup;
                             piece.RowIndex = oldRow;
                             piece.ColumnIndex = oldCol;
 
@@ -392,15 +424,32 @@ namespace Chess.ModelsLogic
             }
 
             return false;
-        }
-        private bool IsCheckmate(bool isWhite)
+        }       
+        private static Piece[,] FlipBoard(Piece[,] original)
         {
-            if (IsKingInCheck(isWhite))
-                if (!HasAnyLegalMove(isWhite))
-                    return true;
-            return false;
-            
+            Piece[,] flipped = new Piece[8, 8];
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    Piece p = original[i, j];
+
+                    int newRow = 7 - i;
+                    int newCol = 7 - j;
+
+                    if (p.StringImageSource == null)
+                    {
+                        flipped[newRow, newCol] = new Pawn(newRow, newCol, false, null);
+                    }
+                    else
+                    {
+                        flipped[newRow, newCol] = CreatePiece(p, newRow, newCol);
+                    }
+                }
+            }
+            return flipped;
         }
-    
+
     }
 }

@@ -40,6 +40,8 @@ namespace Chess.Models
         public int GuestTimeMs { get; set; }
         public string GuestName { get; set; } = string.Empty;         
         public int Time {  get; set; }
+        public bool IsGameOver { get; set; }
+        public bool? WinnerIsWhite { get; set; }
         public DateTime Created { get; set; }
         public bool IsFull { get; set; }
         public bool IsHostTurn { get; set; } = false;
