@@ -1,6 +1,8 @@
 ﻿using Chess.Models;
+using Chess.Views;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Views;
 using Plugin.CloudFirestore;
 
 namespace Chess.ModelsLogic
@@ -222,7 +224,7 @@ namespace Chess.ModelsLogic
                 if (!IsGameOver)
                 {
                     bool opponentIsWhite = !PieceToMove.IsWhite;
-                    if (IsCheckmate(opponentIsWhite, FlipBoard(BoardPieces)))
+                    if (Game.IsCheckmate(opponentIsWhite, FlipBoard(BoardPieces)))
                     {
                         IsGameOver = true;
                         WinnerIsWhite = PieceToMove.IsWhite;
@@ -233,12 +235,11 @@ namespace Chess.ModelsLogic
                             { nameof(WinnerIsWhite), WinnerIsWhite }
                         };
                         fbd.UpdateFields(Keys.GamesCollection, Id, dict, _ => { });
-                        MainThread.InvokeOnMainThreadAsync(() =>
+                        MainThread.InvokeOnMainThreadAsync(async () =>
                         {
                             bool iWon = WinnerIsWhite == (!IsHostUser);
-
-                            Toast.Make(iWon ? Strings.Win : Strings.Lose,
-                                       ToastDuration.Long, 16).Show();
+                            await Shell.Current.CurrentPage.ShowPopupAsync(
+                                new GameResultPopup(iWon));
                         });
                     }
                 }
@@ -248,10 +249,10 @@ namespace Chess.ModelsLogic
                 OnGameChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        private bool IsCheckmate(bool isWhite, Piece[,] board)
+        private static bool IsCheckmate(bool isWhite, Piece[,] board)
         {
-            if (IsKingInCheck(isWhite, board))
-                if (!HasAnyLegalMove(isWhite, board))
+            if (Game.IsKingInCheck(isWhite, board))
+                if (!Game.HasAnyLegalMove(isWhite, board))
                     return true;
             return false;
 
@@ -307,12 +308,11 @@ namespace Chess.ModelsLogic
                 {
                     IsGameOver = true;
                     WinnerIsWhite = updatedGame.WinnerIsWhite;
-                    MainThread.InvokeOnMainThreadAsync(() =>
+                    MainThread.InvokeOnMainThreadAsync(async () =>
                     {
                         bool iWon = WinnerIsWhite == (!IsHostUser);
-
-                        Toast.Make(iWon ? Strings.Win : Strings.Lose,
-                                   ToastDuration.Long, 16).Show();
+                        await Shell.Current.CurrentPage.ShowPopupAsync(
+                            new GameResultPopup(iWon));
                     });
                 }
             }
@@ -345,7 +345,7 @@ namespace Chess.ModelsLogic
                 uiPiece.IsWhite = modelPiece.IsWhite;
             }
         }
-        private bool IsKingInCheck(bool isWhite, Piece[,] board)
+        private static bool IsKingInCheck(bool isWhite, Piece[,] board)
         {
             int kingRow = -1, kingCol = -1;
             bool found = false;
@@ -380,7 +380,7 @@ namespace Chess.ModelsLogic
 
             return false;
         }
-        private bool HasAnyLegalMove(bool isWhite, Piece[,] board)
+        private static bool HasAnyLegalMove(bool isWhite, Piece[,] board)
         {
             for (int i = 0; i < 8; i++)
             {
@@ -396,26 +396,17 @@ namespace Chess.ModelsLogic
                         {
                             if (!piece.IsMoveValid(board!, i, j, rTo, cTo))
                                 continue;
-
-                            // גיבוי
                             Piece fromBackup = board[i, j];
                             Piece toBackup = board[rTo, cTo];
                             int oldRow = piece.RowIndex;
                             int oldCol = piece.ColumnIndex;
-
-                            // סימולציה אמיתית
                             board[rTo, cTo] = CreatePiece(piece, rTo, cTo);
                             board[i, j] = new Pawn(i, j, false, null);
-
-                            // בדיקת שח
-                            bool kingStillInCheck = IsKingInCheck(isWhite, board);
-
-                            // שחזור
+                            bool kingStillInCheck = Game.IsKingInCheck(isWhite, board);
                             board[i, j] = fromBackup;
                             board[rTo, cTo] = toBackup;
                             piece.RowIndex = oldRow;
                             piece.ColumnIndex = oldCol;
-
                             if (!kingStillInCheck)
                                 return true;
                         }
