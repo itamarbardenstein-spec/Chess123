@@ -21,7 +21,7 @@
                HorizontalOptions="Center"
                HorizontalTextAlignment="Center" />
 
-        <Button Text="חזרה למסך הבית"
+        <Button Text="Home"
                 Clicked="OnHomeClicked"
                 BackgroundColor="#2196F3"
                 TextColor="White"/>

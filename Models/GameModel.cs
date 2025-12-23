@@ -56,6 +56,13 @@ namespace Chess.Models
         public abstract void DeleteDocument(Action<System.Threading.Tasks.Task> OnComplete);
         public abstract void InitGrid(Grid board);
         protected abstract void UpdateFbMove();
+        protected abstract bool IsCheckmate(bool isWhite, Piece[,] board);
+        protected abstract Piece CreatePiece(Piece original, int row, int col);
+        protected abstract void OnChange(IDocumentSnapshot? snapshot, Exception? error);
+        protected abstract void UpdateCellUI(int row, int col);
+        protected abstract bool IsKingInCheck(bool isWhite, Piece[,] board);
+        protected abstract bool HasAnyLegalMove(bool isWhite, Piece[,] board);
+        protected abstract Piece[,] FlipBoard(Piece[,] original);
 
     }
 }

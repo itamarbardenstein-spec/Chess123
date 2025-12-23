@@ -185,7 +185,7 @@ namespace Chess.ModelsLogic
             {
                 if (ClickCount == 0)
                 {
-                    if (p.StringImageSource != null && (IsHostUser ? (!p.IsWhite) : p.IsWhite))
+                    if (p?.StringImageSource != null && (IsHostUser ? (!p.IsWhite) : p.IsWhite))
                     {
                         ClickCount++;
                         MoveFrom[0] = p.RowIndex;
@@ -194,7 +194,7 @@ namespace Chess.ModelsLogic
                 }
                 else
                 {
-                    if (BoardPieces![MoveFrom[0], MoveFrom[1]].IsMoveValid(BoardPieces!, MoveFrom[0], MoveFrom[1], p.RowIndex, p.ColumnIndex))
+                    if (BoardPieces![MoveFrom[0], MoveFrom[1]].IsMoveValid(BoardPieces!, MoveFrom[0], MoveFrom[1], p!.RowIndex, p.ColumnIndex))
                         Play(p.RowIndex, p.ColumnIndex, true);
                     else
                     {
@@ -224,7 +224,7 @@ namespace Chess.ModelsLogic
                 if (!IsGameOver)
                 {
                     bool opponentIsWhite = !PieceToMove.IsWhite;
-                    if (Game.IsCheckmate(opponentIsWhite, FlipBoard(BoardPieces)))
+                    if (IsCheckmate(opponentIsWhite, FlipBoard(BoardPieces)))
                     {
                         IsGameOver = true;
                         WinnerIsWhite = PieceToMove.IsWhite;
@@ -249,15 +249,15 @@ namespace Chess.ModelsLogic
                 OnGameChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        private static bool IsCheckmate(bool isWhite, Piece[,] board)
+        protected override bool IsCheckmate(bool isWhite, Piece[,] board)
         {
-            if (Game.IsKingInCheck(isWhite, board))
-                if (!Game.HasAnyLegalMove(isWhite, board))
+            if (IsKingInCheck(isWhite, board))
+                if (!HasAnyLegalMove(isWhite, board))
                     return true;
             return false;
 
         }
-        public static Piece CreatePiece(Piece original, int row, int col)
+        protected override  Piece CreatePiece(Piece original, int row, int col)
         {
             bool isWhite = original.IsWhite;
             string? img = original.StringImageSource;
@@ -284,7 +284,7 @@ namespace Chess.ModelsLogic
             };
             fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
         }
-        private void OnChange(IDocumentSnapshot? snapshot, Exception? error)
+        protected override void OnChange(IDocumentSnapshot? snapshot, Exception? error)
         {
             Game? updatedGame = snapshot?.ToObject<Game>();
             if (updatedGame != null)
@@ -327,7 +327,7 @@ namespace Chess.ModelsLogic
             }
         }
 
-        private void UpdateCellUI(int row, int col)
+        protected override void UpdateCellUI(int row, int col)
         {
             if (!BoardUIMap.TryGetValue((row, col), out PieceModel? uiPiece))
                 return;
@@ -345,7 +345,7 @@ namespace Chess.ModelsLogic
                 uiPiece.IsWhite = modelPiece.IsWhite;
             }
         }
-        private static bool IsKingInCheck(bool isWhite, Piece[,] board)
+        protected override bool IsKingInCheck(bool isWhite, Piece[,] board)
         {
             int kingRow = -1, kingCol = -1;
             bool found = false;
@@ -380,7 +380,7 @@ namespace Chess.ModelsLogic
 
             return false;
         }
-        private static bool HasAnyLegalMove(bool isWhite, Piece[,] board)
+        protected override bool HasAnyLegalMove(bool isWhite, Piece[,] board)
         {
             for (int i = 0; i < 8; i++)
             {
@@ -402,7 +402,7 @@ namespace Chess.ModelsLogic
                             int oldCol = piece.ColumnIndex;
                             board[rTo, cTo] = CreatePiece(piece, rTo, cTo);
                             board[i, j] = new Pawn(i, j, false, null);
-                            bool kingStillInCheck = Game.IsKingInCheck(isWhite, board);
+                            bool kingStillInCheck = IsKingInCheck(isWhite, board);
                             board[i, j] = fromBackup;
                             board[rTo, cTo] = toBackup;
                             piece.RowIndex = oldRow;
@@ -416,7 +416,7 @@ namespace Chess.ModelsLogic
 
             return false;
         }       
-        private static Piece[,] FlipBoard(Piece[,] original)
+        protected override Piece[,] FlipBoard(Piece[,] original)
         {
             Piece[,] flipped = new Piece[8, 8];
 
