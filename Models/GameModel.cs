@@ -35,9 +35,7 @@ namespace Chess.Models
         [Ignored]
         public string Id { get; set; } = string.Empty;
         [Ignored]
-        public bool IsHostUser { get; set; }
-        public int HostTimeMs { get; set; }
-        public int GuestTimeMs { get; set; }
+        public bool IsHostUser { get; set; }       
         public string GuestName { get; set; } = string.Empty;         
         public int Time {  get; set; }
         public bool IsGameOver { get; set; }
@@ -63,6 +61,6 @@ namespace Chess.Models
         protected abstract bool IsKingInCheck(bool isWhite, Piece[,] board);
         protected abstract bool HasAnyLegalMove(bool isWhite, Piece[,] board);
         protected abstract Piece[,] FlipBoard(Piece[,] original);
-
+        public abstract void Castling(bool right);
     }
 }

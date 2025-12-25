@@ -209,11 +209,21 @@ namespace Chess.ModelsLogic
         }
         protected override void Play(int rowIndex, int columnIndex, bool MyMove)
         {
+            if (BoardPieces![MoveFrom[0], MoveFrom[1]] is King)
+              (BoardPieces[MoveFrom[0], MoveFrom[1]] as King)!.HasKingMoved = true;
+            if(BoardPieces![MoveFrom[0], MoveFrom[1]] is Rook)
+            {
+                Rook? rook = BoardPieces[MoveFrom[0], MoveFrom[1]] as Rook;
+                if (MoveFrom[1] == 0)
+                    rook!.HasLeftRookMoved = true;
+                else
+                    rook!.HasRightRookMoved = true;
+            }
             Piece PieceToMove = BoardPieces![MoveFrom[0], MoveFrom[1]];
             BoardPieces[rowIndex, columnIndex] = CreatePiece(PieceToMove, rowIndex, columnIndex);
             BoardPieces[MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
             UpdateCellUI(MoveFrom[0], MoveFrom[1]);
-            UpdateCellUI(rowIndex, columnIndex);        
+            UpdateCellUI(rowIndex, columnIndex); 
             if (MyMove)
             {
                 MoveTo[0] = rowIndex;
@@ -255,9 +265,8 @@ namespace Chess.ModelsLogic
                 if (!HasAnyLegalMove(isWhite, board))
                     return true;
             return false;
-
         }
-        protected override  Piece CreatePiece(Piece original, int row, int col)
+        protected override Piece CreatePiece(Piece original, int row, int col)
         {
             bool isWhite = original.IsWhite;
             string? img = original.StringImageSource;
@@ -441,6 +450,22 @@ namespace Chess.ModelsLogic
             }
             return flipped;
         }
-
+        public override void Castling(bool right)
+        {
+            if (right)
+            {
+                BoardPieces![7,6]= CreatePiece(BoardPieces[7,4], 7, 6);
+                BoardPieces[7, 4]= new Pawn(7,4,false,null);
+                BoardPieces[7, 5]= CreatePiece(BoardPieces[7,7], 7, 5);
+                BoardPieces[7, 7]= new Pawn(7,7,false,null);    
+            }
+            else
+            {
+                BoardPieces![7, 2] = CreatePiece(BoardPieces[7, 4], 7, 2);
+                BoardPieces[7, 4] = new Pawn(7, 4, false, null);
+                BoardPieces[7, 3] = CreatePiece(BoardPieces[7, 0], 7, 3);
+                BoardPieces[7, 0] = new Pawn(7, 0, false, null);
+            }
+        }
     }
 }
