@@ -12,7 +12,7 @@ namespace Chess.ViewModel
         public string MyName => game.MyName;
         public string StatusMessage => game.StatusMessage;
         public string OpponentName=> game.OpponentName;
-
+        public string TimeLeft => game.TimeLeft;
         public GamePageVM(Game game, Grid board)
         {
             this.game = game;
@@ -20,13 +20,17 @@ namespace Chess.ViewModel
             game.InvalidMove += InvalidMove;
             game.OnGameChanged += OnGameChanged;
             game.OnGameDeleted += OnGameDeleted;
-            game.DisplayChanged += OnDisplayChanged;            
+            game.DisplayChanged += OnDisplayChanged;
+            game.TimeLeftChanged += OnTimeLeftChanged;
             grdBoard.InitGrid(board,game.IsHostUser);
             grdBoard.ButtonClicked += OnButtonClicked;             
             if (!game.IsHostUser)   
                 game.UpdateGuestUser(OnComplete);
         }
-
+        private void OnTimeLeftChanged(object? sender, EventArgs e)
+        {
+            OnPropertyChanged(nameof(TimeLeft));
+        }
         private void InvalidMove(object? sender, EventArgs e)
         {
             MainThread.InvokeOnMainThreadAsync(() =>

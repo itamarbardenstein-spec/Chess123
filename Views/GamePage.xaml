@@ -12,6 +12,10 @@
             Margin="25"
             HorizontalOptions="Center"
             Text="{Binding StatusMessage}" />
+        <Label
+     Margin="50"
+     HorizontalOptions="Center"
+     Text="{Binding TimeLeft}" />
         <Grid
             x:Name="grdBoard"
             ColumnSpacing="1"

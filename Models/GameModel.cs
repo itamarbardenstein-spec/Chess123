@@ -9,16 +9,18 @@ namespace Chess.Models
     {
         public GameGrid? gameGrid = [];
         protected int ClickCount = 0;
-
         protected abstract GameStatus Status { get; }       
         protected enum Actions { Changed, Deleted }      
         protected Actions action = Actions.Changed;
+        protected TimerSettings timerSettings = new(Keys.TimerTotalTime, Keys.TimerInterval);
         protected FbData fbd = new();
         protected IListenerRegistration? ilr;
         [Ignored]
         public GameStatus _status = new();       
         [Ignored]
         public EventHandler? OnGameChanged;
+        [Ignored]
+        public EventHandler? TimeLeftChanged;
         [Ignored]
         public EventHandler? InvalidMove;
         [Ignored]
@@ -36,7 +38,9 @@ namespace Chess.Models
         [Ignored]
         public string Id { get; set; } = string.Empty;
         [Ignored]
-        public bool IsHostUser { get; set; }       
+        public bool IsHostUser { get; set; }
+        [Ignored]
+        public string TimeLeft { get; protected set; } = string.Empty;
         public string GuestName { get; set; } = string.Empty;         
         public int Time {  get; set; }
         public bool IsGameOver { get; set; }

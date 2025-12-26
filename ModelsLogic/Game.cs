@@ -1,4 +1,5 @@
 ﻿using Chess.Models;
+using CommunityToolkit.Mvvm.Messaging;
 using Chess.Views;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
@@ -11,22 +12,33 @@ namespace Chess.ModelsLogic
     {
         public override string OpponentName => IsHostUser ? GuestName : HostName;
         protected override GameStatus Status => _status;
+        public Game() { RegisterTimer(); }
         public Game(GameTime selectedGameTime)
-        {          
+        {
+            RegisterTimer();
             Created = DateTime.Now;
             HostName = new User().UserName;
             IsHostUser = true;
             Time = selectedGameTime.Time;
             UpdateStatus();
         }
+        private void RegisterTimer()
+        {
+            WeakReferenceMessenger.Default.Register<AppMessage<long>>(this, (r, m) =>
+            {
+                OnMessageReceived(m.Value);
+            });
+        }
+        private void OnMessageReceived(long timeLeft)
+        {
+            TimeLeft = timeLeft == Keys.FinishedSignal ? Strings.TimeUp : double.Round(timeLeft / 1000, 1).ToString();
+            TimeLeftChanged?.Invoke(this, EventArgs.Empty);
+        }
         public override void SetDocument(Action<Task> OnComplete)
         {
             Id = fbd.SetDocument(this, Keys.GamesCollection, Id, OnComplete);
         }
-        public Game()
-        {
-           
-        }
+        
         protected override void UpdateStatus()
         {
             _status.CurrentStatus = IsHostUser && IsHostTurn || !IsHostUser && !IsHostTurn ?
@@ -181,6 +193,12 @@ namespace Chess.ModelsLogic
                     MoveFrom[1] = 7 - MoveFrom[1];
                     MoveTo[1] = 7 - MoveTo[1];
                     Play(MoveTo[0], MoveTo[1], false);
+                }
+                else
+                {
+                    WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
+                    TimeLeft = string.Empty;
+                    TimeLeftChanged?.Invoke(this, EventArgs.Empty);
                 }
                 if (updatedGame.IsGameOver && !IsGameOver)
                 {
