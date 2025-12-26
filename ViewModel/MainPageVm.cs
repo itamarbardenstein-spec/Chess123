@@ -9,7 +9,7 @@ namespace Chess.ViewModel
     public partial class MainPageVm: ObservableObject
     {
         private readonly Games games = new();
-        public ICommand AddGameCommand => new Command(AddGame);
+        public ICommand AddGameCommand { get; }
         public bool IsBusy => games.IsBusy;
         public ObservableCollection<GameTime>? GameTimes { get => games.GameTimes; set => games.GameTimes = value; }
         public GameTime SelectedGameTime { get => games.SelectedGameTime; set => games.SelectedGameTime = value; }
@@ -33,12 +33,16 @@ namespace Chess.ViewModel
 
         private void AddGame()
         {
-            games.AddGame();
-            OnPropertyChanged(nameof(IsBusy));
+            if (!IsBusy)
+            {
+                games.AddGame();
+                OnPropertyChanged(nameof(IsBusy));
+            }                
         }
 
         public MainPageVm()
         {
+            AddGameCommand = new Command(AddGame);
             games.OnGameAdded += OnGameAdded;
             games.OnGamesChanged += OnGamesChanged;
         }

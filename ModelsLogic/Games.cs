@@ -1,4 +1,4 @@
-﻿using Chess.Models;
+﻿    using Chess.Models;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using Plugin.CloudFirestore;
@@ -7,28 +7,27 @@ namespace Chess.ModelsLogic
 {
     public class Games:GamesModel
     {
-        public void AddGame()
+        public override void AddGame()
         {
             IsBusy = true;
-            currentGame = new(SelectedGameTime)
+            _currentGame = new Game(SelectedGameTime)
             {
                 IsHostUser = true
             };
-            currentGame.OnGameDeleted += OnGameDeleted;
-            currentGame.SetDocument(OnComplete);
+            _currentGame.SetDocument(OnComplete);
         }
-        private void OnGameDeleted(object? sender, EventArgs e)
-        {
-            MainThread.InvokeOnMainThreadAsync(() =>
-            {
-                Toast.Make(Strings.GameDeleted, ToastDuration.Long).Show();
-            });
-            
-        }
-        private void OnComplete(Task task)
+        //public override void OnGameDeleted(object? sender, EventArgs e)
+        //{
+        //    MainThread.InvokeOnMainThreadAsync(() =>
+        //    {
+        //        Toast.Make(Strings.GameDeleted, ToastDuration.Long).Show();
+        //    });
+
+        //}
+        protected override void OnComplete(Task task)
         {
             IsBusy = false;
-            OnGameAdded?.Invoke(this, currentGame!);
+            OnGameAdded?.Invoke(this, _currentGame!);
         }
         public Games()
         {
@@ -42,11 +41,11 @@ namespace Chess.ModelsLogic
         {
             ilr?.Remove();
         }
-        private void OnChange(IQuerySnapshot snapshot, Exception error)
+        protected override void OnChange(IQuerySnapshot snapshot, Exception error)
         {
             fbd.GetDocumentsWhereEqualTo(Keys.GamesCollection, nameof(GameModel.IsFull), false, OnComplete);
         }
-        private void OnComplete(IQuerySnapshot qs)
+        protected override void OnComplete(IQuerySnapshot qs)
         {
             GamesList!.Clear();
             foreach (IDocumentSnapshot ds in qs.Documents)

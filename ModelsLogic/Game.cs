@@ -12,11 +12,11 @@ namespace Chess.ModelsLogic
         public override string OpponentName => IsHostUser ? GuestName : HostName;
         protected override GameStatus Status => _status;
         public Game(GameTime selectedGameTime)
-        {
+        {          
+            Created = DateTime.Now;
             HostName = new User().UserName;
             IsHostUser = true;
             Time = selectedGameTime.Time;
-            Created = DateTime.Now;
             UpdateStatus();
         }
         public override void SetDocument(Action<Task> OnComplete)
@@ -25,7 +25,7 @@ namespace Chess.ModelsLogic
         }
         public Game()
         {
-            UpdateStatus();
+           
         }
         protected override void UpdateStatus()
         {
@@ -36,6 +36,7 @@ namespace Chess.ModelsLogic
         {
             GuestName = MyName;
             IsFull = true;
+            UpdateStatus();
             UpdateFbJoinGame(OnComplete);
         }
         private void UpdateFbJoinGame(Action<Task> OnComplete)
@@ -70,117 +71,8 @@ namespace Chess.ModelsLogic
         {
             fbd.DeleteDocument(Keys.GamesCollection, Id, OnComplete);
         }
-        public override void InitGrid(Grid board)
+        public override void CheckMove(Piece p)
         {
-            GameBoard = board;
-            BoardPieces = new Piece[8, 8];
-            for (int i = 0; i < 8; i++)
-            {
-                board.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                board.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            }
-            for (int i = 0; i < 8; i++)
-            {
-                if (IsHostUser)
-                {
-                    BoardPieces[1, i] = new Pawn(1, i, true, Strings.WhitePawn);
-                    BoardPieces[6, i] = new Pawn(6, i, false, Strings.BlackPawn);
-                }
-                else
-                {
-                    BoardPieces[1, i] = new Pawn(1, i, false, Strings.BlackPawn);
-                    BoardPieces[6, i] = new Pawn(6, i, true, Strings.WhitePawn);
-                }
-                if (i == 0 || i == 7)
-                {
-                    if (IsHostUser)
-                    {
-                        BoardPieces[0, i] = new Rook(0, i, true, Strings.WhiteRook);
-                        BoardPieces[7, i] = new Rook(7, i, false, Strings.BlackRook);
-                    }
-                    else
-                    {
-                        BoardPieces[0, i] = new Rook(0, i, false, Strings.BlackRook);
-                        BoardPieces[7, i] = new Rook(7, i, true, Strings.WhiteRook);
-                    }
-                }
-                else if (i == 1 || i == 6)
-                {
-                    if (IsHostUser)
-                    {
-                        BoardPieces[0, i] = new Knight(0, i, true, Strings.WhiteKnight);
-                        BoardPieces[7, i] = new Knight(7, i, false, Strings.BlackKnight);
-                    }
-                    else
-                    {
-                        BoardPieces[0, i] = new Knight(0, i, false, Strings.BlackKnight);
-                        BoardPieces[7, i] = new Knight(7, i, true, Strings.WhiteKnight);
-                    }
-                }
-                else if (i == 2 || i == 5)
-                {
-                    if (IsHostUser)
-                    {
-                        BoardPieces[0, i] = new Bishop(0, i, true, Strings.WhiteBishop);
-                        BoardPieces[7, i] = new Bishop(7, i, false, Strings.BlackBishop);
-                    }
-                    else
-                    {
-                        BoardPieces[0, i] = new Bishop(0, i, false, Strings.BlackBishop);
-                        BoardPieces[7, i] = new Bishop(7, i, true, Strings.WhiteBishop);
-                    }
-                }
-                else if (i == 3)
-                {
-                    if (IsHostUser)
-                    {
-                        BoardPieces[0, i + 1] = new Queen(0, i + 1, true, Strings.WhiteQueen);
-                        BoardPieces[7, i + 1] = new Queen(7, i + 1, false, Strings.BlackQueen);
-                    }
-                    else
-                    {
-                        BoardPieces[0, i] = new Queen(0, i, false, Strings.BlackQueen);
-                        BoardPieces[7, i] = new Queen(7, i, true, Strings.WhiteQueen);
-                    }
-                }
-                else
-                {
-                    if (IsHostUser)
-                    {
-                        BoardPieces[0, i - 1] = new King(0, i - 1, true, Strings.WhiteKing);
-                        BoardPieces[7, i - 1] = new King(7, i - 1, false, Strings.BlackKing);
-                    }
-                    else
-                    {
-                        BoardPieces[0, i] = new King(0, i, false, Strings.BlackKing);
-                        BoardPieces[7, i] = new King(7, i, true, Strings.WhiteKing);
-                    }
-                }
-            }
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    if (BoardPieces[i, j] == null)
-                        BoardPieces[i, j] = new Pawn(i, j, false, null);
-                    Piece p = BoardPieces[i, j];
-                    if ((i + j) % 2 == 0)
-                    {
-                        p!.BackgroundColor = Color.FromArgb(Strings.BoardColorWhite);
-                    }
-                    else
-                    {
-                        p!.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
-                    }
-                    p.Clicked += OnButtonClicked;
-                    board.Add(p, j, i);
-                    BoardUIMap[(i, j)] = p;
-                }
-            }
-        }
-        protected override void OnButtonClicked(object? sender, EventArgs e)
-        {
-            Piece? p = sender as Piece;
             if (_status.CurrentStatus == GameStatus.Statuses.Play)
             {
                 if (ClickCount == 0)
@@ -194,36 +86,29 @@ namespace Chess.ModelsLogic
                 }
                 else
                 {
-                    if (BoardPieces![MoveFrom[0], MoveFrom[1]].IsMoveValid(BoardPieces!, MoveFrom[0], MoveFrom[1], p!.RowIndex, p.ColumnIndex))
+                    if (gameGrid!.BoardPieces![MoveFrom[0], MoveFrom[1]].IsMoveValid(gameGrid?.BoardPieces!, MoveFrom[0], MoveFrom[1], p.RowIndex, p.ColumnIndex))
                         Play(p.RowIndex, p.ColumnIndex, true);
                     else
-                    {
-                        MainThread.InvokeOnMainThreadAsync(() =>
-                        {
-                            Toast.Make(Strings.InvalidMove, ToastDuration.Long, 14).Show();
-                        });
-                    }
+                        InvalidMove?.Invoke(this, EventArgs.Empty);
                     ClickCount = 0;
                 }
             }
         }
-        protected override void Play(int rowIndex, int columnIndex, bool MyMove)
+        public override void Play(int rowIndex, int columnIndex, bool MyMove)
         {
-            if (BoardPieces![MoveFrom[0], MoveFrom[1]] is King)
-              (BoardPieces[MoveFrom[0], MoveFrom[1]] as King)!.HasKingMoved = true;
-            if(BoardPieces![MoveFrom[0], MoveFrom[1]] is Rook)
-            {
-                Rook? rook = BoardPieces[MoveFrom[0], MoveFrom[1]] as Rook;
-                if (MoveFrom[1] == 0)
-                    rook!.HasLeftRookMoved = true;
-                else
-                    rook!.HasRightRookMoved = true;
-            }
-            Piece PieceToMove = BoardPieces![MoveFrom[0], MoveFrom[1]];
-            BoardPieces[rowIndex, columnIndex] = CreatePiece(PieceToMove, rowIndex, columnIndex);
-            BoardPieces[MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
-            UpdateCellUI(MoveFrom[0], MoveFrom[1]);
-            UpdateCellUI(rowIndex, columnIndex); 
+            //if (gameGrid?.BoardPieces![MoveFrom[0], MoveFrom[1]] is King)
+            //  (gameGrid?.BoardPieces[MoveFrom[0], MoveFrom[1]] as King)!.HasKingMoved = true;
+            //if(gameGrid?.BoardPieces![MoveFrom[0], MoveFrom[1]] is Rook)
+            //{
+            //    Rook? rook = gameGrid?.BoardPieces[MoveFrom[0], MoveFrom[1]] as Rook;
+            //    if (MoveFrom[1] == 0)
+            //        rook!.HasLeftRookMoved = true;
+            //    else
+            //        rook!.HasRightRookMoved = true;
+            //}
+            Piece PieceToMove = gameGrid?.BoardPieces![MoveFrom[0], MoveFrom[1]]!;
+            DisplayMoveArgs args = new(MoveFrom[0],MoveFrom[1],rowIndex, columnIndex);
+            DisplayChanged?.Invoke(this, args);           
             if (MyMove)
             {
                 MoveTo[0] = rowIndex;
@@ -234,7 +119,7 @@ namespace Chess.ModelsLogic
                 if (!IsGameOver)
                 {
                     bool opponentIsWhite = !PieceToMove.IsWhite;
-                    if (IsCheckmate(opponentIsWhite, FlipBoard(BoardPieces)))
+                    if (IsCheckmate(opponentIsWhite, FlipBoard(gameGrid?.BoardPieces!)))
                     {
                         IsGameOver = true;
                         WinnerIsWhite = PieceToMove.IsWhite;
@@ -266,23 +151,7 @@ namespace Chess.ModelsLogic
                     return true;
             return false;
         }
-        protected override Piece CreatePiece(Piece original, int row, int col)
-        {
-            bool isWhite = original.IsWhite;
-            string? img = original.StringImageSource;
-
-            return original switch
-            {
-                Pawn => new Pawn(row, col, isWhite, img),
-                Rook => new Rook(row, col, isWhite, img),
-                Knight => new Knight(row, col, isWhite, img),
-                Bishop => new Bishop(row, col, isWhite, img),
-                Queen => new Queen(row, col, isWhite, img),
-                King => new King(row, col, isWhite, img),
-
-                _ => throw new Exception()
-            };
-        }
+        
         protected override void UpdateFbMove()
         {
             Dictionary<string, object> dict = new()
@@ -329,31 +198,14 @@ namespace Chess.ModelsLogic
             {
                 MainThread.InvokeOnMainThreadAsync(() =>
                 {
-                    Shell.Current.Navigation.PopAsync();
-                    Toast.Make(Strings.GameDeleted, ToastDuration.Long, 14).Show();
+                    OnGameDeleted?.Invoke(this, EventArgs.Empty);
+                    Shell.Current.Navigation.PopAsync();                  
                 });
 
             }
         }
 
-        protected override void UpdateCellUI(int row, int col)
-        {
-            if (!BoardUIMap.TryGetValue((row, col), out PieceModel? uiPiece))
-                return;
-            Piece modelPiece = BoardPieces![row, col];
-            if (modelPiece.StringImageSource == null)
-            {
-                uiPiece.StringImageSource = null;
-                uiPiece.Source = null;
-                uiPiece.IsWhite = false;
-            }
-            else
-            {
-                uiPiece.StringImageSource = modelPiece.StringImageSource;
-                uiPiece.Source = modelPiece.StringImageSource;
-                uiPiece.IsWhite = modelPiece.IsWhite;
-            }
-        }
+        
         protected override bool IsKingInCheck(bool isWhite, Piece[,] board)
         {
             int kingRow = -1, kingCol = -1;
@@ -409,7 +261,7 @@ namespace Chess.ModelsLogic
                             Piece toBackup = board[rTo, cTo];
                             int oldRow = piece.RowIndex;
                             int oldCol = piece.ColumnIndex;
-                            board[rTo, cTo] = CreatePiece(piece, rTo, cTo);
+                            board[rTo, cTo] = gameGrid!.CreatePiece(piece, rTo, cTo);
                             board[i, j] = new Pawn(i, j, false, null);
                             bool kingStillInCheck = IsKingInCheck(isWhite, board);
                             board[i, j] = fromBackup;
@@ -444,28 +296,28 @@ namespace Chess.ModelsLogic
                     }
                     else
                     {
-                        flipped[newRow, newCol] = CreatePiece(p, newRow, newCol);
+                        flipped[newRow, newCol] = gameGrid!.CreatePiece(p, newRow, newCol);
                     }
                 }
             }
             return flipped;
         }
-        public override void Castling(bool right)
-        {
-            if (right)
-            {
-                BoardPieces![7,6]= CreatePiece(BoardPieces[7,4], 7, 6);
-                BoardPieces[7, 4]= new Pawn(7,4,false,null);
-                BoardPieces[7, 5]= CreatePiece(BoardPieces[7,7], 7, 5);
-                BoardPieces[7, 7]= new Pawn(7,7,false,null);    
-            }
-            else
-            {
-                BoardPieces![7, 2] = CreatePiece(BoardPieces[7, 4], 7, 2);
-                BoardPieces[7, 4] = new Pawn(7, 4, false, null);
-                BoardPieces[7, 3] = CreatePiece(BoardPieces[7, 0], 7, 3);
-                BoardPieces[7, 0] = new Pawn(7, 0, false, null);
-            }
-        }
+        //public override void Castling(bool right)
+        //{
+        //    if (right)
+        //    {
+        //        BoardPieces![7,6]= CreatePiece(BoardPieces[7,4], 7, 6);
+        //        BoardPieces[7, 4]= new Pawn(7,4,false,null);
+        //        BoardPieces[7, 5]= CreatePiece(BoardPieces[7,7], 7, 5);
+        //        BoardPieces[7, 7]= new Pawn(7,7,false,null);    
+        //    }
+        //    else
+        //    {
+        //        BoardPieces![7, 2] = CreatePiece(BoardPieces[7, 4], 7, 2);
+        //        BoardPieces[7, 4] = new Pawn(7, 4, false, null);
+        //        BoardPieces[7, 3] = CreatePiece(BoardPieces[7, 0], 7, 3);
+        //        BoardPieces[7, 0] = new Pawn(7, 0, false, null);
+        //    }
+        //}
     }
 }

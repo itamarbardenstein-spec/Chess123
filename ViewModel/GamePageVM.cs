@@ -7,6 +7,7 @@ namespace Chess.ViewModel
 {
     public partial class GamePageVM : ObservableObject
     {
+        private readonly GameGrid grdBoard = [];
         private readonly Game game;
         public string MyName => game.MyName;
         public string StatusMessage => game.StatusMessage;
@@ -14,17 +15,45 @@ namespace Chess.ViewModel
 
         public GamePageVM(Game game, Grid board)
         {
-            game.OnGameChanged += OnGameChanged;
-            game.InitGrid(board);
             this.game = game;
-            if (!game.IsHostUser)
+            this.game.gameGrid = grdBoard;
+            game.InvalidMove += InvalidMove;
+            game.OnGameChanged += OnGameChanged;
+            game.OnGameDeleted += OnGameDeleted;
+            game.DisplayChanged += OnDisplayChanged;            
+            grdBoard.InitGrid(board,game.IsHostUser);
+            grdBoard.ButtonClicked += OnButtonClicked;             
+            if (!game.IsHostUser)   
                 game.UpdateGuestUser(OnComplete);
         }
 
+        private void InvalidMove(object? sender, EventArgs e)
+        {
+            MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Toast.Make(Strings.InvalidMove, ToastDuration.Long, 14).Show();
+            });
+        }
+
+        private void OnGameDeleted(object? sender, EventArgs e)
+        {
+            MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Toast.Make(Strings.GameDeleted, ToastDuration.Long).Show();
+            });
+        }
+        private void OnDisplayChanged(object? sender, DisplayMoveArgs e)
+        {
+            grdBoard.UpdateDisplay(e);
+        }
+        private void OnButtonClicked(object? sender, Piece e)
+        {
+            game.CheckMove(e);
+        }
         private void OnGameChanged(object? sender, EventArgs e)
         {
             OnPropertyChanged(nameof(OpponentName));
-            OnPropertyChanged(nameof(StatusMessage));
+            OnPropertyChanged(nameof(StatusMessage)); 
         }
 
         private void OnComplete(Task task)
