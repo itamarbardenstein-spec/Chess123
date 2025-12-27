@@ -10,8 +10,8 @@
         public const string FbAppDomailKey = "chess-416af.firebaseapp.com";
         public const string GamesCollection = "Games";
         public const int NoMove = -1;
-        public const int TimerTotalTime = 600;
+        public const int TimerTotalTime = 31000;
         public const int TimerInterval = 1000;
-        public const long FinishedSignal = -1;
+        public const long FinishedSignal = -1000;
     }
 }

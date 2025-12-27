@@ -1,8 +1,6 @@
 ﻿using Chess.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using Chess.Views;
-using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Views;
 using Plugin.CloudFirestore;
 
@@ -34,6 +32,7 @@ namespace Chess.ModelsLogic
             TimeLeft = timeLeft == Keys.FinishedSignal ? Strings.TimeUp : double.Round(timeLeft / 1000, 1).ToString();
             TimeLeftChanged?.Invoke(this, EventArgs.Empty);
         }
+
         public override void SetDocument(Action<Task> OnComplete)
         {
             Id = fbd.SetDocument(this, Keys.GamesCollection, Id, OnComplete);
@@ -188,6 +187,7 @@ namespace Chess.ModelsLogic
                 UpdateStatus();
                 if (_status.CurrentStatus == GameStatus.Statuses.Play && updatedGame.MoveFrom[0] != Keys.NoMove)
                 {
+                    WeakReferenceMessenger.Default.Send(new AppMessage<TimerSettings>(timerSettings));
                     MoveFrom[0] = 7 - MoveFrom[0];
                     MoveTo[0] = 7 - MoveTo[0];
                     MoveFrom[1] = 7 - MoveFrom[1];
