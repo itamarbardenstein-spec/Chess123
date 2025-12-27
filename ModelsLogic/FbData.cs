@@ -31,7 +31,7 @@ namespace Chess.ModelsLogic
             IDocumentReference cr = fs.Collection(collectonName).Document(id);
             return cr.AddSnapshotListener(OnChange);
         }
-        public async void GetDocumentsWhereEqualTo(string collectonName, string fName, object fValue, Action<IQuerySnapshot> OnComplete)
+        public override async void GetDocumentsWhereEqualTo(string collectonName, string fName, object fValue, Action<IQuerySnapshot> OnComplete)
         {
             ICollectionReference cr = fs.Collection(collectonName);
             IQuerySnapshot qs = await cr.WhereEqualsTo(fName, fValue).GetAsync();

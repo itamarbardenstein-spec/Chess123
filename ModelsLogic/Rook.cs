@@ -4,8 +4,8 @@ namespace Chess.ModelsLogic
 {
     public partial class Rook(int row, int column, bool isWhite, string? image) : Piece(row, column, isWhite, image)
     {
-        //public bool HasRightRookMoved { get; set; } = false;
-        //public bool HasLeftRookMoved { get; set; } = false;
+        public bool HasRightRookMoved { get; set; } = false;
+        public bool HasLeftRookMoved { get; set; } = false;
         public override bool IsMoveValid(Piece[,] board, int rFrom, int cFrom, int rTo, int cTo)
         {          
             if (rFrom != rTo && cFrom != cTo)

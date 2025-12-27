@@ -64,6 +64,5 @@ namespace Chess.Models
         protected abstract bool HasAnyLegalMove(bool isWhite, Piece[,] board);
         public abstract void CheckMove(Piece p);
         protected abstract Piece[,] FlipBoard(Piece[,] original);
-        //public abstract void Castling(bool right);
     }
 }

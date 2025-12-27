@@ -107,17 +107,23 @@ namespace Chess.ModelsLogic
         }
         public override void Play(int rowIndex, int columnIndex, bool MyMove)
         {
-            //if (gameGrid?.BoardPieces![MoveFrom[0], MoveFrom[1]] is King)
-            //  (gameGrid?.BoardPieces[MoveFrom[0], MoveFrom[1]] as King)!.HasKingMoved = true;
-            //if(gameGrid?.BoardPieces![MoveFrom[0], MoveFrom[1]] is Rook)
-            //{
-            //    Rook? rook = gameGrid?.BoardPieces[MoveFrom[0], MoveFrom[1]] as Rook;
-            //    if (MoveFrom[1] == 0)
-            //        rook!.HasLeftRookMoved = true;
-            //    else
-            //        rook!.HasRightRookMoved = true;
-            //}
+            if (gameGrid?.BoardPieces![MoveFrom[0], MoveFrom[1]] is King king)
+                king.HasKingMoved = true;
+            if (gameGrid?.BoardPieces![MoveFrom[0], MoveFrom[1]] is Rook rook)
+            {
+                if (MoveFrom[1] == 0) rook.HasLeftRookMoved = true;
+                else rook.HasRightRookMoved = true;
+            }
             Piece PieceToMove = gameGrid?.BoardPieces![MoveFrom[0], MoveFrom[1]]!;
+            if (PieceToMove is King && Math.Abs(MoveFrom[1] - columnIndex) == 2)
+            {
+                bool isKingside=false;
+                if (IsHostUser)
+                  isKingside = columnIndex > MoveFrom[1]; // e.g., 4 to 6 is Kingside
+                else
+                    isKingside = columnIndex < MoveFrom[1]; // e.g., 3 to 1 is Kingside
+                gameGrid?.Castling(isKingside,IsHostUser);
+            }
             DisplayMoveArgs args = new(MoveFrom[0],MoveFrom[1],rowIndex, columnIndex);
             DisplayChanged?.Invoke(this, args);           
             if (MyMove)
@@ -320,22 +326,6 @@ namespace Chess.ModelsLogic
             }
             return flipped;
         }
-        //public override void Castling(bool right)
-        //{
-        //    if (right)
-        //    {
-        //        BoardPieces![7,6]= CreatePiece(BoardPieces[7,4], 7, 6);
-        //        BoardPieces[7, 4]= new Pawn(7,4,false,null);
-        //        BoardPieces[7, 5]= CreatePiece(BoardPieces[7,7], 7, 5);
-        //        BoardPieces[7, 7]= new Pawn(7,7,false,null);    
-        //    }
-        //    else
-        //    {
-        //        BoardPieces![7, 2] = CreatePiece(BoardPieces[7, 4], 7, 2);
-        //        BoardPieces[7, 4] = new Pawn(7, 4, false, null);
-        //        BoardPieces[7, 3] = CreatePiece(BoardPieces[7, 0], 7, 3);
-        //        BoardPieces[7, 0] = new Pawn(7, 0, false, null);
-        //    }
-        //}
+        
     }
 }

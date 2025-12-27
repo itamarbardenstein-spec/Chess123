@@ -124,7 +124,7 @@ namespace Chess.ModelsLogic
         {
             ButtonClicked?.Invoke(this, (Piece)sender!);
         }        
-        public void UpdateDisplay(DisplayMoveArgs e)
+        public override void UpdateDisplay(DisplayMoveArgs e)
         {
             BoardPieces![e.ToRow, e.ToColumn] = CreatePiece(BoardPieces![e.FromRow, e.FromColomn]!, e.ToRow, e.ToColumn);
             BoardPieces![e.FromRow, e.FromColomn] = new Pawn(e.FromRow, e.FromColomn, false, null);
@@ -165,6 +165,44 @@ namespace Chess.ModelsLogic
 
                 _ => throw new Exception()
             };
+        }
+        public override void Castling(bool right,bool isHostUser)
+        {
+            if (right)
+            {
+                if (!isHostUser)
+                {
+                    BoardPieces![7, 5] = CreatePiece(BoardPieces[7, 7], 7, 5);
+                    BoardPieces[7, 7] = new Pawn(7, 7, false, null);
+                    UpdateCellUI(7, 5);
+                    UpdateCellUI(7, 7);
+                }
+                else
+                {
+                    BoardPieces![7, 3] = CreatePiece(BoardPieces[7, 0], 7, 3);
+                    BoardPieces[7, 0] = new Pawn(7, 0, false, null);
+                    UpdateCellUI(7, 3);
+                    UpdateCellUI(7, 0);
+                }
+                
+            }
+            else
+            {
+                if (!isHostUser)
+                {
+                    BoardPieces![7, 3] = CreatePiece(BoardPieces[7, 0], 7, 3);
+                    BoardPieces[7, 0] = new Pawn(7, 0, false, null);
+                    UpdateCellUI(7, 3);
+                    UpdateCellUI(7, 0);
+                }
+                else
+                {
+                    BoardPieces![7, 5] = CreatePiece(BoardPieces[7, 7], 7, 5);
+                    BoardPieces[7, 7] = new Pawn(7, 7, false, null);
+                    UpdateCellUI(7, 5);
+                    UpdateCellUI(7, 7);
+                }
+            }            
         }
     }
 }
