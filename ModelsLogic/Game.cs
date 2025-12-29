@@ -107,8 +107,8 @@ namespace Chess.ModelsLogic
         }
         public override void Play(int rowIndex, int columnIndex, bool MyMove)
         {
-            if (gameGrid?.BoardPieces![MoveFrom[0], MoveFrom[1]] is King king)
-                king.HasKingMoved = true;
+            if (gameGrid?.BoardPieces![MoveFrom[0], MoveFrom[1]] is King king&&MyMove)
+                    king.HasKingMoved = true;
             if (gameGrid?.BoardPieces![MoveFrom[0], MoveFrom[1]] is Rook rook)
             {
                 if (MoveFrom[1] == 0) rook.HasLeftRookMoved = true;
@@ -121,12 +121,12 @@ namespace Chess.ModelsLogic
                 if (!IsHostUser)
                 {
                     isKingSide = columnIndex > MoveFrom[1];
-                    gameGrid?.Castling(isKingSide, IsHostUser);
+                    gameGrid?.Castling(isKingSide, IsHostUser,MyMove);
                 }
                 else
                 {
                     isKingSide = columnIndex < MoveFrom[1];
-                    gameGrid?.Castling(!isKingSide, IsHostUser);
+                    gameGrid?.Castling(!isKingSide, IsHostUser,MyMove);
                 }
                     
                 

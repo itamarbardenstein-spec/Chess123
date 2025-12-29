@@ -166,41 +166,80 @@ namespace Chess.ModelsLogic
                 _ => throw new Exception()
             };
         }
-        public override void Castling(bool right,bool isHostUser)
+        public override void Castling(bool right,bool isHostUser,bool MyMove)
         {
             if (right)
             {
-                if (isHostUser)
+                if (MyMove)
                 {
-                    BoardPieces![7, 5] = CreatePiece(BoardPieces[7, 7], 7, 5);
-                    BoardPieces[7, 7] = new Pawn(7, 7, false, null);
-                    UpdateCellUI(7, 5);
-                    UpdateCellUI(7, 7);
+                    if (isHostUser)
+                    {
+                        BoardPieces![7, 4] = CreatePiece(BoardPieces[7, 7], 7, 4);
+                        BoardPieces[7, 7] = new Pawn(7, 7, false, null);
+                        UpdateCellUI(7, 4);
+                        UpdateCellUI(7, 7);
+                    }
+                    else
+                    {
+                        BoardPieces![7, 5] = CreatePiece(BoardPieces[7, 7], 7, 5);
+                        BoardPieces[7, 7] = new Pawn(7, 7, false, null);
+                        UpdateCellUI(7, 5);
+                        UpdateCellUI(7, 7);
+                    }
                 }
                 else
                 {
-                    BoardPieces![7, 3] = CreatePiece(BoardPieces[7, 0], 7, 3);
-                    BoardPieces[7, 0] = new Pawn(7, 0, false, null);
-                    UpdateCellUI(7, 3);
-                    UpdateCellUI(7, 0);
-                }
-                
+                    if (!isHostUser)
+                    {
+                        BoardPieces![0, 5] = CreatePiece(BoardPieces[0, 7], 0, 5);
+                        BoardPieces[0, 7] = new Pawn(0, 7, false, null);
+                        UpdateCellUI(0, 5);
+                        UpdateCellUI(0, 7);
+                    }
+                    else
+                    {
+                        BoardPieces![0, 4] = CreatePiece(BoardPieces[0, 7], 0, 4);
+                        BoardPieces[0, 7] = new Pawn(0, 7, false, null);
+                        UpdateCellUI(0, 4);
+                        UpdateCellUI(0, 7);
+                    }
+                }                
             }
             else
             {
-                if (isHostUser)
+                if (MyMove)
                 {
-                    BoardPieces![7, 2] = CreatePiece(BoardPieces[7, 0], 7, 2);
-                    BoardPieces[7, 0] = new Pawn(7, 0, false, null);
-                    UpdateCellUI(7, 2);
-                    UpdateCellUI(7, 0);
+                    if (isHostUser)
+                    {
+                        BoardPieces![7, 2] = CreatePiece(BoardPieces[7, 0], 7, 2);
+                        BoardPieces[7, 0] = new Pawn(7, 0, false, null);
+                        UpdateCellUI(7, 2);
+                        UpdateCellUI(7, 0);
+                    }
+                    else
+                    {
+                        BoardPieces![7, 3] = CreatePiece(BoardPieces[7, 0], 7, 3);
+                        BoardPieces[7, 0] = new Pawn(7, 0, false, null);
+                        UpdateCellUI(7, 3);
+                        UpdateCellUI(7, 0);
+                    }
                 }
                 else
                 {
-                    BoardPieces![7, 5] = CreatePiece(BoardPieces[7, 7], 7, 5);
-                    BoardPieces[7, 7] = new Pawn(7, 7, false, null);
-                    UpdateCellUI(7, 5);
-                    UpdateCellUI(7, 7);
+                    if (!isHostUser)
+                    {
+                        BoardPieces![0, 3] = CreatePiece(BoardPieces[0, 0], 0, 3);
+                        BoardPieces[0, 0] = new Pawn(0, 0, false, null);
+                        UpdateCellUI(0, 3);
+                        UpdateCellUI(0, 0);
+                    }
+                    else
+                    {
+                        BoardPieces![0, 2] = CreatePiece(BoardPieces[0, 0], 0, 2);
+                        BoardPieces[0, 0] = new Pawn(0, 0, false, null);
+                        UpdateCellUI(0, 2);
+                        UpdateCellUI(0, 0);
+                    }
                 }
             }            
         }

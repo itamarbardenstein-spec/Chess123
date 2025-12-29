@@ -13,7 +13,7 @@ namespace Chess.Models
         protected abstract void UpdateCellUI(int row, int col);
         public abstract Piece CreatePiece(Piece original, int row, int col);
         public abstract void UpdateDisplay(DisplayMoveArgs e);
-        public abstract void Castling(bool right,bool isHostUser);
+        public abstract void Castling(bool right,bool isHostUser,bool MyMove);
 
     }
 }
