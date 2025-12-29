@@ -170,7 +170,7 @@ namespace Chess.ModelsLogic
         {
             if (right)
             {
-                if (!isHostUser)
+                if (isHostUser)
                 {
                     BoardPieces![7, 5] = CreatePiece(BoardPieces[7, 7], 7, 5);
                     BoardPieces[7, 7] = new Pawn(7, 7, false, null);
@@ -188,11 +188,11 @@ namespace Chess.ModelsLogic
             }
             else
             {
-                if (!isHostUser)
+                if (isHostUser)
                 {
-                    BoardPieces![7, 3] = CreatePiece(BoardPieces[7, 0], 7, 3);
+                    BoardPieces![7, 2] = CreatePiece(BoardPieces[7, 0], 7, 2);
                     BoardPieces[7, 0] = new Pawn(7, 0, false, null);
-                    UpdateCellUI(7, 3);
+                    UpdateCellUI(7, 2);
                     UpdateCellUI(7, 0);
                 }
                 else

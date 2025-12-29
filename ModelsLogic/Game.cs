@@ -117,12 +117,19 @@ namespace Chess.ModelsLogic
             Piece PieceToMove = gameGrid?.BoardPieces![MoveFrom[0], MoveFrom[1]]!;
             if (PieceToMove is King && Math.Abs(MoveFrom[1] - columnIndex) == 2)
             {
-                bool isKingside=false;
-                if (IsHostUser)
-                  isKingside = columnIndex > MoveFrom[1]; // e.g., 4 to 6 is Kingside
+                bool isKingSide=false;
+                if (!IsHostUser)
+                {
+                    isKingSide = columnIndex > MoveFrom[1];
+                    gameGrid?.Castling(isKingSide, IsHostUser);
+                }
                 else
-                    isKingside = columnIndex < MoveFrom[1]; // e.g., 3 to 1 is Kingside
-                gameGrid?.Castling(isKingside,IsHostUser);
+                {
+                    isKingSide = columnIndex < MoveFrom[1];
+                    gameGrid?.Castling(!isKingSide, IsHostUser);
+                }
+                    
+                
             }
             DisplayMoveArgs args = new(MoveFrom[0],MoveFrom[1],rowIndex, columnIndex);
             DisplayChanged?.Invoke(this, args);           
