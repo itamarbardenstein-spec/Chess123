@@ -48,6 +48,8 @@ namespace Chess.Models
         public string HostName { get; set; } = string.Empty;
         public bool? WinnerIsWhite { get; set; }
         public bool IsFull { get; set; }
+        public long WhiteTimeLeft { get; set; } 
+        public long BlackTimeLeft { get; set; }
         public bool IsHostTurn { get; set; } = false;
         public List<int> MoveFrom { get; set; } = [Keys.NoMove, Keys.NoMove];
         public List<int> MoveTo { get; set; } = [Keys.NoMove, Keys.NoMove];        

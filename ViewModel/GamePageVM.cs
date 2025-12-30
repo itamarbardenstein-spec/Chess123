@@ -11,8 +11,15 @@ namespace Chess.ViewModel
         private readonly Game game;
         public string MyName => game.MyName;
         public string StatusMessage => game.StatusMessage;
+        public string MyTime => game.IsHostUser? FormatTime(game.BlackTimeLeft) :FormatTime(game.WhiteTimeLeft);
+        public string OpponentTime => game.IsHostUser? FormatTime(game.WhiteTimeLeft) : FormatTime(game.BlackTimeLeft);
         public string OpponentName=> game.OpponentName;
         public string TimeLeft => game.TimeLeft;
+        private static string FormatTime(long millis)
+        {
+            TimeSpan t = TimeSpan.FromMilliseconds(millis);
+            return $"{t.Minutes:D2}:{t.Seconds:D2}";
+        }
         public GamePageVM(Game game, Grid board)
         {
             this.game = game;
@@ -26,10 +33,10 @@ namespace Chess.ViewModel
             grdBoard.ButtonClicked += OnButtonClicked;             
             if (!game.IsHostUser)   
                 game.UpdateGuestUser(OnComplete);
-        }
+        }       
         private void OnTimeLeftChanged(object? sender, EventArgs e)
         {
-            OnPropertyChanged(nameof(TimeLeft));
+            OnPropertyChanged(nameof(MyTime));
         }
         private void InvalidMove(object? sender, EventArgs e)
         {
@@ -57,7 +64,9 @@ namespace Chess.ViewModel
         private void OnGameChanged(object? sender, EventArgs e)
         {
             OnPropertyChanged(nameof(OpponentName));
-            OnPropertyChanged(nameof(StatusMessage)); 
+            OnPropertyChanged(nameof(StatusMessage));
+            OnPropertyChanged(nameof(OpponentTime));
+            OnPropertyChanged(nameof(MyTime));
         }
 
         private void OnComplete(Task task)

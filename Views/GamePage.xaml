@@ -12,16 +12,46 @@
             Margin="25"
             HorizontalOptions="Center"
             Text="{Binding StatusMessage}" />
-        <Label
-     Margin="50"
-     HorizontalOptions="Center"
-     Text="{Binding TimeLeft}" />
+        <Border  
+                Stroke="#555555"
+                StrokeThickness="2"
+                HorizontalOptions="Center"
+                Background="#333333"
+                Padding="15,5"
+                MaximumWidthRequest="200">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10"/>
+            </Border.StrokeShape>
+            <Label Text="{Binding OpponentTime}" 
+                       TextColor="#FF4444" 
+                       FontSize="32" 
+                       FontAttributes="Bold"
+                       FontFamily="monospace"
+                       HorizontalOptions="Center"/>
+        </Border>
         <Grid
             x:Name="grdBoard"
             ColumnSpacing="1"
             HorizontalOptions="Center"
             RowSpacing="1"
             VerticalOptions="Center" />
+        <Border
+                Stroke="#2196F3"
+                StrokeThickness="3"
+                HorizontalOptions="Center"
+                Background="#252525"
+                Padding="15,5"
+                MaximumWidthRequest="200">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10"/>
+            </Border.StrokeShape>
+            <Label Text="{Binding MyTime}" 
+                       TextColor="White" 
+                       FontSize="32" 
+                       FontAttributes="Bold"
+                       FontFamily="monospace"
+                       HorizontalOptions="Center"/>
+        </Border>
         <Label HorizontalOptions="Center" Text="{Binding MyName}" />
     </VerticalStackLayout>
 </ContentPage>

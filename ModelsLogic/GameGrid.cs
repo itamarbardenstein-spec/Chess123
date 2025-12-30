@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Chess.Models;
-using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core;
-
+﻿using Chess.Models;
 namespace Chess.ModelsLogic
 {
     public partial class GameGrid : GameGridModel
@@ -157,12 +149,18 @@ namespace Chess.ModelsLogic
             return original switch
             {
                 Pawn => new Pawn(row, col, isWhite, img),
-                Rook => new Rook(row, col, isWhite, img),
+                Rook r => new Rook(row, col, isWhite, img)
+                {
+                    HasLeftRookMoved = r.HasLeftRookMoved,
+                    HasRightRookMoved = r.HasRightRookMoved
+                },
                 Knight => new Knight(row, col, isWhite, img),
                 Bishop => new Bishop(row, col, isWhite, img),
                 Queen => new Queen(row, col, isWhite, img),
-                King => new King(row, col, isWhite, img),
-
+                King k => new King(row, col, isWhite, img)
+                {
+                    HasKingMoved = k.HasKingMoved
+                },
                 _ => throw new Exception()
             };
         }
