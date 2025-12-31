@@ -25,8 +25,11 @@ namespace Chess.Models
         public EventHandler? InvalidMove;
         [Ignored]
         public EventHandler? OnGameDeleted;
+
         [Ignored]
         public EventHandler<DisplayMoveArgs>? DisplayChanged;
+        [Ignored]
+        public EventHandler<GameOverArgs>? GameOver;
         [Ignored]
         public string StatusMessage => Status.StatusMessage;    
         [Ignored]
@@ -49,6 +52,7 @@ namespace Chess.Models
         public bool? WinnerIsWhite { get; set; }
         public bool IsFull { get; set; }
         public long WhiteTimeLeft { get; set; } 
+        public bool TimeRanOut { get; set; }
         public long BlackTimeLeft { get; set; }
         public bool IsHostTurn { get; set; } = false;
         public List<int> MoveFrom { get; set; } = [Keys.NoMove, Keys.NoMove];
@@ -66,5 +70,11 @@ namespace Chess.Models
         protected abstract bool HasAnyLegalMove(bool isWhite, Piece[,] board);
         public abstract void CheckMove(Piece p);
         protected abstract Piece[,] FlipBoard(Piece[,] original);
+        protected abstract void RegisterTimer();
+        protected abstract void OnMessageReceived(long timeLeft);
+        public abstract void UpdateGuestUser(Action<Task> OnComplete);
+        protected abstract void UpdateFbJoinGame(Action<Task> OnComplete);
+        public abstract string GameOverMessageTitle(bool IWon);
+        public abstract string GameOverMessageReason(bool IWon,bool IsCheckmate);
     }
 }

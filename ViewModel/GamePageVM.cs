@@ -1,7 +1,9 @@
-﻿using Chess.Models;
+﻿ using Chess.Models;
 using Chess.ModelsLogic;
+using Chess.Views;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Views;
 
 namespace Chess.ViewModel
 {
@@ -25,15 +27,22 @@ namespace Chess.ViewModel
             this.game = game;
             this.game.gameGrid = grdBoard;
             game.InvalidMove += InvalidMove;
-            game.OnGameChanged += OnGameChanged;
+            game.OnGameChanged += OnGameChanged;         
             game.OnGameDeleted += OnGameDeleted;
             game.DisplayChanged += OnDisplayChanged;
             game.TimeLeftChanged += OnTimeLeftChanged;
+            game.GameOver += OnGameOver;
             grdBoard.InitGrid(board,game.IsHostUser);
             grdBoard.ButtonClicked += OnButtonClicked;             
             if (!game.IsHostUser)   
                 game.UpdateGuestUser(OnComplete);
-        }       
+        }     
+        private void OnGameOver(object? sender, GameOverArgs e)
+        {
+            string reason = game.GameOverMessageReason(e.IWon, e.IsCheckmate);
+            string title = game.GameOverMessageTitle(e.IWon);
+            Shell.Current.ShowPopup(new GameResultPopup(title, reason));
+        }
         private void OnTimeLeftChanged(object? sender, EventArgs e)
         {
             OnPropertyChanged(nameof(MyTime));

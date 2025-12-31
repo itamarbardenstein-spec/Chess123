@@ -24,7 +24,6 @@ namespace Chess.ViewModel
             PlayCommand = new Command(Play);
             InstructionsCommand = new Command(ShowInstructionsPrompt);
             OpenSettingsCommand = new Command(OnOpenSettings);
-
         }
         private void OnOpenSettings(object? sender)
         {

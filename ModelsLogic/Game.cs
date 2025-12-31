@@ -1,74 +1,88 @@
-﻿    using Chess.Models;
-    using CommunityToolkit.Mvvm.Messaging;
-    using Chess.Views;
-    using CommunityToolkit.Maui.Views;
-    using Plugin.CloudFirestore;
+﻿using Chess.Models;
+using CommunityToolkit.Mvvm.Messaging;
+using Chess.Views;
+using CommunityToolkit.Maui.Views;
+using Plugin.CloudFirestore;
 
-    namespace Chess.ModelsLogic
+namespace Chess.ModelsLogic
+{
+    public class Game : GameModel
     {
-        public class Game : GameModel
+        public override string OpponentName => IsHostUser ? GuestName : HostName;
+        protected override GameStatus Status => _status;
+        public Game() { RegisterTimer(); }
+        public Game(GameTime selectedGameTime)
         {
-            public override string OpponentName => IsHostUser ? GuestName : HostName;
-            protected override GameStatus Status => _status;
-            public Game() { RegisterTimer(); }
-            public Game(GameTime selectedGameTime)
+            RegisterTimer();
+            Created = DateTime.Now;
+            HostName = new User().UserName;
+            IsHostUser = true;
+            Time = selectedGameTime.Time;
+            UpdateStatus();
+            long totalMillis = Time * 60 * 1000;
+            WhiteTimeLeft = totalMillis;
+            BlackTimeLeft = totalMillis;
+        }
+        protected override void RegisterTimer()
+        {
+            WeakReferenceMessenger.Default.Register<AppMessage<long>>(this, (r, m) =>
             {
-                RegisterTimer();
-                Created = DateTime.Now;
-                HostName = new User().UserName;
-                IsHostUser = true;
-                Time = selectedGameTime.Time;
-                UpdateStatus();
-                long totalMillis = Time * 60 * 1000;
-                WhiteTimeLeft = totalMillis;
-                BlackTimeLeft = totalMillis;
-            }
-            private void RegisterTimer()
+                OnMessageReceived(m.Value);
+            });
+        }
+        protected override void OnMessageReceived(long timeLeft)
+        {         
+            if (timeLeft == Keys.FinishedSignal)
             {
-                WeakReferenceMessenger.Default.Register<AppMessage<long>>(this, (r, m) =>
+                if (!IsGameOver)
                 {
-                    OnMessageReceived(m.Value);
-                });
+                    ilr?.Remove();
+                    IsGameOver = true;
+                    WinnerIsWhite = !IsHostUser;
+                    TimeRanOut = true;
+                    if (!string.IsNullOrEmpty(Id))
+                    {
+                        UpdateFbGameOver();
+                    }
+                    GameOver?.Invoke(this, new GameOverArgs(false, false));
+                }
+                return;
             }
-            private void OnMessageReceived(long timeLeft)
-            {
-                // שמירה למשתנה הנכון כדי שלא יאבד
-                if (IsHostUser) // או בדיקה אחרת של הצבע שלך
-                    BlackTimeLeft = timeLeft;
-                else                   
-                    WhiteTimeLeft = timeLeft;
-            // עדכון התצוגה
-                TimeLeft = double.Round(timeLeft / 1000.0, 1).ToString();
-                TimeLeftChanged?.Invoke(this, EventArgs.Empty);
-            }
+            if (IsHostUser)
+               BlackTimeLeft = timeLeft;
+            else                   
+               WhiteTimeLeft = timeLeft;
+            TimeLeft = double.Round(timeLeft / 1000.0, 1).ToString();
+            TimeLeftChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         public override void SetDocument(Action<Task> OnComplete)
-            {
-                Id = fbd.SetDocument(this, Keys.GamesCollection, Id, OnComplete);
-            }
+        {
+            Id = fbd.SetDocument(this, Keys.GamesCollection, Id, OnComplete);
+        }
         
-            protected override void UpdateStatus()
+        protected override void UpdateStatus()
+        {
+            _status.CurrentStatus = IsHostUser && IsHostTurn || !IsHostUser && !IsHostTurn ?
+            GameStatus.Statuses.Play : GameStatus.Statuses.Wait;
+        }
+        public override void UpdateGuestUser(Action<Task> OnComplete)
+        {
+            GuestName = MyName;
+            IsFull = true;
+            UpdateStatus();
+            UpdateFbJoinGame(OnComplete);
+        }
+        protected override void UpdateFbJoinGame(Action<Task> OnComplete)
+        {
+            Dictionary<string, object> dict = new()
             {
-                _status.CurrentStatus = IsHostUser && IsHostTurn || !IsHostUser && !IsHostTurn ?
-                    GameStatus.Statuses.Play : GameStatus.Statuses.Wait;
-            }
-            public void UpdateGuestUser(Action<Task> OnComplete)
-            {
-                GuestName = MyName;
-                IsFull = true;
-                UpdateStatus();
-                UpdateFbJoinGame(OnComplete);
-            }
-            private void UpdateFbJoinGame(Action<Task> OnComplete)
-            {
-                Dictionary<string, object> dict = new()
-                {
-                    { nameof(IsFull), IsFull },
-                    { nameof(GuestName), GuestName }
-                };
-                action = Actions.Changed;
-                fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
-            }
+                { nameof(IsFull), IsFull },
+                { nameof(GuestName), GuestName }
+            };
+            action = Actions.Changed;
+            fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
+        }
             public override void AddSnapshotListener()
             {
                 ilr = fbd.AddSnapshotListener(Keys.GamesCollection, Id, OnChange);
@@ -126,7 +140,7 @@
                 Piece PieceToMove = gameGrid?.BoardPieces![MoveFrom[0], MoveFrom[1]]!;
                 if (PieceToMove is King && Math.Abs(MoveFrom[1] - columnIndex) == 2)
                 {
-                    bool isKingSide=false;
+                    bool isKingSide;
                     if (!IsHostUser)
                     {
                         isKingSide = columnIndex > MoveFrom[1];
@@ -156,19 +170,9 @@
                         {
                             IsGameOver = true;
                             WinnerIsWhite = PieceToMove.IsWhite;
-                            
-                            Dictionary<string, object> dict = new()
-                            {
-                                { nameof(IsGameOver), true },
-                                { nameof(WinnerIsWhite), WinnerIsWhite }
-                            };
-                            fbd.UpdateFields(Keys.GamesCollection, Id, dict, _ => { });
-                            MainThread.InvokeOnMainThreadAsync(async () =>
-                            {
-                                bool iWon = WinnerIsWhite == (!IsHostUser);
-                                await Shell.Current.CurrentPage.ShowPopupAsync(
-                                    new GameResultPopup(iWon));
-                            });
+                            UpdateFbGameOver();  
+                            GameOverArgs GameOverArgs = new(true, true);
+                            GameOver?.Invoke(this, GameOverArgs);
                         }
                     }
                 }
@@ -185,75 +189,87 @@
                 return false;
             }
 
-        protected override void UpdateFbMove()
-        {
-            Dictionary<string, object> dict = new()
+            protected override void UpdateFbMove()
             {
-                { nameof(MoveFrom), MoveFrom },
-                { nameof(MoveTo), MoveTo },
-                { nameof(IsHostTurn), IsHostTurn },
-                { nameof(WhiteTimeLeft), WhiteTimeLeft },
-                { nameof(BlackTimeLeft), BlackTimeLeft }
-            };
-            fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
-        }
-        protected override void OnChange(IDocumentSnapshot? snapshot, Exception? error)
-            {
-                Game? updatedGame = snapshot?.ToObject<Game>();
-                if (updatedGame != null)
+                Dictionary<string, object> dict = new()
                 {
-                    IsFull = updatedGame.IsFull;
-                    GuestName = updatedGame.GuestName;
-                    IsHostTurn = updatedGame.IsHostTurn;
-                    MoveFrom = updatedGame.MoveFrom;
-                    MoveTo = updatedGame.MoveTo;
-                    WhiteTimeLeft = updatedGame.WhiteTimeLeft;
-                    BlackTimeLeft = updatedGame.BlackTimeLeft;
-                    UpdateStatus();
-                    OnGameChanged?.Invoke(this, EventArgs.Empty);
-                    if (_status.CurrentStatus == GameStatus.Statuses.Play && updatedGame.MoveFrom[0] != Keys.NoMove)
-                    {
-                        long myCurrentTime = IsHostUser ? BlackTimeLeft : WhiteTimeLeft; // (הנחה: מארח הוא לבן)
-                        // יצירת הגדרות טיימר עם הזמן שנשאר לי בפועל!
-                        TimerSettings currentTimer = new(myCurrentTime, Keys.TimerInterval);
-                        WeakReferenceMessenger.Default.Send(new AppMessage<TimerSettings>(currentTimer));
-                        MoveFrom[0] = 7 - MoveFrom[0];
-                        MoveTo[0] = 7 - MoveTo[0];
-                        MoveFrom[1] = 7 - MoveFrom[1];
-                        MoveTo[1] = 7 - MoveTo[1];
-                        Play(MoveTo[0], MoveTo[1], false);
-                    }
-                    else
-                    {
-                        WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
-                        TimeLeft = string.Empty;
-                        TimeLeftChanged?.Invoke(this, EventArgs.Empty);
-                    }
-                    if (updatedGame.IsGameOver && !IsGameOver)
-                    {
-                        IsGameOver = true;
-                        WinnerIsWhite = updatedGame.WinnerIsWhite;
-                        MainThread.InvokeOnMainThreadAsync(async () =>
-                        {
-                            bool iWon = WinnerIsWhite == (!IsHostUser);
-                            await Shell.Current.CurrentPage.ShowPopupAsync(
-                                new GameResultPopup(iWon));
-                        });
-                    }
+                    { nameof(MoveFrom), MoveFrom },
+                    { nameof(MoveTo), MoveTo },
+                    { nameof(IsHostTurn), IsHostTurn },
+                    { nameof(WhiteTimeLeft), WhiteTimeLeft },
+                    { nameof(BlackTimeLeft), BlackTimeLeft }
+                };
+                fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
+            }
+        protected override void OnChange(IDocumentSnapshot? snapshot, Exception? error)
+        {
+            Game? updatedGame = snapshot?.ToObject<Game>();
+            if (updatedGame != null)
+            {
+                IsFull = updatedGame.IsFull;
+                GuestName = updatedGame.GuestName;
+                IsHostTurn = updatedGame.IsHostTurn;
+                MoveFrom = updatedGame.MoveFrom;
+                MoveTo = updatedGame.MoveTo;
+                WhiteTimeLeft = updatedGame.WhiteTimeLeft;
+                BlackTimeLeft = updatedGame.BlackTimeLeft;
+                UpdateStatus();
+                OnGameChanged?.Invoke(this, EventArgs.Empty);
+                if (_status.CurrentStatus == GameStatus.Statuses.Play && updatedGame.MoveFrom[0] != Keys.NoMove)
+                {
+                    long myCurrentTime = IsHostUser ? BlackTimeLeft : WhiteTimeLeft;
+                    TimerSettings currentTimer = new(myCurrentTime, Keys.TimerInterval);
+                    WeakReferenceMessenger.Default.Send(new AppMessage<TimerSettings>(currentTimer));
+                    MoveFrom[0] = 7 - MoveFrom[0];
+                    MoveTo[0] = 7 - MoveTo[0];
+                    MoveFrom[1] = 7 - MoveFrom[1];
+                    MoveTo[1] = 7 - MoveTo[1];
+                    Play(MoveTo[0], MoveTo[1], false);
                 }
                 else
                 {
-                    MainThread.InvokeOnMainThreadAsync(() =>
-                    {
-                        OnGameDeleted?.Invoke(this, EventArgs.Empty);
-                        Shell.Current.Navigation.PopAsync();                  
-                    });
-
+                    WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
+                    TimeLeft = string.Empty;
+                    TimeLeftChanged?.Invoke(this, EventArgs.Empty);
                 }
+                if (updatedGame.IsGameOver && !IsGameOver)
+                {
+                    IsGameOver = true;
+                    WinnerIsWhite = updatedGame.WinnerIsWhite;
+                    TimeRanOut = updatedGame.TimeRanOut;
+                    GameOverArgs GameOverArgs;
+                    if (TimeRanOut == true)
+                    {
+                        GameOverArgs = new(true, false);
+                    }
+                    else
+                    {
+                        GameOverArgs = new(false, true);
+                    }
+                    GameOver?.Invoke(this, GameOverArgs);
+                }               
             }
+            else
+            {
+                MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    OnGameDeleted?.Invoke(this, EventArgs.Empty);
+                    Shell.Current.Navigation.PopAsync();
+                });
+            }
+        }
+        private void UpdateFbGameOver()
+        {
+            Dictionary<string, object> dict = new()
+            {
+               { nameof(IsGameOver), true },
+               { nameof(WinnerIsWhite), WinnerIsWhite! },
+               { nameof(TimeRanOut), TimeRanOut },              
+            };
+            fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
+        }
 
-        
-            protected override bool IsKingInCheck(bool isWhite, Piece[,] board)
+        protected override bool IsKingInCheck(bool isWhite, Piece[,] board)
             {
                 int kingRow = -1, kingCol = -1;
                 bool found = false;
@@ -349,6 +365,22 @@
                 }
                 return flipped;
             }
-        
+        public override string GameOverMessageTitle(bool IWon)
+        {
+            return IWon ? Strings.YouWon : Strings.YouLost;
+        }
+        public override string GameOverMessageReason(bool IWon, bool IsCheckmate)
+        {        
+            string reason;
+            if (IsCheckmate)
+            {
+                reason = IWon ? Strings.WinCheckmate : Strings.LoseCheckmate;
+            }
+            else
+            {
+                reason = IWon ? Strings.WinTime : Strings.LoseTime;
+            }  
+            return reason;
         }
     }
+}

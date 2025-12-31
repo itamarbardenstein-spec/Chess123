@@ -1,25 +1,15 @@
 using Chess.Models;
+using Chess.ViewModel;
 using CommunityToolkit.Maui.Views;
 
 namespace Chess.Views
 {
     public partial class GameResultPopup : Popup
     {
-        public GameResultPopup(bool iWon)
+        public GameResultPopup(string title, string message)
         {
             InitializeComponent();
-
-            TitleLabel.Text = iWon ? Strings.YouWon : Strings.YouLost;
-            MessageLabel.Text = iWon
-                ? Strings.Win: Strings.Lose;
+            BindingContext = new GameResultPopupVM(this, title, message);
         }
-
-        private async void OnHomeClicked(object sender, EventArgs e)
-        {
-            Close();
-            await MainThread.InvokeOnMainThreadAsync(() =>
-            {
-                Application.Current!.MainPage = new HomePage();
-            });
-        }
-    }}
+    }
+}
