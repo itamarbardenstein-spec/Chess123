@@ -37,7 +37,7 @@ namespace Chess.ViewModel
         }
         public static void ShowInstructionsPrompt(object obj)
         {
-            Application.Current!.MainPage!.DisplayAlert(Strings.Instructions, Strings.InsructionsTxt, Strings.Ok);
+            Application.Current!.MainPage!.DisplayAlert(Strings.Instructions, Strings.InstructionsTxt, Strings.Ok);
         }
 
         private void Play(object? sender)

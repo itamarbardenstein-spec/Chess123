@@ -1,4 +1,4 @@
-﻿ using Chess.Models;
+﻿using Chess.Models;
 using Chess.ModelsLogic;
 using Chess.Views;
 using CommunityToolkit.Maui.Alerts;

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="Chess.Views.PawnPromotionPopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:Chess.ViewModel"
+    x:DataType="vm:PawnPromotionPopupVM">
+    <VerticalStackLayout>
+        <Button
+            BackgroundColor="#2196F3"
+            Command="{Binding PromoteToQueenCommand}"
+            Text="Promote to Queen"
+            TextColor="White" />
+        <Button
+            BackgroundColor="#2196F3"
+            Command="{Binding PromoteToRookCommand}"
+            Text="Promote to Rook"
+            TextColor="White" />
+        <Button
+            BackgroundColor="#2196F3"
+            Command="{Binding PromoteToBishopCommand}"
+            Text="Promote to Bishop"
+            TextColor="White" />
+        <Button
+            BackgroundColor="#2196F3"
+            Command="{Binding PromoteToKnightCommand}"
+            Text="Promote to Knight"
+            TextColor="White" />
+    </VerticalStackLayout>
+</toolkit:Popup>

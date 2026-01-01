@@ -1,7 +1,5 @@
 ﻿using Chess.Models;
 using CommunityToolkit.Mvvm.Messaging;
-using Chess.Views;
-using CommunityToolkit.Maui.Views;
 using Plugin.CloudFirestore;
 
 namespace Chess.ModelsLogic

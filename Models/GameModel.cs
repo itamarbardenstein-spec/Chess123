@@ -76,5 +76,6 @@ namespace Chess.Models
         protected abstract void UpdateFbJoinGame(Action<Task> OnComplete);
         public abstract string GameOverMessageTitle(bool IWon);
         public abstract string GameOverMessageReason(bool IWon,bool IsCheckmate);
+        public abstract void Promotion(int row, int column);
     }
 }

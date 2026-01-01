@@ -12,22 +12,23 @@
             Margin="25"
             HorizontalOptions="Center"
             Text="{Binding StatusMessage}" />
-        <Border  
-                Stroke="#555555"
-                StrokeThickness="2"
-                HorizontalOptions="Center"
-                Background="#333333"
-                Padding="15,5"
-                MaximumWidthRequest="200">
+        <Border
+            Padding="15,5"
+            Background="#333333"
+            HorizontalOptions="Center"
+            MaximumWidthRequest="200"
+            Stroke="#555555"
+            StrokeThickness="2">
             <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10"/>
+                <RoundRectangle CornerRadius="10" />
             </Border.StrokeShape>
-            <Label Text="{Binding OpponentTime}" 
-                       TextColor="#FF4444" 
-                       FontSize="32" 
-                       FontAttributes="Bold"
-                       FontFamily="monospace"
-                       HorizontalOptions="Center"/>
+            <Label
+                FontAttributes="Bold"
+                FontFamily="monospace"
+                FontSize="32"
+                HorizontalOptions="Center"
+                Text="{Binding OpponentTime}"
+                TextColor="#FF4444" />
         </Border>
         <Grid
             x:Name="grdBoard"
@@ -36,21 +37,22 @@
             RowSpacing="1"
             VerticalOptions="Center" />
         <Border
-                Stroke="#2196F3"
-                StrokeThickness="3"
-                HorizontalOptions="Center"
-                Background="#252525"
-                Padding="15,5"
-                MaximumWidthRequest="200">
+            Padding="15,5"
+            Background="#252525"
+            HorizontalOptions="Center"
+            MaximumWidthRequest="200"
+            Stroke="#2196F3"
+            StrokeThickness="3">
             <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10"/>
+                <RoundRectangle CornerRadius="10" />
             </Border.StrokeShape>
-            <Label Text="{Binding MyTime}" 
-                       TextColor="White" 
-                       FontSize="32" 
-                       FontAttributes="Bold"
-                       FontFamily="monospace"
-                       HorizontalOptions="Center"/>
+            <Label
+                FontAttributes="Bold"
+                FontFamily="monospace"
+                FontSize="32"
+                HorizontalOptions="Center"
+                Text="{Binding MyTime}"
+                TextColor="White" />
         </Border>
         <Label HorizontalOptions="Center" Text="{Binding MyName}" />
     </VerticalStackLayout>
