@@ -9,20 +9,6 @@
     x:DataType="vm:HomePageVM"
     BackgroundImageSource="homepagebackgroud.jpg">
     <VerticalStackLayout Spacing="20">
-        <Button
-            BackgroundColor="Transparent"
-            Command="{Binding OpenSettingsCommand}"
-            HorizontalOptions="End"
-            Text="Settings">
-            <Button.ImageSource>
-                <FontImageSource
-                    Glyph="{StaticResource IconSettings}"
-                    Size="40"
-                    Color="DarkSlateGray">
-                    <FontImageSource.FontFamily>MaterialSymbols</FontImageSource.FontFamily>
-                </FontImageSource>
-            </Button.ImageSource>
-        </Button>
         <Label
             FontSize="30"
             HorizontalOptions="Center"

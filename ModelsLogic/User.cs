@@ -15,8 +15,7 @@ namespace Chess.ModelsLogic
         {
             fbd.SignInWithEmailAndPasswordAsync(Email, Password, OnComplete);           
         }
-
-        private void OnComplete(Task task)
+        protected override void OnComplete(Task task)
         {
             if (task.IsCompletedSuccessfully)
             {
@@ -46,23 +45,20 @@ namespace Chess.ModelsLogic
             }                                        
             return Strings.UnknownErrorMessage;
         }
-
-        private static void ShowAlert(string msg)
+        protected override void ShowAlert(string msg)
         {
             MainThread.InvokeOnMainThreadAsync(() =>
             {
                 Toast.Make(msg, ToastDuration.Long).Show();
             });
         }
-        private void SaveToPreferences()
+        protected override void SaveToPreferences()
         {
             Preferences.Set(Keys.UserNameKey, UserName);
             Preferences.Set(Keys.PasswordKey, Password);
             Preferences.Set(Keys.EmailKey, Email);
             Preferences.Set(Keys.AgeKey, Age);          
-        }
-
-        
+        }    
         public override bool CanLogin()
         {
             return (!string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Email));

@@ -241,5 +241,9 @@ namespace Chess.ModelsLogic
                 }
             }            
         }
+        public override void Promotion(int row, int column)
+        {
+           
+        }
     }
 }

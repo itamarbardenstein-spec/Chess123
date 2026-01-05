@@ -54,7 +54,6 @@ namespace Chess.ViewModel
                 Toast.Make(Strings.InvalidMove, ToastDuration.Long, 14).Show();
             });
         }
-
         private void OnGameDeleted(object? sender, EventArgs e)
         {
             MainThread.InvokeOnMainThreadAsync(() =>
@@ -77,18 +76,15 @@ namespace Chess.ViewModel
             OnPropertyChanged(nameof(OpponentTime));
             OnPropertyChanged(nameof(MyTime));
         }
-
         private void OnComplete(Task task)
         {
             if(!task.IsCompletedSuccessfully)
                Toast.Make(Strings.JoinGameErr, ToastDuration.Long).Show();
         }
-
         public void AddSnapshotListener()
         {
            game.AddSnapshotListener();
         }
-
         public void RemoveSnapshotListener()
         {
             game.RemoveSnapshotListener();

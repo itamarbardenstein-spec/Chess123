@@ -64,6 +64,8 @@ namespace Chess.Models
         public abstract void RemoveSnapshotListener();
         public abstract void DeleteDocument(Action<System.Threading.Tasks.Task> OnComplete);        
         protected abstract void UpdateFbMove();
+        protected abstract void UpdateFbGameOver();
+        protected abstract void OnComplete(Task task);
         protected abstract bool IsCheckmate(bool isWhite, Piece[,] board);
         protected abstract void OnChange(IDocumentSnapshot? snapshot, Exception? error);        
         protected abstract bool IsKingInCheck(bool isWhite, Piece[,] board);
