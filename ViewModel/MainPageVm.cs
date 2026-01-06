@@ -30,7 +30,6 @@ namespace Chess.ViewModel
                 }
             }
         }
-
         private void AddGame()
         {
             if (!IsBusy)
@@ -39,19 +38,16 @@ namespace Chess.ViewModel
                 OnPropertyChanged(nameof(IsBusy));
             }                
         }
-
         public MainPageVm()
         {
             AddGameCommand = new Command(AddGame);
             games.OnGameAdded += OnGameAdded;
             games.OnGamesChanged += OnGamesChanged;
         }
-
         private void OnGamesChanged(object? sender, EventArgs e)
         {
             OnPropertyChanged(nameof(GamesList));
         }
-
         private void OnGameAdded(object? sender, Game game)
         {
             OnPropertyChanged(nameof(IsBusy));
@@ -64,7 +60,6 @@ namespace Chess.ViewModel
         {
             games.AddSnapshotListener();
         }
-
         public void RemoveSnapshotListener()
         {
             games.RemoveSnapshotListener();

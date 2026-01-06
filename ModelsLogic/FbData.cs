@@ -1,8 +1,5 @@
 ﻿using Chess.Models;
-using Firebase.Auth;
-using Firebase.Auth.Providers;
 using Plugin.CloudFirestore;
-
 namespace Chess.ModelsLogic
 {
     public partial class FbData : FbDataModel

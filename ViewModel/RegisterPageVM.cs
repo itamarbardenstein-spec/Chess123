@@ -7,7 +7,7 @@ using CommunityToolkit.Maui.Core;
 
 namespace Chess.ViewModel
 {
-    internal partial class RegisterPageVM: ObservableObject
+    public partial class RegisterPageVM: ObservableObject
     {
         public ICommand ToggleIsPasswordCommand { get; }
         public bool IsPassword { get; set; } = true;
@@ -23,7 +23,6 @@ namespace Chess.ViewModel
             ToggleIsPasswordCommand = new Command(ToggleIsPassword);
             user.OnAuthCompleted += OnAuthComplete;
         }
-
         private void OnAuthComplete(object? sender, EventArgs e)
         {
             MainThread.InvokeOnMainThreadAsync(() =>
@@ -31,11 +30,9 @@ namespace Chess.ViewModel
                 if (Application.Current != null)
                 {
                     Application.Current.MainPage = new HomePage();
-
                 }
             });
         }
-
         private void ToggleIsPassword()
         {
             IsPassword = !IsPassword;
@@ -52,8 +49,7 @@ namespace Chess.ViewModel
             {                              
                  user.UserName = value;
                  (RegisterCommand as Command)?.ChangeCanExecute();                            
-            }
-            
+            }            
         }
         public string Password
         {
@@ -63,7 +59,6 @@ namespace Chess.ViewModel
                 user.Password = value;
                 (RegisterCommand as Command)?.ChangeCanExecute();
             }
-
         }
         public string Email
         {
@@ -73,7 +68,6 @@ namespace Chess.ViewModel
                 user.Email = value;
                 (RegisterCommand as Command)?.ChangeCanExecute();
             }
-
         }
         public string Age
         {
@@ -83,8 +77,6 @@ namespace Chess.ViewModel
                 user.Age = value;
                 (RegisterCommand as Command)?.ChangeCanExecute();
             }
-
-        }
-        
+        }      
     }
 }

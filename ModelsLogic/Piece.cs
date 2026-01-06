@@ -20,7 +20,6 @@ namespace Chess.ModelsLogic
             Piece start = board[startRow, startCol];
             Piece end = board[endRow, endCol];
             return end.StringImageSource == null || end.IsWhite != start.IsWhite;
-        }
-        
+        }        
     }
 }

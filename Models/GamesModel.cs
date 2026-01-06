@@ -21,7 +21,6 @@ namespace Chess.Models
         protected abstract void OnComplete(IQuerySnapshot qs);
         public abstract void AddSnapshotListener();
         public abstract void AddGame();
-        public abstract void RemoveSnapshotListener();
-        
+        public abstract void RemoveSnapshotListener();       
     }
 }

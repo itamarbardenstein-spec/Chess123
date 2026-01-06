@@ -14,8 +14,7 @@ namespace Chess.ViewModel
         public bool CanLogin()
         {
             return user.CanLogin();
-        }
-        
+        }    
         public LoginPagVM()
         {
             LoginCommand = new Command(Login, CanLogin);
@@ -40,9 +39,7 @@ namespace Chess.ViewModel
         {
             IsPassword = !IsPassword;
             OnPropertyChanged(nameof(IsPassword));
-        }
-
-       
+        }     
         public string UserName
         {
             get => user.UserName;
@@ -51,7 +48,6 @@ namespace Chess.ViewModel
                 user.UserName = value;
                 (LoginCommand as Command)?.ChangeCanExecute();
             }
-
         }
         public string Password
         {
@@ -61,7 +57,6 @@ namespace Chess.ViewModel
                 user.Password = value;
                 (LoginCommand as Command)?.ChangeCanExecute();
             }
-
         }
         public string Email
         {
@@ -71,11 +66,6 @@ namespace Chess.ViewModel
                 user.Email = value;
                 (LoginCommand as Command)?.ChangeCanExecute();
             }
-
         }
-           
-        
-
-
     }
 }

@@ -39,7 +39,6 @@ namespace Chess.ModelsLogic
             }
             if (dr <= 1 && dc <= 1)
                 return target.StringImageSource == null || enemy;
-
             return false;
         }
     }

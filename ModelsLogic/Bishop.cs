@@ -10,7 +10,6 @@ namespace Chess.ModelsLogic
                 return false;
             int dr = Math.Sign(rTo - rFrom);
             int dc = Math.Sign(cTo - cFrom);
-
             return PathClear(board, rFrom, cFrom, rTo, cTo, dr, dc);
         }
     }

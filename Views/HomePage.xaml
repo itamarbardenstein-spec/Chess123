@@ -20,6 +20,5 @@
             HorizontalOptions="Center"
             Text="First time playing?" />
         <Button Command="{Binding InstructionsCommand}" Text="{x:Static m:Strings.Instructions}" />
-
     </VerticalStackLayout>
 </ContentPage>

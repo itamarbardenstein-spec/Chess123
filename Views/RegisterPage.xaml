@@ -7,7 +7,6 @@
     xmlns:vm="clr-namespace:Chess.ViewModel"
     x:DataType="vm:RegisterPageVM"
     Title="RegisterPage">
-
     <VerticalStackLayout
         Padding="30"
         Spacing="25"

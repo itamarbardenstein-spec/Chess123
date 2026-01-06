@@ -1,6 +1,4 @@
-﻿    using Chess.Models;
-using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core;
+﻿using Chess.Models;
 using Plugin.CloudFirestore;
 
 namespace Chess.ModelsLogic
@@ -15,23 +13,11 @@ namespace Chess.ModelsLogic
                 IsHostUser = true
             };
             _currentGame.SetDocument(OnComplete);
-        }
-        //public override void OnGameDeleted(object? sender, EventArgs e)
-        //{
-        //    MainThread.InvokeOnMainThreadAsync(() =>
-        //    {
-        //        Toast.Make(Strings.GameDeleted, ToastDuration.Long).Show();
-        //    });
-
-        //}
+        }   
         protected override void OnComplete(Task task)
         {
             IsBusy = false;
             OnGameAdded?.Invoke(this, _currentGame!);
-        }
-        public Games()
-        {
-
         }
         public override void AddSnapshotListener()
         {

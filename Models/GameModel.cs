@@ -25,7 +25,6 @@ namespace Chess.Models
         public EventHandler? InvalidMove;
         [Ignored]
         public EventHandler? OnGameDeleted;
-
         [Ignored]
         public EventHandler<DisplayMoveArgs>? DisplayChanged;
         [Ignored]

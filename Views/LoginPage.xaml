@@ -40,8 +40,8 @@
             Stroke="DarkCyan"                    
             StrokeShape="RoundRectangle 15"     
             StrokeThickness="1">
-            <Grid> 
-               
+            <Grid>
+
                 <Entry 
                    Placeholder="{x:Static m:Strings.Password}" 
                    Text="{Binding Password}" 
@@ -57,10 +57,8 @@
                    HorizontalOptions="End"
                    Text="{Binding IsPassword, Converter={StaticResource passwordIconConvert}}"
                    TextColor="DarkCyan"/>
-
             </Grid>
         </Border>
-
         <Border 
             Padding="10"                         
             Stroke="DarkCyan"                   
@@ -72,7 +70,6 @@
                 Placeholder="{x:Static m:Strings.Email}"
                 Text="{Binding Email}" />
         </Border>
-    
         <Button 
             Command="{Binding LoginCommand}" 
             Text="{x:Static m:Strings.Login}"
