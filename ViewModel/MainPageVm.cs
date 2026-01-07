@@ -22,7 +22,6 @@ namespace Chess.ViewModel
                 if (value != null)
                 {
                     games.CurrentGame = value;
-
                     MainThread.InvokeOnMainThreadAsync(() =>
                     {
                         Shell.Current.Navigation.PushAsync(new GamePage(value), true);

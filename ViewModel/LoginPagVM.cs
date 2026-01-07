@@ -2,7 +2,6 @@
 using Chess.Models;
 using Chess.ModelsLogic;
 using Chess.Views;
-
 namespace Chess.ViewModel
 {
     internal partial class LoginPagVM : ObservableObject

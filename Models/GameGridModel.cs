@@ -4,7 +4,6 @@ namespace Chess.Models
 {
     public abstract class GameGridModel:Grid
     {
-        protected Grid? GameBoard;
         public Piece[,]? BoardPieces;
         public EventHandler<Piece>? ButtonClicked;
         protected Dictionary<(int row, int col), PieceModel> BoardUIMap = [];

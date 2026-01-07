@@ -1,8 +1,6 @@
 ﻿using Chess.Models;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
-using Firebase.Auth;
-
 namespace Chess.ModelsLogic
 {
     public class User : UserModels

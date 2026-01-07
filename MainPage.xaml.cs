@@ -1,5 +1,4 @@
 ﻿using Chess.ViewModel;
-
 namespace Chess
 {
     public partial class MainPage : ContentPage
@@ -15,12 +14,10 @@ namespace Chess
             base.OnAppearing();
             mpVM.AddSnapshotListener();
         }
-
         protected override void OnDisappearing()
         {
             mpVM.RemoveSnapshotListener();
             base.OnDisappearing();
         }
     }       
-    
 }

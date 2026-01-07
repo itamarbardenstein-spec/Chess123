@@ -1,8 +1,6 @@
 using Chess.ModelsLogic;
 using Chess.ViewModel;
-
 namespace Chess.Views;
-
 public partial class GamePage : ContentPage
 {
     private readonly GamePageVM gpVM;
@@ -17,7 +15,6 @@ public partial class GamePage : ContentPage
         base.OnAppearing();
         gpVM.AddSnapshotListener();
     }
-
     protected override void OnDisappearing()
     {
         gpVM.RemoveSnapshotListener();

@@ -6,7 +6,6 @@ namespace Chess.ModelsLogic
         public override void InitGrid(Grid board,bool IsHostUser)
         {
             this.Parent = board;    
-            GameBoard = board;
             BoardPieces = new Piece[8, 8];
             for (int i = 0; i < 8; i++)
             {
@@ -145,7 +144,6 @@ namespace Chess.ModelsLogic
         {
             bool isWhite = original.IsWhite;
             string? img = original.StringImageSource;
-
             return original switch
             {
                 Pawn => new Pawn(row, col, isWhite, img),

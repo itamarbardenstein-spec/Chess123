@@ -1,7 +1,5 @@
-using Chess.Models;
 using Chess.ViewModel;
 using CommunityToolkit.Maui.Views;
-
 namespace Chess.Views
 {
     public partial class GameResultPopup : Popup

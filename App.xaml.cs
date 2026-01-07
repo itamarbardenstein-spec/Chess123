@@ -13,6 +13,5 @@ namespace Chess
             User user = new();
             MainPage = user.IsRegistered ? new LoginPage() : new RegisterPage();
         }
-
     }
 }

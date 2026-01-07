@@ -1,6 +1,5 @@
 ﻿using Chess.Models;
 using Plugin.CloudFirestore;
-
 namespace Chess.ModelsLogic
 {
     public class Games:GamesModel

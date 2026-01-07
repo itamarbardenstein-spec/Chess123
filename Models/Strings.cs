@@ -25,7 +25,7 @@
         public static string JoinGameErr = "Error in joining game";
         public static string GameDeleted ="Game has been deleted";
         public const string SelectGameTime = "Select Game Time";
-        public const string AppTitle = "Chess    ©Itamar.B.S";
+        public const string AppTitle = "Chess    ©Itamar.B";
         public const string WaitMessage = "Please wait";
         public const string PlayMessage = "Play please";
         public const string BlackKing = "chess_king_svgrepo_com.svg";
