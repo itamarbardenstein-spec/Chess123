@@ -40,9 +40,7 @@ namespace Chess.Models
         [Ignored]
         public string Id { get; set; } = string.Empty;
         [Ignored]
-        public bool IsHostUser { get; set; }
-        [Ignored]
-        public string TimeLeft { get; protected set; } = string.Empty;
+        public bool IsHostUser { get; set; }       
         public string GuestName { get; set; } = string.Empty;         
         public int Time {  get; set; }
         public bool IsGameOver { get; set; }

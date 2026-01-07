@@ -50,7 +50,6 @@ namespace Chess.ModelsLogic
                BlackTimeLeft = timeLeft;
             else                   
                WhiteTimeLeft = timeLeft;
-            TimeLeft = double.Round(timeLeft / 1000.0, 1).ToString();
             TimeLeftChanged?.Invoke(this, EventArgs.Empty);
         }
         public override void SetDocument(Action<Task> OnComplete)
@@ -199,32 +198,6 @@ namespace Chess.ModelsLogic
             Game? updatedGame = snapshot?.ToObject<Game>();
             if (updatedGame != null)
             {
-                IsFull = updatedGame.IsFull;
-                GuestName = updatedGame.GuestName;
-                IsHostTurn = updatedGame.IsHostTurn;
-                MoveFrom = updatedGame.MoveFrom;
-                MoveTo = updatedGame.MoveTo;
-                WhiteTimeLeft = updatedGame.WhiteTimeLeft;
-                BlackTimeLeft = updatedGame.BlackTimeLeft;
-                UpdateStatus();
-                OnGameChanged?.Invoke(this, EventArgs.Empty);
-                if (_status.CurrentStatus == GameStatus.Statuses.Play && updatedGame.MoveFrom[0] != Keys.NoMove)
-                {
-                    long myCurrentTime = IsHostUser ? BlackTimeLeft : WhiteTimeLeft;
-                    TimerSettings currentTimer = new(myCurrentTime, Keys.TimerInterval);
-                    WeakReferenceMessenger.Default.Send(new AppMessage<TimerSettings>(currentTimer));
-                    MoveFrom[0] = 7 - MoveFrom[0];
-                    MoveTo[0] = 7 - MoveTo[0];
-                    MoveFrom[1] = 7 - MoveFrom[1];
-                    MoveTo[1] = 7 - MoveTo[1];
-                    Play(MoveTo[0], MoveTo[1], false);
-                }
-                else
-                {
-                    WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
-                    TimeLeft = string.Empty;
-                    TimeLeftChanged?.Invoke(this, EventArgs.Empty);
-                }
                 if (updatedGame.IsGameOver && !IsGameOver)
                 {
                     IsGameOver = true;
@@ -236,7 +209,34 @@ namespace Chess.ModelsLogic
                     else
                         GameOverArgs = new(false, true);
                     GameOver?.Invoke(this, GameOverArgs);
-                }               
+                }
+                else
+                {
+                    IsFull = updatedGame.IsFull;
+                    GuestName = updatedGame.GuestName;
+                    IsHostTurn = updatedGame.IsHostTurn;
+                    MoveFrom = updatedGame.MoveFrom;
+                    MoveTo = updatedGame.MoveTo;
+                    WhiteTimeLeft = updatedGame.WhiteTimeLeft;
+                    BlackTimeLeft = updatedGame.BlackTimeLeft;
+                    UpdateStatus();
+                    OnGameChanged?.Invoke(this, EventArgs.Empty);
+                    if (_status.CurrentStatus == GameStatus.Statuses.Play && updatedGame.MoveFrom[0] != Keys.NoMove)
+                    {
+                        long myCurrentTime = IsHostUser ? BlackTimeLeft : WhiteTimeLeft;
+                        TimerSettings currentTimer = new(myCurrentTime, Keys.TimerInterval);
+                        WeakReferenceMessenger.Default.Send(new AppMessage<TimerSettings>(currentTimer));
+                        MoveFrom[0] = 7 - MoveFrom[0];
+                        MoveTo[0] = 7 - MoveTo[0];
+                        MoveFrom[1] = 7 - MoveFrom[1];
+                        MoveTo[1] = 7 - MoveTo[1];
+                        Play(MoveTo[0], MoveTo[1], false);
+                    }
+                    else
+                    {
+                        WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
+                    }
+                }                              
             }
             else
             {

@@ -16,7 +16,6 @@ namespace Chess.ViewModel
         public string MyTime => game.IsHostUser? FormatTime(game.BlackTimeLeft) :FormatTime(game.WhiteTimeLeft);
         public string OpponentTime => game.IsHostUser? FormatTime(game.WhiteTimeLeft) : FormatTime(game.BlackTimeLeft);
         public string OpponentName=> game.OpponentName;
-        public string TimeLeft => game.TimeLeft;
         private static string FormatTime(long millis)
         {
             TimeSpan t = TimeSpan.FromMilliseconds(millis);
