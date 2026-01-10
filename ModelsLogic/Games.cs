@@ -2,7 +2,7 @@
 using Plugin.CloudFirestore;
 namespace Chess.ModelsLogic
 {
-    public class Games:GamesModel
+    public class Games : GamesModel
     {
         public override void AddGame()
         {
@@ -12,7 +12,7 @@ namespace Chess.ModelsLogic
                 IsHostUser = true
             };
             _currentGame.SetDocument(OnComplete);
-        }   
+        }
         protected override void OnComplete(Task task)
         {
             IsBusy = false;
@@ -39,6 +39,7 @@ namespace Chess.ModelsLogic
                 if (game != null)
                 {
                     game.Id = ds.Id;
+                    game.InitGameBoard();
                     GamesList.Add(game);
                 }
             }

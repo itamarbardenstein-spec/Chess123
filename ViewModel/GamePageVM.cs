@@ -13,9 +13,9 @@ namespace Chess.ViewModel
         private readonly Game game;
         public string MyName => game.MyName;
         public string StatusMessage => game.StatusMessage;
-        public string MyTime => game.IsHostUser? FormatTime(game.BlackTimeLeft) :FormatTime(game.WhiteTimeLeft);
-        public string OpponentTime => game.IsHostUser? FormatTime(game.WhiteTimeLeft) : FormatTime(game.BlackTimeLeft);
-        public string OpponentName=> game.OpponentName;
+        public string MyTime => game.IsHostUser ? FormatTime(game.BlackTimeLeft) : FormatTime(game.WhiteTimeLeft);
+        public string OpponentTime => game.IsHostUser ? FormatTime(game.WhiteTimeLeft) : FormatTime(game.BlackTimeLeft);
+        public string OpponentName => game.OpponentName;
         private static string FormatTime(long millis)
         {
             TimeSpan t = TimeSpan.FromMilliseconds(millis);
@@ -24,18 +24,33 @@ namespace Chess.ViewModel
         public GamePageVM(Game game, Grid board)
         {
             this.game = game;
-            this.game.gameGrid = grdBoard;
             game.InvalidMove += InvalidMove;
-            game.OnGameChanged += OnGameChanged;         
+            game.OnGameChanged += OnGameChanged; 
             game.OnGameDeleted += OnGameDeleted;
+            //game.OnPromotion += Promotion;
             game.DisplayChanged += OnDisplayChanged;
+            game.OnCastling += Castling;
+            //game.PawnPromotionGrid += PromotionGrid;
             game.TimeLeftChanged += OnTimeLeftChanged;
             game.GameOver += OnGameOver;
-            grdBoard.InitGrid(board,game.IsHostUser);
-            grdBoard.ButtonClicked += OnButtonClicked;             
-            if (!game.IsHostUser)   
+            grdBoard.InitGrid(board, game.IsHostUser);
+            grdBoard.ButtonClicked += OnButtonClicked;
+            if (!game.IsHostUser)
                 game.UpdateGuestUser(OnComplete);
-        }     
+        }
+
+        //private void Promotion(object? sender, OnPromotionArgs e)
+        //{
+        //    Shell.Current.ShowPopup(new PawnPromotionPopup(e.Row, e.Column, game));
+        //}
+        //private void PromotionGrid(object? sender, PawnPromotionArgs e)
+        //{
+        //    grdBoard.Promotion(e.IsHostUser, e.Row, e.Column, e.PieceToSwitch, e.MyMove);
+        //}
+        private void Castling(object? sender, CastlingArgs e)
+        {
+            grdBoard?.Castling(e.Right, e.IsHostUser, e.MyMove);
+        }
         private void OnGameOver(object? sender, GameOverArgs e)
         {
             string reason = game.GameOverMessageReason(e.IWon, e.IsCheckmate);
@@ -77,12 +92,12 @@ namespace Chess.ViewModel
         }
         private void OnComplete(Task task)
         {
-            if(!task.IsCompletedSuccessfully)
-               Toast.Make(Strings.JoinGameErr, ToastDuration.Long).Show();
+            if (!task.IsCompletedSuccessfully)
+                Toast.Make(Strings.JoinGameErr, ToastDuration.Long).Show();
         }
         public void AddSnapshotListener()
         {
-           game.AddSnapshotListener();
+            game.AddSnapshotListener();
         }
         public void RemoveSnapshotListener()
         {
