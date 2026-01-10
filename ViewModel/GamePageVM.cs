@@ -27,10 +27,10 @@ namespace Chess.ViewModel
             game.InvalidMove += InvalidMove;
             game.OnGameChanged += OnGameChanged; 
             game.OnGameDeleted += OnGameDeleted;
-            //game.OnPromotion += Promotion;
+            game.OnPromotion += Promotion;
             game.DisplayChanged += OnDisplayChanged;
             game.OnCastling += Castling;
-            //game.PawnPromotionGrid += PromotionGrid;
+            game.PawnPromotionGrid += PromotionGrid;
             game.TimeLeftChanged += OnTimeLeftChanged;
             game.GameOver += OnGameOver;
             grdBoard.InitGrid(board, game.IsHostUser);
@@ -39,14 +39,14 @@ namespace Chess.ViewModel
                 game.UpdateGuestUser(OnComplete);
         }
 
-        //private void Promotion(object? sender, OnPromotionArgs e)
-        //{
-        //    Shell.Current.ShowPopup(new PawnPromotionPopup(e.Row, e.Column, game));
-        //}
-        //private void PromotionGrid(object? sender, PawnPromotionArgs e)
-        //{
-        //    grdBoard.Promotion(e.IsHostUser, e.Row, e.Column, e.PieceToSwitch, e.MyMove);
-        //}
+        private void Promotion(object? sender, OnPromotionArgs e)
+        {
+            Shell.Current.ShowPopup(new PawnPromotionPopup(e.Row, e.Column, game));
+        }
+        private void PromotionGrid(object? sender, PawnPromotionArgs e)
+        {
+            grdBoard.Promotion(e.IsHostUser, e.Row, e.Column, e.PieceToSwitch, e.MyMove);
+        }
         private void Castling(object? sender, CastlingArgs e)
         {
             grdBoard?.Castling(e.Right, e.IsHostUser, e.MyMove);

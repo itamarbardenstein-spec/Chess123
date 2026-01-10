@@ -212,11 +212,12 @@ namespace Chess.ModelsLogic
         }
         public override void Play(int rowIndex, int columnIndex, bool MyMove)
         {
-            //if (gameBoard![MoveFrom[0], MoveFrom[1]] is Pawn && rowIndex == 0)
-            //{
-            //    OnPromotionArgs onPromotionArgs = new(rowIndex, columnIndex);
-            //    OnPromotion?.Invoke(this, onPromotionArgs);
-            //}
+            bool isPromotion = gameBoard![MoveFrom[0], MoveFrom[1]] is Pawn && rowIndex == 0;
+            if (isPromotion)
+            {
+                OnPromotionArgs onPromotionArgs = new(rowIndex, columnIndex);
+                OnPromotion?.Invoke(this, onPromotionArgs);
+            }
             CheckCastling(columnIndex, MyMove);
             Piece PieceToMove = gameBoard?[MoveFrom[0], MoveFrom[1]]!;
             gameBoard![rowIndex, columnIndex] = CreatePiece(gameBoard![MoveFrom[0], MoveFrom[1]]!, rowIndex, columnIndex);
@@ -225,27 +226,32 @@ namespace Chess.ModelsLogic
             DisplayChanged?.Invoke(this, args);
             if (MyMove)
             {
-                MoveTo[0] = rowIndex;
-                MoveTo[1] = columnIndex;
-                _status.UpdateStatus();
-                IsHostTurn = !IsHostTurn;
-                UpdateFbMove();
-                if (!IsGameOver)
-                {
-                    bool opponentIsWhite = !PieceToMove.IsWhite;
-                    if (IsCheckmate(opponentIsWhite, FlipBoard(gameBoard!)))
-                    {
-                        IsGameOver = true;
-                        WinnerIsWhite = PieceToMove.IsWhite;
-                        UpdateFbGameOver();
-                        GameOverArgs GameOverArgs = new(true, true);
-                        GameOver?.Invoke(this, GameOverArgs);
-                    }
-                }
+                if (isPromotion) return;
+                FinishTurn(gameBoard[rowIndex, columnIndex]);
             }
             else
             {
                 OnGameChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+        private void FinishTurn(Piece movedPiece)
+        {
+            MoveTo[0] = movedPiece.RowIndex;
+            MoveTo[1] = movedPiece.ColumnIndex;
+            _status.UpdateStatus();
+            IsHostTurn = !IsHostTurn;
+            UpdateFbMove();
+            if (!IsGameOver)
+            {
+                bool opponentIsWhite = !movedPiece.IsWhite;
+                if (IsCheckmate(opponentIsWhite, FlipBoard(gameBoard!)))
+                {
+                    IsGameOver = true;
+                    WinnerIsWhite = movedPiece.IsWhite;
+                    UpdateFbGameOver();
+                    GameOverArgs GameOverArgs = new(true, true);
+                    GameOver?.Invoke(this, GameOverArgs);
+                }
             }
         }
         protected override bool IsCheckmate(bool isWhite, Piece[,] board)
@@ -283,7 +289,7 @@ namespace Chess.ModelsLogic
                     else
                         GameOverArgs = new(false, true);
                     GameOver?.Invoke(this, GameOverArgs);
-                }
+                }              
                 else
                 {
                     IsFull = updatedGame.IsFull;
@@ -293,6 +299,7 @@ namespace Chess.ModelsLogic
                     MoveTo = updatedGame.MoveTo;
                     WhiteTimeLeft = updatedGame.WhiteTimeLeft;
                     BlackTimeLeft = updatedGame.BlackTimeLeft;
+                    PieceToSwitch = updatedGame.PieceToSwitch;
                     UpdateStatus();
                     OnGameChanged?.Invoke(this, EventArgs.Empty);
                     if (_status.CurrentStatus == GameStatus.Statuses.Play && updatedGame.MoveFrom[0] != Keys.NoMove)
@@ -309,6 +316,10 @@ namespace Chess.ModelsLogic
                     else
                     {
                         WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
+                    }
+                    if (MoveFrom[0] != Keys.NoMove && gameBoard?[MoveTo[0], MoveTo[1]] is Pawn && MoveTo[0] == 7)
+                    {                       
+                        Promotion(MoveTo[0], MoveTo[1], PieceToSwitch, false);
                     }
                 }                              
             }
@@ -549,9 +560,54 @@ namespace Chess.ModelsLogic
                 _ => throw new Exception()
             };
         }
-        //public override void Promotion(int row, int column)
-        //{
+        public override void Promotion(int row, int column, string pieceToSwitch, bool MyMove)
+        {
+            if (pieceToSwitch == Strings.Queen)
+            {
+                if (MyMove)
+                    gameBoard![row, column] = IsHostUser ? new Queen(row, column, false, Strings.BlackQueen) : new Queen(row, column, true, Strings.WhiteQueen);
+                else
+                    gameBoard![row, column] = IsHostUser ? new Queen(row, column, true, Strings.WhiteQueen) : new Queen(row, column, false, Strings.BlackQueen);
+            }
+            else if (pieceToSwitch == Strings.Rook)
+            {
+                if (MyMove)
+                    gameBoard![row, column] = IsHostUser ? new Rook(row, column, false, Strings.BlackRook) : new Rook(row, column, true, Strings.WhiteRook);
+                else
+                    gameBoard![row, column] = IsHostUser ? new Rook(row, column, true, Strings.WhiteRook) : new Rook(row, column, false, Strings.BlackRook);
+            }
+            else if (pieceToSwitch == Strings.Bishop)
+            {
+                if (MyMove)
+                    gameBoard![row, column] = IsHostUser ? new Bishop(row, column, false, Strings.BlackBishop) : new Bishop(row, column, true, Strings.WhiteBishop);
+                else
+                    gameBoard![row, column] = IsHostUser ? new Bishop(row, column, true, Strings.WhiteBishop) : new Bishop(row, column, false, Strings.BlackBishop);
+            }
+            else
+            {
+                if (MyMove)
+                    gameBoard![row, column] = IsHostUser ? new Knight(row, column, false, Strings.BlackKnight) : new Knight(row, column, true, Strings.WhiteKnight);
+                else
+                    gameBoard![row, column] = IsHostUser ? new Knight(row, column, true, Strings.WhiteKnight) : new Knight(row, column, false, Strings.BlackKnight);
 
-        //}
+            }
+            PawnPromotionArgs promotionArgs = new(IsHostUser, row, column, pieceToSwitch, MyMove);
+            PawnPromotionGrid?.Invoke(this, promotionArgs);
+            if (MyMove)
+            {
+                PieceToSwitch = pieceToSwitch;
+                UpdateFbPromotion();
+                FinishTurn(gameBoard![row, column]);
+                WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
+            }           
+        }
+        protected override void UpdateFbPromotion()
+        {
+            Dictionary<string, object> dict = new()
+            {
+               { nameof(PieceToSwitch), PieceToSwitch },
+            };
+            fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
+        }
     }
 }

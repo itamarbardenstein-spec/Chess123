@@ -13,6 +13,6 @@ namespace Chess.Models
         public abstract Piece CreatePiece(Piece original, int row, int col);
         public abstract void UpdateDisplay(DisplayMoveArgs e);
         public abstract void Castling(bool right,bool isHostUser,bool MyMove);
-        public abstract void Promotion(int row, int column);
+        public abstract void Promotion(bool IsHostUser, int Row, int column, string pieceToSwitch, bool MyMove);
     }
 }

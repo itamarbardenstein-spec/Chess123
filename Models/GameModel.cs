@@ -82,11 +82,11 @@ namespace Chess.Models
         protected abstract void UpdateFbJoinGame(Action<Task> OnComplete);
         public abstract string GameOverMessageTitle(bool IWon);
         public abstract string GameOverMessageReason(bool IWon, bool IsCheckmate);
-        //public abstract void Promotion(int row, int column, string PieceToSwitch, bool MyMove);
+        public abstract void Promotion(int row, int column, string PieceToSwitch, bool MyMove);
         public abstract Piece CreatePiece(Piece original, int row, int col);
         public abstract void InitGameBoard();
         protected abstract void Castling(bool right, bool isHostUser, bool MyMove);
         protected abstract void CheckCastling(int columnIndex, bool MyMove);
-        //protected abstract void UpdateFbPromotion();
+        protected abstract void UpdateFbPromotion();
     }
 }
