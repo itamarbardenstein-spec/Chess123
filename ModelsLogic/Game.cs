@@ -189,27 +189,30 @@ namespace Chess.ModelsLogic
         }
         public override void CheckMove(Piece p)
         {
-            if (_status.CurrentStatus == GameStatus.Statuses.Play)
+            if (!IsGameOver)
             {
-                if (ClickCount == 0)
+                if (_status.CurrentStatus == GameStatus.Statuses.Play)
                 {
-                    if (p?.StringImageSource != null && (IsHostUser ? (!p.IsWhite) : p.IsWhite))
+                    if (ClickCount == 0)
                     {
-                        ClickCount++;
-                        MoveFrom[0] = p.RowIndex;
-                        MoveFrom[1] = p.ColumnIndex;
+                        if (p?.StringImageSource != null && (IsHostUser ? (!p.IsWhite) : p.IsWhite))
+                        {
+                            ClickCount++;
+                            MoveFrom[0] = p.RowIndex;
+                            MoveFrom[1] = p.ColumnIndex;
+                        }
+                    }
+                    else
+                    {
+                        if (gameBoard![MoveFrom[0], MoveFrom[1]].IsMoveValid(gameBoard, MoveFrom[0], MoveFrom[1], p.RowIndex, p.ColumnIndex))
+                            Play(p.RowIndex, p.ColumnIndex, true);
+                        else
+                            InvalidMove?.Invoke(this, EventArgs.Empty);
+                        ClickCount = 0;
                     }
                 }
-                else
-                {
-                    if (gameBoard![MoveFrom[0], MoveFrom[1]].IsMoveValid(gameBoard, MoveFrom[0], MoveFrom[1], p.RowIndex, p.ColumnIndex))
-                        Play(p.RowIndex, p.ColumnIndex, true);
-                    else
-                        InvalidMove?.Invoke(this, EventArgs.Empty);
-                    ClickCount = 0;
-                }
             }
-        }
+        }             
         public override void Play(int rowIndex, int columnIndex, bool MyMove)
         {
             bool isPromotion = gameBoard![MoveFrom[0], MoveFrom[1]] is Pawn && rowIndex == 0;
@@ -255,7 +258,7 @@ namespace Chess.ModelsLogic
             }
         }
         protected override bool IsCheckmate(bool isWhite, Piece[,] board)
-        {
+            {
             if (IsKingInCheck(isWhite, board))
                 if (!HasAnyLegalMove(isWhite, board))
                     return true;
@@ -289,6 +292,7 @@ namespace Chess.ModelsLogic
                     else
                         GameOverArgs = new(false, true);
                     GameOver?.Invoke(this, GameOverArgs);
+                    WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
                 }              
                 else
                 {
@@ -312,19 +316,20 @@ namespace Chess.ModelsLogic
                         MoveFrom[1] = 7 - MoveFrom[1];
                         MoveTo[1] = 7 - MoveTo[1];
                         Play(MoveTo[0], MoveTo[1], false);
+                        if (MoveFrom[0] != Keys.NoMove && gameBoard?[MoveTo[0], MoveTo[1]] is Pawn && MoveTo[0] == 7)
+                        {
+                            Promotion(MoveTo[0], MoveTo[1], PieceToSwitch, false);
+                        }
                     }
                     else
                     {
                         WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
-                    }
-                    if (MoveFrom[0] != Keys.NoMove && gameBoard?[MoveTo[0], MoveTo[1]] is Pawn && MoveTo[0] == 7)
-                    {                       
-                        Promotion(MoveTo[0], MoveTo[1], PieceToSwitch, false);
-                    }
+                    }                  
                 }                              
             }
             else
             {
+                WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
                 MainThread.InvokeOnMainThreadAsync(() =>
                 {
                     OnGameDeleted?.Invoke(this, EventArgs.Empty);
