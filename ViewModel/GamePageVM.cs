@@ -30,6 +30,7 @@ namespace Chess.ViewModel
             game.OnPromotion += Promotion;
             game.DisplayChanged += OnDisplayChanged;
             game.OnCastling += Castling;
+            game.KingIsInCheck += KingIsInCheck;
             game.PawnPromotionGrid += PromotionGrid;
             game.TimeLeftChanged += OnTimeLeftChanged;
             game.GameOver += OnGameOver;
@@ -38,7 +39,10 @@ namespace Chess.ViewModel
             if (!game.IsHostUser)
                 game.UpdateGuestUser(OnComplete);
         }
-
+        private void KingIsInCheck(object? sender, EventArgs e)
+        {
+           Toast.Make(Strings.KingInCheck, ToastDuration.Long, 14).Show();
+        }
         private void Promotion(object? sender, OnPromotionArgs e)
         {
             Shell.Current.ShowPopup(new PawnPromotionPopup(e.Row, e.Column, game));

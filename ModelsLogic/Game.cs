@@ -214,7 +214,18 @@ namespace Chess.ModelsLogic
             }
         }             
         public override void Play(int rowIndex, int columnIndex, bool MyMove)
-        {
+        {                         
+            gameBoard![rowIndex, columnIndex] = CreatePiece(gameBoard![MoveFrom[0], MoveFrom[1]]!, rowIndex, columnIndex);
+            gameBoard![MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
+            if(IsKingInCheck(gameBoard![rowIndex, columnIndex].IsWhite, gameBoard))
+            {
+                gameBoard![MoveFrom[0], MoveFrom[1]] = CreatePiece(gameBoard![rowIndex, columnIndex]!, MoveFrom[0], MoveFrom[1]);
+                gameBoard![rowIndex, columnIndex] = new Pawn(rowIndex, columnIndex, false, null);
+                KingIsInCheck?.Invoke(this, EventArgs.Empty);             
+                return;
+            }
+            gameBoard![MoveFrom[0], MoveFrom[1]] = CreatePiece(gameBoard![rowIndex, columnIndex]!, MoveFrom[0], MoveFrom[1]);
+            gameBoard![rowIndex, columnIndex] = new Pawn(rowIndex, columnIndex, false, null);
             bool isPromotion = gameBoard![MoveFrom[0], MoveFrom[1]] is Pawn && rowIndex == 0;
             if (isPromotion)
             {
@@ -222,7 +233,6 @@ namespace Chess.ModelsLogic
                 OnPromotion?.Invoke(this, onPromotionArgs);
             }
             CheckCastling(columnIndex, MyMove);
-            Piece PieceToMove = gameBoard?[MoveFrom[0], MoveFrom[1]]!;
             gameBoard![rowIndex, columnIndex] = CreatePiece(gameBoard![MoveFrom[0], MoveFrom[1]]!, rowIndex, columnIndex);
             gameBoard![MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
             DisplayMoveArgs args = new(MoveFrom[0], MoveFrom[1], rowIndex, columnIndex);
