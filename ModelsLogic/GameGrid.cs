@@ -275,14 +275,14 @@ namespace Chess.ModelsLogic
         public void ShowLegalMoves(List<int[]> legalMoves)
         {
             ClearDots();
-            foreach (var move in legalMoves)
+            foreach (int[] move in legalMoves)
             {
                 int row = move[0];
                 int col = move[1];
-                var cell = GetCell(row, col);
+                Piece? cell = GetCell(row, col);
                 if (cell != null)
-                {                    
-                    cell.BackgroundColor = Color.FromRgba(255, 255, 0, 0.4);
+                {
+                    cell.BackgroundColor = Color.FromRgba(0, 170, 255, 0.3);
                 }
             }
         }

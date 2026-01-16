@@ -35,7 +35,7 @@ namespace Chess.ViewModel
             game.KingIsInCheck += KingIsInCheck;
             game.PawnPromotionGrid += PromotionGrid;
             game.TimeLeftChanged += OnTimeLeftChanged;
-            game.GameOver += OnGameOver;
+            game.GameOver += OnGameOver;    
             grdBoard.InitGrid(board, game.IsHostUser);
             grdBoard.ButtonClicked += OnButtonClicked;
             if (!game.IsHostUser)

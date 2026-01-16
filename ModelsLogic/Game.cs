@@ -221,7 +221,7 @@ namespace Chess.ModelsLogic
             {
                 for (int c = 0; c < 8; c++)
                 {
-                    if (p.IsMoveValid(gameBoard!, p.RowIndex, p.ColumnIndex, r, c))
+                    if (gameBoard![p.RowIndex, p.ColumnIndex].IsMoveValid(gameBoard!, p.RowIndex, p.ColumnIndex, r, c))
                     {
                         legalMoves.Add([r, c]);
                     }
