@@ -272,5 +272,44 @@ namespace Chess.ModelsLogic
             }
             UpdateCellUI(row, column);
         }
+        public void ShowLegalMoves(List<int[]> legalMoves)
+        {
+            ClearDots();
+            foreach (var move in legalMoves)
+            {
+                int row = move[0];
+                int col = move[1];
+                var cell = GetCell(row, col);
+                if (cell != null)
+                {                    
+                    cell.BackgroundColor = Color.FromRgba(255, 255, 0, 0.4);
+                }
+            }
+        }
+        private Piece? GetCell(int row, int col)
+        {
+            if (BoardUIMap.TryGetValue((row, col), out PieceModel? uiPiece))
+            {
+                return uiPiece as Piece;
+            }
+            return null;
+        }
+        public void ClearDots()
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    var cell = GetCell(i, j);
+                    if (cell != null)
+                    {
+                        if ((i + j) % 2 == 0)
+                            cell.BackgroundColor = Color.FromArgb(Strings.BoardColorWhite);
+                        else
+                            cell.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
+                    }
+                }
+            }
+        }
     }
 }

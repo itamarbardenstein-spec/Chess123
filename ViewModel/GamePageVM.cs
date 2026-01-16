@@ -27,8 +27,10 @@ namespace Chess.ViewModel
             game.InvalidMove += InvalidMove;
             game.OnGameChanged += OnGameChanged; 
             game.OnGameDeleted += OnGameDeleted;
+            game.LegalMoves += ShowLegalMoves;
             game.OnPromotion += Promotion;
             game.DisplayChanged += OnDisplayChanged;
+            game.ClearLegalMovesDots += ClearDots;
             game.OnCastling += Castling;
             game.KingIsInCheck += KingIsInCheck;
             game.PawnPromotionGrid += PromotionGrid;
@@ -38,6 +40,14 @@ namespace Chess.ViewModel
             grdBoard.ButtonClicked += OnButtonClicked;
             if (!game.IsHostUser)
                 game.UpdateGuestUser(OnComplete);
+        }
+        private void ClearDots(object? sender, EventArgs e)
+        {
+            grdBoard.ClearDots();
+        }
+        private void ShowLegalMoves(object? sender, List<int[]> e)
+        {
+            grdBoard.ShowLegalMoves(e);
         }
         private void KingIsInCheck(object? sender, EventArgs e)
         {

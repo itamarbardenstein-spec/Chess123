@@ -26,7 +26,11 @@ namespace Chess.Models
         [Ignored]
         public EventHandler? KingIsInCheck;
         [Ignored]
+        public EventHandler? ClearLegalMovesDots;
+        [Ignored]
         public EventHandler? OnGameDeleted;
+        [Ignored]   
+        public EventHandler<List<int[]>>? LegalMoves;
         [Ignored]
         public EventHandler<DisplayMoveArgs>? DisplayChanged;
         [Ignored]

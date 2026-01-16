@@ -189,6 +189,7 @@ namespace Chess.ModelsLogic
         }
         public override void CheckMove(Piece p)
         {
+            List<int[]> legalMoves = GetLegalMoveList(p);
             if (!IsGameOver)
             {
                 if (_status.CurrentStatus == GameStatus.Statuses.Play)
@@ -200,19 +201,34 @@ namespace Chess.ModelsLogic
                             ClickCount++;
                             MoveFrom[0] = p.RowIndex;
                             MoveFrom[1] = p.ColumnIndex;
+                            LegalMoves?.Invoke(this, legalMoves);
                         }
                     }
                     else
                     {
                         if (gameBoard![MoveFrom[0], MoveFrom[1]].IsMoveValid(gameBoard, MoveFrom[0], MoveFrom[1], p.RowIndex, p.ColumnIndex))
                             Play(p.RowIndex, p.ColumnIndex, true);
-                        else
-                            InvalidMove?.Invoke(this, EventArgs.Empty);
+                        ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);
                         ClickCount = 0;
                     }
                 }
             }
-        }             
+        }   
+        private List<int[]> GetLegalMoveList(Piece p)
+        {
+            List<int[]> legalMoves = [];
+            for (int r = 0; r < 8; r++)
+            {
+                for (int c = 0; c < 8; c++)
+                {
+                    if (p.IsMoveValid(gameBoard!, p.RowIndex, p.ColumnIndex, r, c))
+                    {
+                        legalMoves.Add([r, c]);
+                    }
+                }
+            }
+            return legalMoves;
+        }
         public override void Play(int rowIndex, int columnIndex, bool MyMove)
         {                         
             gameBoard![rowIndex, columnIndex] = CreatePiece(gameBoard![MoveFrom[0], MoveFrom[1]]!, rowIndex, columnIndex);
@@ -246,7 +262,7 @@ namespace Chess.ModelsLogic
             {
                 OnGameChanged?.Invoke(this, EventArgs.Empty);
             }
-        }
+        }       
         private void FinishTurn(Piece movedPiece)
         {
             MoveTo[0] = movedPiece.RowIndex;
