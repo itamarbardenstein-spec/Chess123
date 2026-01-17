@@ -32,6 +32,8 @@ namespace Chess.ViewModel
             game.DisplayChanged += OnDisplayChanged;
             game.ClearLegalMovesDots += ClearDots;
             game.OnCastling += Castling;
+            game.HighlightSquare += HighlightSquare;
+            game.ClearHighLight += ClearHighlight;
             game.KingIsInCheck += KingIsInCheck;
             game.PawnPromotionGrid += PromotionGrid;
             game.TimeLeftChanged += OnTimeLeftChanged;
@@ -41,6 +43,16 @@ namespace Chess.ViewModel
             if (!game.IsHostUser)
                 game.UpdateGuestUser(OnComplete);
         }
+
+        private void ClearHighlight(object? sender, HighlightSquareArgs e)
+        {
+            grdBoard.ClearHighlight(e.Row,e.Column);
+        }
+        private void HighlightSquare(object? sender, HighlightSquareArgs e)
+        {
+           grdBoard.HighlightSquare(e.Row, e.Column);
+        }
+
         private void ClearDots(object? sender, EventArgs e)
         {
             grdBoard.ClearDots();

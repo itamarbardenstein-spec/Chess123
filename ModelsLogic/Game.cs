@@ -206,10 +206,19 @@ namespace Chess.ModelsLogic
                     }
                     else
                     {
-                        if (gameBoard![MoveFrom[0], MoveFrom[1]].IsMoveValid(gameBoard, MoveFrom[0], MoveFrom[1], p.RowIndex, p.ColumnIndex))
-                            Play(p.RowIndex, p.ColumnIndex, true);
-                        ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);
-                        ClickCount = 0;
+                        if (p?.StringImageSource!=null&&p.IsWhite == gameBoard?[MoveFrom[0], MoveFrom[1]].IsWhite)
+                        {
+                            MoveFrom[0] = p.RowIndex;
+                            MoveFrom[1] = p.ColumnIndex;
+                            LegalMoves?.Invoke(this, legalMoves);
+                        }                                      
+                        else
+                        {
+                            if (gameBoard![MoveFrom[0], MoveFrom[1]].IsMoveValid(gameBoard, MoveFrom[0], MoveFrom[1], p!.RowIndex, p.ColumnIndex))
+                                Play(p.RowIndex, p.ColumnIndex, true);
+                            ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);
+                            ClickCount = 0;
+                        }                   
                     }
                 }
             }

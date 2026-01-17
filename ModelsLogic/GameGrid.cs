@@ -4,9 +4,9 @@ namespace Chess.ModelsLogic
 {
     public partial class GameGrid : GameGridModel
     {
-        public override void InitGrid(Grid board,bool IsHostUser)
+        public override void InitGrid(Grid board, bool IsHostUser)
         {
-            this.Parent = board;    
+            this.Parent = board;
             BoardPieces = new Piece[8, 8];
             for (int i = 0; i < 8; i++)
             {
@@ -115,7 +115,7 @@ namespace Chess.ModelsLogic
         protected override void OnButtonClicked(object? sender, EventArgs e)
         {
             ButtonClicked?.Invoke(this, (Piece)sender!);
-        }        
+        }
         public override void UpdateDisplay(DisplayMoveArgs e)
         {
             BoardPieces![e.ToRow, e.ToColumn] = CreatePiece(BoardPieces![e.FromRow, e.FromColomn]!, e.ToRow, e.ToColumn);
@@ -163,7 +163,7 @@ namespace Chess.ModelsLogic
                 _ => throw new Exception()
             };
         }
-        public override void Castling(bool right,bool isHostUser,bool MyMove)
+        public override void Castling(bool right, bool isHostUser, bool MyMove)
         {
             if (right)
             {
@@ -200,7 +200,7 @@ namespace Chess.ModelsLogic
                         UpdateCellUI(0, 4);
                         UpdateCellUI(0, 7);
                     }
-                }                
+                }
             }
             else
             {
@@ -238,7 +238,7 @@ namespace Chess.ModelsLogic
                         UpdateCellUI(0, 0);
                     }
                 }
-            }            
+            }
         }
         public override void Promotion(bool IsHostUser, int row, int column, string pieceToSwitch, bool MyMove)
         {
@@ -309,6 +309,27 @@ namespace Chess.ModelsLogic
                     boardGrid.Remove(dot);
                 }
             }
+        }
+        public void HighlightSquare(int row, int column)
+        {
+            ClearHighlight(lastRowClicked, lastColumnClicked);
+            BoardPieces![row, column].BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);   
+            lastRowClicked = row;
+            lastColumnClicked = column;
+        }
+        public void ClearHighlight(int row, int column)
+        {
+            if(lastColumnClicked!= -1 && lastRowClicked != -1)
+            {
+                if ((row + column) % 2 == 0)
+                {
+                    BoardPieces![row, column]!.BackgroundColor = Color.FromArgb(Strings.BoardColorWhite);
+                }
+                else
+                {
+                    BoardPieces![row, column]!.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
+                }
+            }            
         }
     }
 }
