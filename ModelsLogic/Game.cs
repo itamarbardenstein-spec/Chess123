@@ -43,7 +43,7 @@ namespace Chess.ModelsLogic
                     {
                         UpdateFbGameOver();
                     }
-                    GameOver?.Invoke(this, new GameOverArgs(false, false));
+                    GameOver?.Invoke(this, new GameOverArgs(false, Strings.Time));
                 }
                 return;
             }
@@ -230,7 +230,7 @@ namespace Chess.ModelsLogic
             return legalMoves;
         }
         public override void Play(int rowIndex, int columnIndex, bool MyMove)
-        {                         
+        {                          
             gameBoard![rowIndex, columnIndex] = CreatePiece(gameBoard![MoveFrom[0], MoveFrom[1]]!, rowIndex, columnIndex);
             gameBoard![MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
             if(IsKingInCheck(gameBoard![rowIndex, columnIndex].IsWhite, gameBoard))
@@ -238,31 +238,33 @@ namespace Chess.ModelsLogic
                 gameBoard![MoveFrom[0], MoveFrom[1]] = CreatePiece(gameBoard![rowIndex, columnIndex]!, MoveFrom[0], MoveFrom[1]);
                 gameBoard![rowIndex, columnIndex] = new Pawn(rowIndex, columnIndex, false, null);
                 KingIsInCheck?.Invoke(this, EventArgs.Empty);             
-                return;
-            }
-            gameBoard![MoveFrom[0], MoveFrom[1]] = CreatePiece(gameBoard![rowIndex, columnIndex]!, MoveFrom[0], MoveFrom[1]);
-            gameBoard![rowIndex, columnIndex] = new Pawn(rowIndex, columnIndex, false, null);
-            bool isPromotion = gameBoard![MoveFrom[0], MoveFrom[1]] is Pawn && rowIndex == 0;
-            if (isPromotion)
-            {
-                OnPromotionArgs onPromotionArgs = new(rowIndex, columnIndex);
-                OnPromotion?.Invoke(this, onPromotionArgs);
-            }
-            CheckCastling(columnIndex, MyMove);
-            gameBoard![rowIndex, columnIndex] = CreatePiece(gameBoard![MoveFrom[0], MoveFrom[1]]!, rowIndex, columnIndex);
-            gameBoard![MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
-            DisplayMoveArgs args = new(MoveFrom[0], MoveFrom[1], rowIndex, columnIndex);
-            DisplayChanged?.Invoke(this, args);
-            if (MyMove)
-            {
-                if (isPromotion) return;
-                FinishTurn(gameBoard[rowIndex, columnIndex]);
             }
             else
             {
-                OnGameChanged?.Invoke(this, EventArgs.Empty);
+                gameBoard![MoveFrom[0], MoveFrom[1]] = CreatePiece(gameBoard![rowIndex, columnIndex]!, MoveFrom[0], MoveFrom[1]);
+                gameBoard![rowIndex, columnIndex] = new Pawn(rowIndex, columnIndex, false, null);
+                bool isPromotion = gameBoard![MoveFrom[0], MoveFrom[1]] is Pawn && rowIndex == 0;
+                if (isPromotion)
+                {
+                    OnPromotionArgs onPromotionArgs = new(rowIndex, columnIndex);
+                    OnPromotion?.Invoke(this, onPromotionArgs);
+                }
+                CheckCastling(columnIndex, MyMove);
+                gameBoard![rowIndex, columnIndex] = CreatePiece(gameBoard![MoveFrom[0], MoveFrom[1]]!, rowIndex, columnIndex);
+                gameBoard![MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
+                DisplayMoveArgs args = new(MoveFrom[0], MoveFrom[1], rowIndex, columnIndex);
+                DisplayChanged?.Invoke(this, args);
+                if (MyMove)
+                {
+                    if (!isPromotion)
+                    FinishTurn(gameBoard[rowIndex, columnIndex]);
+                }
+                else
+                {
+                    OnGameChanged?.Invoke(this, EventArgs.Empty);
+                }
             }
-        }       
+        }                      
         private void FinishTurn(Piece movedPiece)
         {
             MoveTo[0] = movedPiece.RowIndex;
@@ -278,7 +280,7 @@ namespace Chess.ModelsLogic
                     IsGameOver = true;
                     WinnerIsWhite = movedPiece.IsWhite;
                     UpdateFbGameOver();
-                    GameOverArgs GameOverArgs = new(true, true);
+                    GameOverArgs GameOverArgs = new(true, Strings.Checkmate);
                     GameOver?.Invoke(this, GameOverArgs);
                 }
             }
@@ -314,9 +316,9 @@ namespace Chess.ModelsLogic
                     TimeRanOut = updatedGame.TimeRanOut;
                     GameOverArgs GameOverArgs;
                     if (TimeRanOut == true)
-                        GameOverArgs = new(true, false);
+                        GameOverArgs = new(true, Strings.Time);
                     else
-                        GameOverArgs = new(false, true);
+                        GameOverArgs = new(false, Strings.Checkmate);
                     GameOver?.Invoke(this, GameOverArgs);
                     WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
                 }              
@@ -390,20 +392,21 @@ namespace Chess.ModelsLogic
                     }
                 }
             }
-            if (!found)
-                return false;
-            for (int i = 0; i < 8; i++)
+            if (found) 
             {
-                for (int j = 0; j < 8; j++)
+                for (int i = 0; i < 8; i++)
                 {
-                    Piece p = board![i, j];
-                    if (p.StringImageSource != null && p.IsWhite != isWhite)
+                    for (int j = 0; j < 8; j++)
                     {
-                        if (p.IsMoveValid(board!, i, j, kingRow, kingCol))
-                            return true;
+                        Piece p = board![i, j];
+                        if (p.StringImageSource != null && p.IsWhite != isWhite)
+                        {
+                            if (p.IsMoveValid(board!, i, j, kingRow, kingCol))
+                                return true;
+                        }
                     }
                 }
-            }
+            }        
             return false;
         }
         protected override bool HasAnyLegalMove(bool isWhite, Piece[,] board)
@@ -552,22 +555,28 @@ namespace Chess.ModelsLogic
             }
             return flipped;
         }
-        public override string GameOverMessageTitle(bool IWon)
+        public override string GameOverMessageTitle(bool IWon, string reason)
         {
+            if (reason==Strings.Draw)
+                return Strings.Draw;
             return IWon ? Strings.YouWon : Strings.YouLost;
         }
-        public override string GameOverMessageReason(bool IWon, bool IsCheckmate)
+        public override string GameOverMessageReason(bool IWon, string reason)
         {        
-            string reason;
-            if (IsCheckmate)
+            string result;
+            if (reason==Strings.Checkmate)
             {
-                reason = IWon ? Strings.WinCheckmate : Strings.LoseCheckmate;
+                result = IWon ? Strings.WinCheckmate : Strings.LoseCheckmate;
+            }
+            else if(reason==Strings.Time)
+            {
+                result = IWon ? Strings.WinTime : Strings.LoseTime;
             }
             else
             {
-                reason = IWon ? Strings.WinTime : Strings.LoseTime;
-            }  
-            return reason;
+                result = Strings.YouDrew;
+            }
+            return result;
         }
         public override Piece CreatePiece(Piece original, int row, int col)
         {

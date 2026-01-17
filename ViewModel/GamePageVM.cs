@@ -67,8 +67,8 @@ namespace Chess.ViewModel
         }
         private void OnGameOver(object? sender, GameOverArgs e)
         {
-            string reason = game.GameOverMessageReason(e.IWon, e.IsCheckmate);
-            string title = game.GameOverMessageTitle(e.IWon);
+            string reason = game.GameOverMessageReason(e.IWon, e.Reason);
+            string title = game.GameOverMessageTitle(e.IWon, e.Reason);
             Shell.Current.ShowPopup(new GameResultPopup(title, reason));
         }
         private void OnTimeLeftChanged(object? sender, EventArgs e)

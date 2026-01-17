@@ -1,4 +1,5 @@
 ﻿using Chess.Models;
+using Microsoft.Maui.Controls.Shapes;
 namespace Chess.ModelsLogic
 {
     public partial class GameGrid : GameGridModel
@@ -275,39 +276,37 @@ namespace Chess.ModelsLogic
         public void ShowLegalMoves(List<int[]> legalMoves)
         {
             ClearDots();
-            foreach (int[] move in legalMoves)
+            if (this.Parent is Grid boardGrid)
             {
-                int row = move[0];
-                int col = move[1];
-                Piece? cell = GetCell(row, col);
-                if (cell != null)
+                foreach (int[] move in legalMoves)
                 {
-                    cell.BackgroundColor = Color.FromRgba(0, 170, 255, 0.3);
+                    int row = move[0];
+                    int col = move[1];
+                    var dot = new Ellipse
+                    {
+                        Fill = Color.FromRgba(0, 0, 0, 0.2),
+                        WidthRequest = 20,
+                        HeightRequest = 20,
+                        HorizontalOptions = LayoutOptions.Center,
+                        VerticalOptions = LayoutOptions.Center,
+                        InputTransparent = true,
+                        ClassId = "LegalMoveDot"
+                    };
+                    boardGrid.Add(dot, col, row);
                 }
             }
         }
-        private Piece? GetCell(int row, int col)
-        {
-            if (BoardUIMap.TryGetValue((row, col), out PieceModel? uiPiece))
-            {
-                return uiPiece as Piece;
-            }
-            return null;
-        }
         public void ClearDots()
         {
-            for (int i = 0; i < 8; i++)
+            if (this.Parent is Grid boardGrid)
             {
-                for (int j = 0; j < 8; j++)
+                var dotsToRemove = boardGrid.Children
+                    .Where(c => c is Ellipse e && e.ClassId == "LegalMoveDot")
+                    .ToList();
+
+                foreach (var dot in dotsToRemove)
                 {
-                    var cell = GetCell(i, j);
-                    if (cell != null)
-                    {
-                        if ((i + j) % 2 == 0)
-                            cell.BackgroundColor = Color.FromArgb(Strings.BoardColorWhite);
-                        else
-                            cell.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
-                    }
+                    boardGrid.Remove(dot);
                 }
             }
         }

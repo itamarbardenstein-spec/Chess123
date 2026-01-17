@@ -86,8 +86,8 @@ namespace Chess.Models
         protected abstract void OnMessageReceived(long timeLeft);
         public abstract void UpdateGuestUser(Action<Task> OnComplete);
         protected abstract void UpdateFbJoinGame(Action<Task> OnComplete);
-        public abstract string GameOverMessageTitle(bool IWon);
-        public abstract string GameOverMessageReason(bool IWon, bool IsCheckmate);
+        public abstract string GameOverMessageTitle(bool IWon, string reason);
+        public abstract string GameOverMessageReason(bool IWon, string reason);
         public abstract void Promotion(int row, int column, string PieceToSwitch, bool MyMove);
         public abstract Piece CreatePiece(Piece original, int row, int col);
         public abstract void InitGameBoard();

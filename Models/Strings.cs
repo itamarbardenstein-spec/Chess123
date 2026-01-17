@@ -43,6 +43,10 @@
         public const string InvalidMove = "Illegal Move! try again";
         public const string BoardColorWhite = "#F0D9B5";
         public const string BoardColorBlack = "#B58863";
+        public const string Checkmate = "Checkmate";
+        public const string Draw = "Draw";
+        public const string Time = "Time";
+        public const string YouDrew = "The game ended in a draw";
         public const string YouWon = "You Won!!";
         public const string YouLost = "You Lost";
         public const string WinCheckmate = "You won the game by checkmate, well done!";

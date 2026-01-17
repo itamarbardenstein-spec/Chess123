@@ -1,8 +1,8 @@
 ﻿namespace Chess.Models
 {
-    public class GameOverArgs(bool iWon, bool IsCheckmate) : EventArgs
+    public class GameOverArgs(bool iWon,string reason) : EventArgs
     {
-        public bool IsCheckmate { get; set; } = IsCheckmate;
+        public string Reason { get; set; } = reason;
         public bool IWon { get; set; }= iWon;
     }
 }
