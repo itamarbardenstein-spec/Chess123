@@ -17,6 +17,7 @@ namespace Chess.Models
         public abstract IListenerRegistration AddSnapshotListener(string collectonName, string id, Plugin.CloudFirestore.DocumentSnapshotHandler OnChange);
         public abstract void DeleteDocument(string collectonName, string id, Action<Task> OnComplete);
         public abstract void GetDocumentsWhereEqualTo(string collectonName, string fName, object fValue, Action<IQuerySnapshot> OnComplete);
+        public abstract void GetDocumentsWhereLessThan(string collectonName, string fName, object fValue, Action<IQuerySnapshot> OnComplete);
 
         public FbDataModel()
         {

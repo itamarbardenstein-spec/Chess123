@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Chess.Models;
@@ -13,6 +14,16 @@ namespace Chess.Platforms.Android
         override protected void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            RegisterTimerMessages();
+            StartDeleteFbDocsService();
+        }
+        private void StartDeleteFbDocsService()
+        {
+            Intent intent = new(this, typeof(DeleteFbDocsService));
+            StartService(intent);
+        }
+        private void RegisterTimerMessages()
+        {
             WeakReferenceMessenger.Default.Register<AppMessage<TimerSettings>>(this, (r, m) =>
             {
                 OnMessageReceived(m.Value);
