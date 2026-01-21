@@ -66,7 +66,7 @@ namespace Chess.Models
         public string PieceToSwitch { get; set; } = string.Empty;
         public bool IsFull { get; set; }
         public long WhiteTimeLeft { get; set; }
-        public bool TimeRanOut { get; set; }
+        public string GameOverReason { get; set; } = string.Empty;
         public long BlackTimeLeft { get; set; }
         public bool IsHostTurn { get; set; } = false;
         public List<int> MoveFrom { get; set; } = [Keys.NoMove, Keys.NoMove];
@@ -98,5 +98,6 @@ namespace Chess.Models
         protected abstract void Castling(bool right, bool isHostUser, bool MyMove);
         protected abstract void CheckCastling(int columnIndex, bool MyMove);
         protected abstract void UpdateFbPromotion();
+        protected abstract void CheckGameOver(Piece movedPiece);
     }
 }

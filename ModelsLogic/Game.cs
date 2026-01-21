@@ -38,7 +38,7 @@ namespace Chess.ModelsLogic
                     ilr?.Remove();
                     IsGameOver = true;
                     WinnerIsWhite = !IsHostUser;
-                    TimeRanOut = true;
+                    GameOverReason = Strings.Time;
                     if (!string.IsNullOrEmpty(Id))
                     {
                         UpdateFbGameOver();
@@ -281,6 +281,10 @@ namespace Chess.ModelsLogic
             _status.UpdateStatus();
             IsHostTurn = !IsHostTurn;
             UpdateFbMove();
+            CheckGameOver(movedPiece);
+        }
+        protected override void CheckGameOver(Piece movedPiece)
+        {
             if (!IsGameOver)
             {
                 bool opponentIsWhite = !movedPiece.IsWhite;
@@ -288,14 +292,55 @@ namespace Chess.ModelsLogic
                 {
                     IsGameOver = true;
                     WinnerIsWhite = movedPiece.IsWhite;
+                    GameOverReason = Strings.Checkmate;
                     UpdateFbGameOver();
                     GameOverArgs GameOverArgs = new(true, Strings.Checkmate);
                     GameOver?.Invoke(this, GameOverArgs);
                 }
+                else if (!HasAnyLegalMove(opponentIsWhite, FlipBoard(gameBoard!)) && !IsKingInCheck(opponentIsWhite, FlipBoard(gameBoard!)))
+                {
+                    IsGameOver = true;
+                    WinnerIsWhite = null;
+                    GameOverReason = Strings.Draw;
+                    UpdateFbGameOver();
+                    GameOverArgs GameOverArgs = new(false, Strings.Draw);
+                    GameOver?.Invoke(this, GameOverArgs);
+                }
+                else
+                {
+                    bool KnightFound = false;
+                    bool BishopFound = false;
+                    bool WinnerPieceFound = false;
+                    for(int i = 0;i<8; i++)
+                    {
+                        for(int j = 0; j < 8; j++)
+                        {
+                            Piece p = gameBoard![i, j];
+                            if (p.StringImageSource != null)
+                            {
+                                if (p is Knight)
+                                    KnightFound = true;
+                                else if (p is Bishop)
+                                    BishopFound = true;
+                                else if (p is not King)
+                                    WinnerPieceFound = true;
+                            }
+                        }
+                    }
+                    if (!WinnerPieceFound && !(KnightFound && BishopFound))
+                    {
+                        IsGameOver = true;
+                        WinnerIsWhite = null;
+                        GameOverReason = Strings.Draw;
+                        UpdateFbGameOver();
+                        GameOverArgs GameOverArgs = new(false, Strings.Draw);
+                        GameOver?.Invoke(this, GameOverArgs);
+                    }
+                }
             }
         }
         protected override bool IsCheckmate(bool isWhite, Piece[,] board)
-            {
+        {
             if (IsKingInCheck(isWhite, board))
                 if (!HasAnyLegalMove(isWhite, board))
                     return true;
@@ -322,12 +367,14 @@ namespace Chess.ModelsLogic
                 {
                     IsGameOver = true;
                     WinnerIsWhite = updatedGame.WinnerIsWhite;
-                    TimeRanOut = updatedGame.TimeRanOut;
+                    GameOverReason = updatedGame.GameOverReason;
                     GameOverArgs GameOverArgs;
-                    if (TimeRanOut == true)
+                    if (GameOverReason == Strings.Time)
                         GameOverArgs = new(true, Strings.Time);
-                    else
+                    else if(GameOverReason==Strings.Checkmate)
                         GameOverArgs = new(false, Strings.Checkmate);
+                    else                         
+                        GameOverArgs = new(false, Strings.Draw);
                     GameOver?.Invoke(this, GameOverArgs);
                     WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
                 }              
@@ -380,7 +427,7 @@ namespace Chess.ModelsLogic
             {
                { nameof(IsGameOver), true },
                { nameof(WinnerIsWhite), WinnerIsWhite! },
-               { nameof(TimeRanOut), TimeRanOut },              
+               { nameof(GameOverReason), GameOverReason },              
             };
             fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
         }
