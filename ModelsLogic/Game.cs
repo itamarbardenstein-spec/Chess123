@@ -222,17 +222,32 @@ namespace Chess.ModelsLogic
                     }
                 }
             }
-        }   
+        }
         private List<int[]> GetLegalMoveList(Piece p)
         {
             List<int[]> legalMoves = [];
+            bool isWhite = p.IsWhite;
             for (int r = 0; r < 8; r++)
             {
                 for (int c = 0; c < 8; c++)
                 {
                     if (gameBoard![p.RowIndex, p.ColumnIndex].IsMoveValid(gameBoard!, p.RowIndex, p.ColumnIndex, r, c))
                     {
-                        legalMoves.Add([r, c]);
+                        Piece fromPiece = gameBoard[p.RowIndex, p.ColumnIndex];
+                        Piece toPiece = gameBoard[r, c];
+                        int originalRow = p.RowIndex;
+                        int originalCol = p.ColumnIndex;
+                        gameBoard[r, c] = CreatePiece(fromPiece, r, c);
+                        gameBoard[p.RowIndex, p.ColumnIndex] = new Pawn(p.RowIndex, p.ColumnIndex, false, null); // משבצת ריקה
+                        bool kingInCheck = IsKingInCheck(isWhite, gameBoard);
+                        gameBoard[p.RowIndex, p.ColumnIndex] = fromPiece;
+                        gameBoard[r, c] = toPiece;
+                        fromPiece.RowIndex = originalRow;
+                        fromPiece.ColumnIndex = originalCol;
+                        if (!kingInCheck)
+                        {
+                            legalMoves.Add([r, c]);
+                        }
                     }
                 }
             }

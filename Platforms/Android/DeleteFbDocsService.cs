@@ -26,11 +26,10 @@ namespace Chess.Platforms.Android
             while (isRunning)
             {
                 fbd.GetDocumentsWhereLessThan(Keys.GamesCollection, nameof(GameModel.Created), DateTime.Now.AddDays(-1), OnComplete);
-                Thread.Sleep(Keys.OneHourInMillisconds);
+                Thread.Sleep(Keys.OneHourInMilliseconds);
             }
             StopSelf();
         }
-
         private void OnComplete(IQuerySnapshot qs)
         {
             foreach (IDocumentSnapshot doc in qs.Documents)
