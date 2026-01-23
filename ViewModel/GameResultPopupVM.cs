@@ -1,8 +1,5 @@
-﻿using Chess.Models;
-using Chess.ModelsLogic;
+﻿
 using Chess.Views;
-using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core;
 using System.Windows.Input;
 
 namespace Chess.ViewModel

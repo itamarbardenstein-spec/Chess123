@@ -240,37 +240,12 @@ namespace Chess.ModelsLogic
                 }
             }
         }
-        public override void Promotion(bool IsHostUser, int row, int column, string pieceToSwitch, bool MyMove)
+        public override void Promotion(bool IsHostUser, int row, int column)
         {
-            if (pieceToSwitch == Strings.Queen)
-            {
-                if (MyMove)
-                    BoardPieces![row, column] = IsHostUser ? new Queen(row, column, false, Strings.BlackQueen) : new Queen(row, column, true, Strings.WhiteQueen);
-                else
-                    BoardPieces![row, column] = IsHostUser ? new Queen(row, column, true, Strings.WhiteQueen) : new Queen(row, column, false, Strings.BlackQueen);
-            }
-            else if (pieceToSwitch == Strings.Rook)
-            {
-                if (MyMove)
-                    BoardPieces![row, column] = IsHostUser ? new Rook(row, column, false, Strings.BlackRook) : new Rook(row, column, true, Strings.WhiteRook);
-                else
-                    BoardPieces![row, column] = IsHostUser ? new Rook(row, column, true, Strings.WhiteRook) : new Rook(row, column, false, Strings.BlackRook);
-            }
-            else if (pieceToSwitch == Strings.Bishop)
-            {
-                if (MyMove)
-                    BoardPieces![row, column] = IsHostUser ? new Bishop(row, column, false, Strings.BlackBishop) : new Bishop(row, column, true, Strings.WhiteBishop);
-                else
-                    BoardPieces![row, column] = IsHostUser ? new Bishop(row, column, true, Strings.WhiteBishop) : new Bishop(row, column, false, Strings.BlackBishop);
-            }
+            if (IsHostUser)
+                BoardPieces![row, column] = new Queen(row, column, false, Strings.BlackQueen);
             else
-            {
-                if (MyMove)
-                    BoardPieces![row, column] = IsHostUser ? new Knight(row, column, false, Strings.BlackKnight) : new Knight(row, column, true, Strings.WhiteKnight);
-                else
-                    BoardPieces![row, column] = IsHostUser ? new Knight(row, column, true, Strings.WhiteKnight) : new Knight(row, column, false, Strings.BlackKnight);
-
-            }
+                BoardPieces![row, column] = new Queen(row, column, true, Strings.WhiteQueen);
             UpdateCellUI(row, column);
         }
         public void ShowLegalMoves(List<int[]> legalMoves)
