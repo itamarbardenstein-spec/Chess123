@@ -416,9 +416,9 @@ namespace Chess.ModelsLogic
                         if (MoveFrom[0] != Keys.NoMove && gameBoard?[MoveFrom[0], MoveFrom[1]] is Pawn && MoveTo[0] == 7)
                         {
                             if (IsHostUser)
-                                gameBoard![MoveTo[0], MoveTo[1]] = new Queen(MoveTo[0], MoveTo[1], false, Strings.BlackQueen);
-                            else
                                 gameBoard![MoveTo[0], MoveTo[1]] = new Queen(MoveTo[0], MoveTo[1], true, Strings.WhiteQueen);
+                            else
+                                gameBoard![MoveTo[0], MoveTo[1]] = new Queen(MoveTo[0], MoveTo[1],  false, Strings.BlackQueen);
                             OnPromotionArgs promoArgs = new(MoveTo[0], MoveTo[1], !IsHostUser);
                             OnPromotion?.Invoke(this, promoArgs);
                         }           
@@ -517,7 +517,7 @@ namespace Chess.ModelsLogic
             }
             return false;
         }
-        protected override void CheckCastling(int columnIndex, bool MyMove)
+        protected override void  CheckCastling(int columnIndex, bool MyMove)
         {
             if (gameBoard?[MoveFrom[0], MoveFrom[1]] is King king && MyMove)
                 king.HasKingMoved = true;
@@ -533,16 +533,22 @@ namespace Chess.ModelsLogic
                 if (!IsHostUser)
                 {
                     isKingSide = columnIndex > MoveFrom[1];
-                    Castling(isKingSide, IsHostUser, MyMove);
-                    CastlingArgs CastleArgs = new(isKingSide, IsHostUser, MyMove);
-                    OnCastling?.Invoke(this, CastleArgs);
+                    if (isKingSide|| gameBoard?[7, 1].StringImageSource != null)
+                    {
+                        Castling(isKingSide, IsHostUser, MyMove);
+                        CastlingArgs CastleArgs = new(isKingSide, IsHostUser, MyMove);
+                        OnCastling?.Invoke(this, CastleArgs);
+                    }                
                 }
                 else
                 {
                     isKingSide = columnIndex < MoveFrom[1];
-                    Castling(!isKingSide, IsHostUser, MyMove);
-                    CastlingArgs CastleArgs = new(!isKingSide, IsHostUser, MyMove);
-                    OnCastling?.Invoke(this, CastleArgs);
+                    if (isKingSide || gameBoard?[7, 6].StringImageSource != null)
+                    {
+                        Castling(!isKingSide, IsHostUser, MyMove);
+                        CastlingArgs CastleArgs = new(!isKingSide, IsHostUser, MyMove);
+                        OnCastling?.Invoke(this, CastleArgs);
+                    }
                 }
             }
         }
