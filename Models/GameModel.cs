@@ -61,7 +61,6 @@ namespace Chess.Models
         public DateTime Created { get; set; }
         public string HostName { get; set; } = string.Empty;
         public bool? WinnerIsWhite { get; set; }
-        public string PieceToSwitch { get; set; } = string.Empty;
         public bool IsFull { get; set; }
         public long WhiteTimeLeft { get; set; }
         public string GameOverReason { get; set; } = string.Empty;
@@ -90,12 +89,10 @@ namespace Chess.Models
         protected abstract void UpdateFbJoinGame(Action<Task> OnComplete);
         public abstract string GameOverMessageTitle(bool IWon, string reason);
         public abstract string GameOverMessageReason(bool IWon, string reason);
-        //public abstract void Promotion(int row, int column, string PieceToSwitch, bool MyMove);
         public abstract Piece CreatePiece(Piece original, int row, int col);
         public abstract void InitGameBoard();
         protected abstract void Castling(bool right, bool isHostUser, bool MyMove);
         protected abstract void CheckCastling(int columnIndex, bool MyMove);
-        //protected abstract void UpdateFbPromotion();
         protected abstract void CheckGameOver(Piece movedPiece);
     }
 }

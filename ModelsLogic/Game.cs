@@ -401,7 +401,6 @@ namespace Chess.ModelsLogic
                     MoveTo = updatedGame.MoveTo;
                     WhiteTimeLeft = updatedGame.WhiteTimeLeft;
                     BlackTimeLeft = updatedGame.BlackTimeLeft;
-                    PieceToSwitch = updatedGame.PieceToSwitch;
                     UpdateStatus();
                     OnGameChanged?.Invoke(this, EventArgs.Empty);
                     if (_status.CurrentStatus == GameStatus.Statuses.Play && updatedGame.MoveFrom[0] != Keys.NoMove)
