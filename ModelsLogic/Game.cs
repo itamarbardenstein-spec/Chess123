@@ -38,7 +38,6 @@ namespace Chess.ModelsLogic
                 {
                     ilr?.Remove();
                     IsGameOver = true;
-                    WinnerIsWhite = !IsHostUser;
                     GameOverReason = Strings.Time;
                     if (!string.IsNullOrEmpty(Id))
                     {
@@ -305,7 +304,6 @@ namespace Chess.ModelsLogic
                 if (IsCheckmate(opponentIsWhite, FlipBoard(gameBoard!)))
                 {
                     IsGameOver = true;
-                    WinnerIsWhite = movedPiece.IsWhite;
                     GameOverReason = Strings.Checkmate;
                     UpdateFbGameOver();
                     GameOverArgs GameOverArgs = new(true, Strings.Checkmate);
@@ -314,7 +312,6 @@ namespace Chess.ModelsLogic
                 else if (!HasAnyLegalMove(opponentIsWhite, FlipBoard(gameBoard!)) && !IsKingInCheck(opponentIsWhite, FlipBoard(gameBoard!)))
                 {
                     IsGameOver = true;
-                    WinnerIsWhite = null;
                     GameOverReason = Strings.Draw;
                     UpdateFbGameOver();
                     GameOverArgs GameOverArgs = new(false, Strings.Draw);
@@ -344,7 +341,6 @@ namespace Chess.ModelsLogic
                     if (!WinnerPieceFound && !(KnightFound && BishopFound))
                     {
                         IsGameOver = true;
-                        WinnerIsWhite = null;
                         GameOverReason = Strings.Draw;
                         UpdateFbGameOver();
                         GameOverArgs GameOverArgs = new(false, Strings.Draw);
@@ -380,15 +376,16 @@ namespace Chess.ModelsLogic
                 if (updatedGame.IsGameOver && !IsGameOver)
                 {
                     IsGameOver = true;
-                    WinnerIsWhite = updatedGame.WinnerIsWhite;
                     GameOverReason = updatedGame.GameOverReason;
                     GameOverArgs GameOverArgs;
                     if (GameOverReason == Strings.Time)
                         GameOverArgs = new(true, Strings.Time);
                     else if(GameOverReason==Strings.Checkmate)
                         GameOverArgs = new(false, Strings.Checkmate);
-                    else                         
+                    else if(GameOverReason==Strings.Draw)
                         GameOverArgs = new(false, Strings.Draw);
+                    else
+                        GameOverArgs = new(true, Strings.Resignation);
                     GameOver?.Invoke(this, GameOverArgs);
                     WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
                 }              
@@ -444,7 +441,6 @@ namespace Chess.ModelsLogic
             Dictionary<string, object> dict = new()
             {
                { nameof(IsGameOver), true },
-               { nameof(WinnerIsWhite), WinnerIsWhite! },
                { nameof(GameOverReason), GameOverReason },              
             };
             fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
@@ -639,17 +635,13 @@ namespace Chess.ModelsLogic
         {        
             string result;
             if (reason==Strings.Checkmate)
-            {
                 result = IWon ? Strings.WinCheckmate : Strings.LoseCheckmate;
-            }
             else if(reason==Strings.Time)
-            {
                 result = IWon ? Strings.WinTime : Strings.LoseTime;
-            }
-            else
-            {
+            else if(reason== Strings.Draw)
                 result = Strings.YouDrew;
-            }
+            else
+                result = IWon ? Strings.OpponentResigned : Strings.YouResigned;
             return result;
         }
         public override Piece CreatePiece(Piece original, int row, int col)
@@ -673,6 +665,23 @@ namespace Chess.ModelsLogic
                 },
                 _ => throw new Exception()
             };
-        }        
+        }
+        public override void ResignGame()
+        {
+            if (!IsGameOver)
+            {
+                if(IsHostTurn&&IsHostUser||!IsHostTurn&&!IsHostUser)
+                {
+                    _status.UpdateStatus();
+                    IsHostTurn = !IsHostTurn;
+                    UpdateFbMove();
+                }                                             
+                IsGameOver = true;
+                GameOverReason = Strings.Resignation;
+                UpdateFbGameOver();
+                GameOverArgs GameOverArgs = new(false, Strings.Resignation);
+                GameOver?.Invoke(this, GameOverArgs);
+            }            
+        }
     }
 }

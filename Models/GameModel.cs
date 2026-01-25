@@ -60,7 +60,6 @@ namespace Chess.Models
         public bool IsGameOver { get; set; }
         public DateTime Created { get; set; }
         public string HostName { get; set; } = string.Empty;
-        public bool? WinnerIsWhite { get; set; }
         public bool IsFull { get; set; }
         public long WhiteTimeLeft { get; set; }
         public string GameOverReason { get; set; } = string.Empty;
@@ -91,8 +90,9 @@ namespace Chess.Models
         public abstract string GameOverMessageReason(bool IWon, string reason);
         public abstract Piece CreatePiece(Piece original, int row, int col);
         public abstract void InitGameBoard();
+        public abstract void ResignGame();
         protected abstract void Castling(bool right, bool isHostUser, bool MyMove);
         protected abstract void CheckCastling(int columnIndex, bool MyMove);
-        protected abstract void CheckGameOver(Piece movedPiece);
+        protected abstract void CheckGameOver(Piece movedPiece);   
     }
 }

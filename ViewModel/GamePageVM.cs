@@ -1,4 +1,5 @@
-﻿using Chess.Models;
+﻿using System.Windows.Input;
+using Chess.Models;
 using Chess.ModelsLogic;
 using Chess.Views;
 using CommunityToolkit.Maui.Alerts;
@@ -16,6 +17,7 @@ namespace Chess.ViewModel
         public string MyTime => game.IsHostUser ? FormatTime(game.BlackTimeLeft) : FormatTime(game.WhiteTimeLeft);
         public string OpponentTime => game.IsHostUser ? FormatTime(game.WhiteTimeLeft) : FormatTime(game.BlackTimeLeft);
         public string OpponentName => game.OpponentName;
+        public ICommand ResignCommand { get; set; }
         private static string FormatTime(long millis)
         {
             TimeSpan t = TimeSpan.FromMilliseconds(millis);
@@ -24,6 +26,7 @@ namespace Chess.ViewModel
         public GamePageVM(Game game, Grid board)
         {
             this.game = game;
+            ResignCommand = new Command(ResignGame);
             game.InvalidMove += InvalidMove;
             game.OnGameChanged += OnGameChanged; 
             game.OnGameDeleted += OnGameDeleted;
@@ -34,14 +37,16 @@ namespace Chess.ViewModel
             game.OnCastling += Castling;
             game.HighlightSquare += HighlightSquare;
             game.ClearHighLight += ClearHighlight;
-            game.KingIsInCheck += KingIsInCheck;
-            //game.PawnPromotionGrid += PromotionGrid;
             game.TimeLeftChanged += OnTimeLeftChanged;
             game.GameOver += OnGameOver;    
             grdBoard.InitGrid(board, game.IsHostUser);
             grdBoard.ButtonClicked += OnButtonClicked;
             if (!game.IsHostUser)
                 game.UpdateGuestUser(OnComplete);
+        }
+        private void ResignGame(object obj)
+        {
+           game.ResignGame();
         }
         private void ClearHighlight(object? sender, HighlightSquareArgs e)
         {
@@ -51,7 +56,6 @@ namespace Chess.ViewModel
         {
            grdBoard.HighlightSquare(e.Row, e.Column);
         }
-
         private void ClearDots(object? sender, EventArgs e)
         {
             grdBoard.ClearDots();
@@ -59,19 +63,11 @@ namespace Chess.ViewModel
         private void ShowLegalMoves(object? sender, List<int[]> e)
         {
             grdBoard.ShowLegalMoves(e);
-        }
-        private void KingIsInCheck(object? sender, EventArgs e)
-        {
-           Toast.Make(Strings.KingInCheck, ToastDuration.Long, 14).Show();
-        }
+        }      
         private void Promotion(object? sender, OnPromotionArgs e)
         {
              grdBoard.Promotion(e.IsHostUser, e.Row, e.Column);
-        }
-        //private void PromotionGrid(object? sender, PawnPromotionArgs e)
-        //{
-        //    grdBoard.Promotion(e.IsHostUser, e.Row, e.Column, e.PieceToSwitch, e.MyMove);
-        //}
+        }      
         private void Castling(object? sender, CastlingArgs e)
         {
             grdBoard?.Castling(e.Right, e.IsHostUser, e.MyMove);
