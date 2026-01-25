@@ -38,8 +38,6 @@ namespace Chess.Models
         [Ignored]
         public EventHandler<HighlightSquareArgs>? ClearHighLight;
         [Ignored]
-        public EventHandler<PawnPromotionArgs>? PawnPromotionGrid;
-        [Ignored]
         public EventHandler<OnPromotionArgs>? OnPromotion;
         [Ignored]
         public EventHandler<CastlingArgs>? OnCastling;
