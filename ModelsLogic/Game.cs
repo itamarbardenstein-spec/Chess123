@@ -274,7 +274,7 @@ namespace Chess.ModelsLogic
                 gameBoard![MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
                 DisplayMoveArgs args = new(MoveFrom[0], MoveFrom[1], rowIndex, columnIndex);
                 DisplayChanged?.Invoke(this, args);
-                if (MyMove&&gameBoard![MoveFrom[0], MoveFrom[1]] is Pawn && rowIndex == 0)
+                if (MyMove && gameBoard![rowIndex, columnIndex] is Pawn && rowIndex == 0)
                 {
                     if (IsHostUser)
                         gameBoard[rowIndex, columnIndex] = new Queen(rowIndex, columnIndex, false, Strings.BlackQueen);
@@ -412,14 +412,14 @@ namespace Chess.ModelsLogic
                         MoveFrom[1] = 7 - MoveFrom[1];
                         MoveTo[1] = 7 - MoveTo[1];
                         Play(MoveTo[0], MoveTo[1], false);
-                        if (MoveFrom[0] != Keys.NoMove && gameBoard?[MoveFrom[0], MoveFrom[1]] is Pawn && MoveTo[0] == 7)
+                        if (MoveFrom[0] != Keys.NoMove && gameBoard?[MoveTo[0], MoveTo[1]] is Pawn && MoveTo[0] == 7)
                         {
                             if (IsHostUser)
                                 gameBoard![MoveTo[0], MoveTo[1]] = new Queen(MoveTo[0], MoveTo[1], true, Strings.WhiteQueen);
                             else
                                 gameBoard![MoveTo[0], MoveTo[1]] = new Queen(MoveTo[0], MoveTo[1],  false, Strings.BlackQueen);
                             OnPromotionArgs promoArgs = new(MoveTo[0], MoveTo[1], !IsHostUser);
-                            OnPromotion?.Invoke(this, promoArgs);
+                            OnPromotion?.Invoke(this, promoArgs);       
                         }           
                     }
                     else
