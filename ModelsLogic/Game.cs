@@ -1,10 +1,9 @@
 ﻿using Chess.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using Plugin.CloudFirestore;
-using System.Data.Common;
 
 namespace Chess.ModelsLogic
-{
+{   
     public class Game : GameModel
     {
         public override string OpponentName => IsHostUser ? GuestName : HostName;
@@ -40,9 +39,7 @@ namespace Chess.ModelsLogic
                     IsGameOver = true;
                     GameOverReason = Strings.Time;
                     if (!string.IsNullOrEmpty(Id))
-                    {
                         UpdateFbGameOver();
-                    }
                     GameOver?.Invoke(this, new GameOverArgs(false, Strings.Time));
                 }
                 return;
@@ -206,7 +203,12 @@ namespace Chess.ModelsLogic
                     }
                     else
                     {
-                        if (p?.StringImageSource!=null&&p.IsWhite == gameBoard?[MoveFrom[0], MoveFrom[1]].IsWhite)
+                        if (p.RowIndex == MoveFrom[0] && p.ColumnIndex == MoveFrom[1])
+                        {
+                            ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);
+                            ClickCount = 0;
+                        }
+                        else if(p?.StringImageSource!=null&&p.IsWhite == gameBoard?[MoveFrom[0], MoveFrom[1]].IsWhite)
                         {
                             MoveFrom[0] = p.RowIndex;
                             MoveFrom[1] = p.ColumnIndex;
