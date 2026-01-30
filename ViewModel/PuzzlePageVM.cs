@@ -11,8 +11,9 @@ namespace Chess.ViewModel
     {
         private readonly PuzzleGrid puzzleGridBoard = [];
         private readonly Puzzle puzlle= new();
-        public ICommand ShowHintCommand { get; set; }
+        public ICommand ShowHintCommand { get; private set; }
         public ICommand HomeCommand { get; private set; }
+        public ICommand ShowMoveCommand { get; private set; }
         public PuzzlePageVM(Grid puzzleBoard)
         {
             puzzleGridBoard.InitPuzzleGrid(puzzleBoard);
@@ -23,7 +24,14 @@ namespace Chess.ViewModel
             puzlle.IncorrectMove += OnIncorrectMove;
             ShowHintCommand=new Command(ShowHint);
             HomeCommand = new Command(TransferHome);
+            ShowMoveCommand=new Command(ShowCorrectMove);
         }
+
+        private void ShowCorrectMove(object obj)
+        {
+            puzzleGridBoard.ShowCorrectMove();
+        }
+
         private void TransferHome(object obj)
         {
             MainThread.InvokeOnMainThreadAsync(() =>

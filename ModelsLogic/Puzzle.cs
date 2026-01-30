@@ -64,46 +64,52 @@ namespace Chess.ModelsLogic
         }     
         public override void OnButtonClicked(Piece p)
         {
-            List<int[]> legalMoves = GetLegalMoveList(p);
-            if (ClickCount == 0)
+            if (!solved)
             {
-                if (p?.StringImageSource != null&&!p.IsWhite)
+                List<int[]> legalMoves = GetLegalMoveList(p);
+                if (ClickCount == 0)
                 {
-                    ClickCount++;
-                    MoveFromRow = p.RowIndex;
-                    MoveFromColumn = p.ColumnIndex;
-                    LegalMoves?.Invoke(this, legalMoves);
-                }
-            }
-            else
-            {
-                if (p.RowIndex == MoveFromRow && p.ColumnIndex == MoveFromColumn)
-                {
-                    ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);
-                    ClickCount = 0;
-                }
-                else if (p?.StringImageSource != null)
-                {
-                    MoveFromRow = p.RowIndex;
-                    MoveFromColumn = p.ColumnIndex;
-                    LegalMoves?.Invoke(this, legalMoves);
+                    if (p?.StringImageSource != null && !p.IsWhite)
+                    {
+                        ClickCount++;
+                        MoveFromRow = p.RowIndex;
+                        MoveFromColumn = p.ColumnIndex;
+                        LegalMoves?.Invoke(this, legalMoves);
+                    }
                 }
                 else
                 {
-                    if (gameBoard![MoveFromRow, MoveFromColumn].IsMoveValid(gameBoard, MoveFromRow, MoveFromColumn, p!.RowIndex, p.ColumnIndex))
-                        CheckMove(p.RowIndex, p.ColumnIndex);
-                    ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);
-                    ClickCount = 0;
-                }                    
-                
+                    if (p.RowIndex == MoveFromRow && p.ColumnIndex == MoveFromColumn)
+                    {
+                        ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);
+                        ClickCount = 0;
+                    }
+                    else if (p?.StringImageSource != null)
+                    {
+                        MoveFromRow = p.RowIndex;
+                        MoveFromColumn = p.ColumnIndex;
+                        LegalMoves?.Invoke(this, legalMoves);
+                    }
+                    else
+                    {
+                        if (gameBoard![MoveFromRow, MoveFromColumn].IsMoveValid(gameBoard, MoveFromRow, MoveFromColumn, p!.RowIndex, p.ColumnIndex))
+                            CheckMove(p.RowIndex, p.ColumnIndex);
+                        ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);
+                        ClickCount = 0;
+                    }
+
+                }
             }
-        }
+        }               
         public override void CheckMove(int rowIndex, int columnIndex)
         {
             MoveToRow = rowIndex;
             MoveToCulomn = columnIndex;
             if (MoveFromRow == 4 && MoveFromColumn == 3 && MoveToRow == 2 && MoveToCulomn == 2)
+            {
                 CorrectMove?.Invoke(this, EventArgs.Empty);
+                solved = true;
+            }               
             else
             {
                 IncorrectMove?.Invoke(this, EventArgs.Empty);

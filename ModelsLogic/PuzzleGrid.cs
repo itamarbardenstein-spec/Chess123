@@ -127,5 +127,10 @@ namespace Chess.ModelsLogic
         {
             BoardPieces![4, 3].BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);
         }
+        public void ShowCorrectMove()
+        {
+            BoardPieces![4, 3].BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);
+            BoardPieces![2,2].BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);
+        }
     }
 }

@@ -10,6 +10,7 @@ namespace Chess.Models
         protected int MoveFromColumn = 0;
         protected int MoveToRow = 0;
         protected int MoveToCulomn = 0;
+        protected bool solved = false;
         public abstract void CheckMove(int rowIndex, int columnIndex);
         public abstract void OnButtonClicked(Piece p);
         protected abstract bool IsKingInCheck(bool isWhite, Piece[,] board);
