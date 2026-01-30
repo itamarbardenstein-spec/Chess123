@@ -118,10 +118,12 @@ namespace Chess.ModelsLogic
         }
         public override void UpdateDisplay(DisplayMoveArgs e)
         {
+            ClearBoardHighLights();         
             BoardPieces![e.ToRow, e.ToColumn] = CreatePiece(BoardPieces![e.FromRow, e.FromColomn]!, e.ToRow, e.ToColumn);
             BoardPieces![e.FromRow, e.FromColomn] = new Pawn(e.FromRow, e.FromColomn, false, null);
             UpdateCellUI(e.FromRow, e.FromColomn);
             UpdateCellUI(e.ToRow, e.ToColumn);
+            HighlightMove(e.FromRow, e.FromColomn, e.ToRow, e.ToColumn);
         }
         protected override void UpdateCellUI(int row, int col)
         {
@@ -287,24 +289,47 @@ namespace Chess.ModelsLogic
         }
         public void HighlightSquare(int row, int column)
         {
-            ClearHighlight(lastRowClicked, lastColumnClicked);
-            BoardPieces![row, column].BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);   
-            lastRowClicked = row;
-            lastColumnClicked = column;
-        }
-        public void ClearHighlight(int row, int column)
-        {
-            if(lastColumnClicked!= -1 && lastRowClicked != -1)
+            if (BoardUIMap.TryGetValue((row, column), out PieceModel? uiPiece) && uiPiece != null)
             {
-                if ((row + column) % 2 == 0)
+                uiPiece.BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);
+                BoardPieces![row, column].BackgroundColor = uiPiece.BackgroundColor;
+            }
+        }
+
+        public void HighlightMove(int fromRow, int fromColumn, int toRow, int toColumn)
+        {
+            HighlightSquare(fromRow, fromColumn);
+            HighlightSquare(toRow, toColumn);
+        }
+        public void ClearBoardHighLights()
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
                 {
-                    BoardPieces![row, column]!.BackgroundColor = Color.FromArgb(Strings.BoardColorWhite);
+                    if (BoardUIMap.TryGetValue((i, j), out PieceModel? uiPiece) && uiPiece != null)
+                    {
+                        if ((i + j) % 2 == 0)
+                            uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorWhite);
+                        else
+                            uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
+                        if (BoardPieces![i, j] != null)
+                            BoardPieces[i, j].BackgroundColor = uiPiece.BackgroundColor;
+                    }
                 }
+            }
+        }
+        public void ClearSquareHighlight(int row, int col)
+        {
+            if (BoardUIMap.TryGetValue((row, col), out PieceModel? uiPiece) && uiPiece != null)
+            {
+                if ((row + col) % 2 == 0)
+                    uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorWhite);
                 else
-                {
-                    BoardPieces![row, column]!.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
-                }
-            }            
+                    uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
+                if (BoardPieces![row, col] != null)
+                    BoardPieces[row, col].BackgroundColor = uiPiece.BackgroundColor;
+            }
         }
     }
 }

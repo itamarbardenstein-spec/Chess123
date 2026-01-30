@@ -42,13 +42,15 @@ namespace Chess.ModelsLogic
                         UpdateFbGameOver();
                     GameOver?.Invoke(this, new GameOverArgs(false, Strings.Time));
                 }
-                return;
             }
-            if (IsHostUser)
-               BlackTimeLeft = timeLeft;
-            else                   
-               WhiteTimeLeft = timeLeft;
-            TimeLeftChanged?.Invoke(this, EventArgs.Empty);
+            else
+            {
+                if (IsHostUser)
+                    BlackTimeLeft = timeLeft;
+                else
+                    WhiteTimeLeft = timeLeft;
+                TimeLeftChanged?.Invoke(this, EventArgs.Empty);
+            }           
         }
         public override void SetDocument(Action<Task> OnComplete)
         {
@@ -199,6 +201,7 @@ namespace Chess.ModelsLogic
                             MoveFrom[0] = p.RowIndex;
                             MoveFrom[1] = p.ColumnIndex;
                             LegalMoves?.Invoke(this, legalMoves);
+                            HighlightSquare?.Invoke(this, new HighlightSquareArgs(p.RowIndex, p.ColumnIndex));
                         }
                     }
                     else
@@ -206,13 +209,16 @@ namespace Chess.ModelsLogic
                         if (p.RowIndex == MoveFrom[0] && p.ColumnIndex == MoveFrom[1])
                         {
                             ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);
+                            ClearSquareHighLight?.Invoke(this, new HighlightSquareArgs(p.RowIndex, p.ColumnIndex));
                             ClickCount = 0;
                         }
-                        else if(p?.StringImageSource!=null&&p.IsWhite == gameBoard?[MoveFrom[0], MoveFrom[1]].IsWhite)
+                        else if(p?.StringImageSource!=null && p.IsWhite == gameBoard?[MoveFrom[0], MoveFrom[1]].IsWhite)
                         {
+                            ClearSquareHighLight?.Invoke(this, new HighlightSquareArgs(MoveFrom[0], MoveFrom[1]));
                             MoveFrom[0] = p.RowIndex;
                             MoveFrom[1] = p.ColumnIndex;
-                            LegalMoves?.Invoke(this, legalMoves);
+                            LegalMoves?.Invoke(this, legalMoves);                          
+                            HighlightSquare?.Invoke(this, new HighlightSquareArgs(p.RowIndex, p.ColumnIndex));
                         }                                      
                         else
                         {
@@ -247,16 +253,14 @@ namespace Chess.ModelsLogic
                         fromPiece.RowIndex = originalRow;
                         fromPiece.ColumnIndex = originalCol;
                         if (!kingInCheck)
-                        {
                             legalMoves.Add([r, c]);
-                        }
                     }
                 }
             }
             return legalMoves;
         }
         public override void Play(int rowIndex, int columnIndex, bool MyMove)
-        {            
+        {
             Piece eatenPiece= gameBoard![rowIndex, columnIndex];           
             gameBoard![rowIndex, columnIndex] = CreatePiece(gameBoard![MoveFrom[0], MoveFrom[1]], rowIndex, columnIndex);
             gameBoard![MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
@@ -670,7 +674,7 @@ namespace Chess.ModelsLogic
         }
         public override void ResignGame()
         {
-            if (!IsGameOver)
+            if (!IsGameOver&&IsFull)
             {
                 if(IsHostTurn&&IsHostUser||!IsHostTurn&&!IsHostUser)
                 {

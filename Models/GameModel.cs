@@ -24,7 +24,9 @@ namespace Chess.Models
         [Ignored]
         public EventHandler? InvalidMove;
         [Ignored]
-        public EventHandler? KingIsInCheck;
+        public EventHandler? KingIsInCheck;      
+        [Ignored]
+        public EventHandler? ClearBoardHighLights;
         [Ignored]
         public EventHandler? ClearLegalMovesDots;
         [Ignored]
@@ -36,7 +38,7 @@ namespace Chess.Models
         [Ignored]
         public EventHandler<HighlightSquareArgs>? HighlightSquare;
         [Ignored]
-        public EventHandler<HighlightSquareArgs>? ClearHighLight;
+        public EventHandler<HighlightSquareArgs>? ClearSquareHighLight;
         [Ignored]
         public EventHandler<OnPromotionArgs>? OnPromotion;
         [Ignored]
