@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Chess.Views.PuzzlePage"
+             Title="PuzzlePage"
+             xmlns:m="clr-namespace:Chess.Models"
+             xmlns:vm="clr-namespace:Chess.ViewModel"
+             x:DataType="vm:PuzzlePageVM">
+    <VerticalStackLayout>
+        <Label
+            FontSize="24"
+            HorizontalOptions="Center"
+            Text="{x:Static m:Strings.PuzzleTitle}" />
+        <Grid
+         x:Name="puzzleBoard"
+         ColumnSpacing="1"
+         HorizontalOptions="Center"
+         RowSpacing="1"
+         VerticalOptions="Center" />
+        <Button
+            BackgroundColor="#4CAF50"
+            Command="{Binding ShowHintCommand}"
+            Text="{x:Static m:Strings.Hint}" />
+        <Button
+    BackgroundColor="#2196F3"
+    Command="{Binding HomeCommand}"
+    Text="Home"
+    TextColor="White" />
+    </VerticalStackLayout>
+    
+</ContentPage>

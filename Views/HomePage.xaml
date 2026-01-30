@@ -15,6 +15,7 @@
             Text="{Binding UserName, StringFormat='Hello {0}!'}"
             TextColor="Black" />
         <Button Command="{Binding PlayCommand}" Text="{x:Static m:Strings.Play}" />
+        <Button Command="{Binding PuzzleCommand}" Text="{x:Static m:Strings.Puzzle}" />
         <Label
             FontSize="30"
             HorizontalOptions="Center"
