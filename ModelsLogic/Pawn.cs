@@ -4,18 +4,19 @@ namespace Chess.ModelsLogic
 {
     public partial class Pawn(int row, int column, bool isWhite, string? image) : Piece(row, column, isWhite, image)
     {
-        public override bool IsMoveValid(Piece[,] board, int fr, int fc, int tr, int tc)
+        public override bool IsMoveValid(Piece[,] board, int fromRow, int fromColumn, int toRow, int toColumn)
         {
-            Piece pawn = board[fr, fc];
+            Piece pawn = board[fromRow, fromColumn];
             bool white = pawn.IsWhite;
-            Piece target = board[tr, tc];
-            if (fc == tc && target.StringImageSource== null && tr == fr - 1)
-                return true;
-            if (fr==6&&fc == tc && target.StringImageSource == null && board[fr - 1, fc].StringImageSource == null && tr == fr - 2)
-                return true;
-            if (Math.Abs(tc - fc) == 1 && tr == fr - 1 && target?.StringImageSource != null && target.IsWhite != white)
-                return true;
-            return false;
+            Piece target = board[toRow, toColumn];
+            bool result = false;
+            if (fromColumn == toColumn && target.StringImageSource== null && toRow == fromRow - 1)
+                result= true;
+            else if (fromRow == 6&& fromColumn == toColumn && target.StringImageSource == null && board[fromRow - 1, fromColumn].StringImageSource == null && toRow == fromRow - 2)
+                result= true;
+            else if (Math.Abs(toColumn - fromColumn) == 1 && toRow == fromRow - 1 && target?.StringImageSource != null && target.IsWhite != white)
+                result= true;
+            return result;
         }
     }
 }

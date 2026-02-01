@@ -4,15 +4,19 @@ namespace Chess.ModelsLogic
 {
     public partial class Queen(int row, int column, bool isWhite, string? image) : Piece(row, column, isWhite, image)
     {
-        public override bool IsMoveValid(Piece[,] board, int rFrom, int cFrom, int rTo, int cTo)
+        public override bool IsMoveValid(Piece[,] board, int fromRow, int fromColumn, int toRow, int toColumn)
         {      
-            bool straight = rFrom == rTo || cFrom == cTo;
-            bool diagonal = Math.Abs(rTo - rFrom) == Math.Abs(cTo - cFrom);
-            if (!straight && !diagonal)
-                return false;
-            int dr = Math.Sign(rTo - rFrom);
-            int dc = Math.Sign(cTo - cFrom);
-            return PathClear(board, rFrom, cFrom, rTo, cTo, dr, dc);
+            bool result = false;
+            bool straight = fromRow == toRow || fromColumn == toColumn;
+            bool diagonal = Math.Abs(toRow - fromRow) == Math.Abs(toColumn - fromColumn);
+            if (straight || diagonal)
+            {
+                int rowDirection = Math.Sign(toRow - fromRow);
+                int columnDirection = Math.Sign(toColumn - fromColumn);
+                if(PathClear(board, fromRow, fromColumn, toRow, toColumn, rowDirection, columnDirection))
+                    result = true;
+            }
+            return result;
         }
     }
 }
