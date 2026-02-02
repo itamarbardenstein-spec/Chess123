@@ -92,25 +92,16 @@ namespace Chess.ModelsLogic
                 }
             }
             for (int i = 0; i < 8; i++)
-            {
                 for (int j = 0; j < 8; j++)
                 {
                     if (BoardPieces[i, j] == null)
                         BoardPieces[i, j] = new Pawn(i, j, false, null);
                     Piece p = BoardPieces[i, j];
-                    if ((i + j) % 2 == 0)
-                    {
-                        p!.BackgroundColor = Color.FromArgb(Strings.BoardColorWhite);
-                    }
-                    else
-                    {
-                        p!.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
-                    }
+                    p!.BackgroundColor = Color.FromArgb(((i + j) % 2 == 0) ? Strings.BoardColorWhite: Strings.BoardColorBlack);
                     p.Clicked += OnButtonClicked;
                     ((Grid)this.Parent).Add(p, j, i);
                     BoardUIMap[(i, j)] = p;
                 }
-            }
         }
         protected override void OnButtonClicked(object? sender, EventArgs e)
         {
@@ -127,8 +118,7 @@ namespace Chess.ModelsLogic
         }
         protected override void UpdateCellUI(int row, int col)
         {
-            if (!BoardUIMap.TryGetValue((row, col), out PieceModel? uiPiece))
-                return;
+            Piece uiPiece =BoardUIMap[(row, col)];
             Piece modelPiece = BoardPieces![row, col];
             if (modelPiece.StringImageSource == null)
             {
@@ -253,49 +243,34 @@ namespace Chess.ModelsLogic
         public void ShowLegalMoves(List<int[]> legalMoves)
         {
             ClearDots();
-            if (this.Parent is Grid boardGrid)
+            foreach (int[] move in legalMoves)
             {
-                foreach (int[] move in legalMoves)
+                int row = move[0];
+                int col = move[1];
+                Ellipse dot = new()
                 {
-                    int row = move[0];
-                    int col = move[1];
-                    var dot = new Ellipse
-                    {
-                        Fill = Color.FromRgba(0, 0, 0, 0.2),
-                        WidthRequest = 20,
-                        HeightRequest = 20,
-                        HorizontalOptions = LayoutOptions.Center,
-                        VerticalOptions = LayoutOptions.Center,
-                        InputTransparent = true,
-                        ClassId = "LegalMoveDot"
-                    };
-                    boardGrid.Add(dot, col, row);
-                }
-            }
+                    Fill = Color.FromRgba(0, 0, 0, 0.2),
+                    WidthRequest = 20,
+                    HeightRequest = 20,
+                    HorizontalOptions = LayoutOptions.Center,
+                    VerticalOptions = LayoutOptions.Center,
+                    InputTransparent = true,
+                };
+                ((Grid)this.Parent).Add(dot, col, row);
+            }                 
         }
         public void ClearDots()
-        {
-            if (this.Parent is Grid boardGrid)
-            {
-                var dotsToRemove = boardGrid.Children
-                    .Where(c => c is Ellipse e && e.ClassId == "LegalMoveDot")
-                    .ToList();
-
-                foreach (var dot in dotsToRemove)
-                {
-                    boardGrid.Remove(dot);
-                }
-            }
+        {         
+            Grid boardGrid=(Grid)this.Parent;
+            List<IView> dotsToRemove = [.. boardGrid.Children.Where(dot => dot is Ellipse)];
+            foreach (IView dot in dotsToRemove)
+                boardGrid.Remove(dot);
         }
         public void HighlightSquare(int row, int column)
         {
-            if (BoardUIMap.TryGetValue((row, column), out PieceModel? uiPiece) && uiPiece != null)
-            {
-                uiPiece.BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);
-                BoardPieces![row, column].BackgroundColor = uiPiece.BackgroundColor;
-            }
+            Piece uiPiece = BoardUIMap[(row, column)];
+            uiPiece.BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);
         }
-
         public void HighlightMove(int fromRow, int fromColumn, int toRow, int toColumn)
         {
             HighlightSquare(fromRow, fromColumn);
@@ -304,32 +279,24 @@ namespace Chess.ModelsLogic
         public void ClearBoardHighLights()
         {
             for (int i = 0; i < 8; i++)
-            {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (BoardUIMap.TryGetValue((i, j), out PieceModel? uiPiece) && uiPiece != null)
-                    {
-                        if ((i + j) % 2 == 0)
-                            uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorWhite);
-                        else
-                            uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
-                        if (BoardPieces![i, j] != null)
-                            BoardPieces[i, j].BackgroundColor = uiPiece.BackgroundColor;
-                    }
-                }
-            }
+                    Piece uiPiece = BoardUIMap[(i, j)];
+                    if ((i + j) % 2 == 0)
+                        uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorWhite);
+                    else
+                        uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
+                }                 
         }
         public void ClearSquareHighlight(int row, int col)
         {
-            if (BoardUIMap.TryGetValue((row, col), out PieceModel? uiPiece) && uiPiece != null)
-            {
-                if ((row + col) % 2 == 0)
-                    uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorWhite);
-                else
-                    uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
-                if (BoardPieces![row, col] != null)
-                    BoardPieces[row, col].BackgroundColor = uiPiece.BackgroundColor;
-            }
+            Piece uiPiece = BoardUIMap[(row, col)];
+            if ((row + col) % 2 == 0)
+                uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorWhite);
+            else
+                uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
+            if (BoardPieces![row, col] != null)
+                BoardPieces[row, col].BackgroundColor = uiPiece.BackgroundColor;
         }
     }
 }

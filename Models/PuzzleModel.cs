@@ -13,9 +13,7 @@ namespace Chess.Models
         protected bool solved = false;
         public abstract void CheckMove(int rowIndex, int columnIndex);
         public abstract void OnButtonClicked(Piece p);
-        protected abstract bool IsKingInCheck(bool isWhite, Piece[,] board);
         public abstract Piece CreatePiece(Piece original, int row, int col);
-        protected abstract Piece[,] FlipBoard(Piece[,] original);
         public abstract void InitPuzzleBoard();
         public EventHandler? ClearLegalMovesDots;
         public EventHandler? CorrectMove;

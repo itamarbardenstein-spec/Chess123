@@ -30,18 +30,21 @@ namespace Chess.ModelsLogic
         }
         public override string GetFirebaseErrorMessage(string msg)
         {
+            string result= string.Empty;
             if (msg.Contains(Strings.ErrMessageReason))
             {
                 if (msg.Contains(Strings.EmailExists))
-                    return Strings.EmailExistsErrMsg;
+                    result= Strings.EmailExistsErrMsg;
                 if (msg.Contains(Strings.InvalidEmailAddress))
-                    return Strings.InvalidEmailErrMessage;
+                    result= Strings.InvalidEmailErrMessage;
                 if (msg.Contains(Strings.WeakPassword))
-                    return Strings.WeakPasswordErrMessage;
+                    result= Strings.WeakPasswordErrMessage;
                 if(msg.Contains(Strings.InvalidLogin))
-                    return Strings.InvalidLoginErrMsg;
-            }                                        
-            return Strings.UnknownErrorMessage;
+                    result= Strings.InvalidLoginErrMsg;
+            }
+            else
+                result= Strings.UnknownErrorMessage;
+            return result;
         }
         protected override void ShowAlert(string msg)
         {

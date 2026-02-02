@@ -50,7 +50,6 @@ namespace Chess.ModelsLogic
             IDocumentReference dr = fs.Collection(collectonName).Document(id);
             await dr.DeleteAsync().ContinueWith(OnComplete);
         }
-
         public override string DisplayName
         {
             get

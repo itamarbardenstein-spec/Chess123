@@ -45,7 +45,6 @@ namespace Chess.ViewModel
             if (!game.IsHostUser)
                 game.UpdateGuestUser(OnComplete);
         }
-
         private void ClearBoardHighlights(object? sender, EventArgs e)
         {
             grdBoard.ClearBoardHighLights();
@@ -59,7 +58,7 @@ namespace Chess.ViewModel
             grdBoard.ClearSquareHighlight(e.Row,e.Column);
         }
         private void HighlightSquare(object? sender, HighlightSquareArgs e)
-        {
+        {   
            grdBoard.HighlightSquare(e.Row, e.Column);
         }
         private void ClearDots(object? sender, EventArgs e)

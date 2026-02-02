@@ -32,7 +32,6 @@ namespace Chess.ModelsLogic
         protected override void OnMessageReceived(long timeLeft)
         {         
             if (timeLeft == Keys.FinishedSignal)
-            {
                 if (!IsGameOver)
                 {
                     ilr?.Remove();
@@ -42,7 +41,6 @@ namespace Chess.ModelsLogic
                         UpdateFbGameOver();
                     GameOver?.Invoke(this, new GameOverArgs(false, Strings.Time));
                 }
-            }
             else
             {
                 if (IsHostUser)
@@ -190,7 +188,6 @@ namespace Chess.ModelsLogic
         {
             List<int[]> legalMoves = GetLegalMoveList(p);
             if (!IsGameOver)
-            {
                 if (_status.CurrentStatus == GameStatus.Statuses.Play)
                 {
                     if (ClickCount == 0)
@@ -229,16 +226,13 @@ namespace Chess.ModelsLogic
                         }                   
                     }
                 }
-            }
         }
         private List<int[]> GetLegalMoveList(Piece p)
         {
             List<int[]> legalMoves = [];
             bool isWhite = p.IsWhite;
             for (int r = 0; r < 8; r++)
-            {
                 for (int c = 0; c < 8; c++)
-                {
                     if (gameBoard![p.RowIndex, p.ColumnIndex].IsMoveValid(gameBoard!, p.RowIndex, p.ColumnIndex, r, c))
                     {
                         Piece fromPiece = gameBoard[p.RowIndex, p.ColumnIndex];
@@ -255,8 +249,6 @@ namespace Chess.ModelsLogic
                         if (!kingInCheck)
                             legalMoves.Add([r, c]);
                     }
-                }
-            }
             return legalMoves;
         }
         public override void Play(int rowIndex, int columnIndex, bool MyMove)
@@ -264,7 +256,7 @@ namespace Chess.ModelsLogic
             Piece eatenPiece= gameBoard![rowIndex, columnIndex];           
             gameBoard![rowIndex, columnIndex] = CreatePiece(gameBoard![MoveFrom[0], MoveFrom[1]], rowIndex, columnIndex);
             gameBoard![MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
-            if(MyMove&&IsKingInCheck(gameBoard![rowIndex, columnIndex].IsWhite, FlipBoard(gameBoard)))
+            if(MyMove && IsKingInCheck(gameBoard![rowIndex, columnIndex].IsWhite, FlipBoard(gameBoard)))
             {
                 gameBoard![MoveFrom[0], MoveFrom[1]] = CreatePiece(gameBoard![rowIndex, columnIndex]!, MoveFrom[0], MoveFrom[1]);
                 gameBoard![rowIndex, columnIndex] = eatenPiece;                    
@@ -280,10 +272,8 @@ namespace Chess.ModelsLogic
                 DisplayChanged?.Invoke(this, args);
                 if (MyMove && gameBoard![rowIndex, columnIndex] is Pawn && rowIndex == 0)
                 {
-                    if (IsHostUser)
-                        gameBoard[rowIndex, columnIndex] = new Queen(rowIndex, columnIndex, false, Strings.BlackQueen);
-                    else 
-                        gameBoard[rowIndex, columnIndex] = new Queen(rowIndex, columnIndex, true, Strings.WhiteQueen);
+                    gameBoard[rowIndex, columnIndex]= IsHostUser? new Queen(rowIndex, columnIndex, false, Strings.BlackQueen):
+                                                             new Queen(rowIndex, columnIndex, true, Strings.WhiteQueen);
                     OnPromotionArgs promoArgs = new(rowIndex, columnIndex, IsHostUser);
                     OnPromotion?.Invoke(this, promoArgs);
                 }
@@ -297,9 +287,7 @@ namespace Chess.ModelsLogic
                     CheckGameOver(gameBoard[rowIndex, columnIndex]);
                 }            
                 else
-                {
                     OnGameChanged?.Invoke(this, EventArgs.Empty);
-                }
             }
         }                            
         protected override void CheckGameOver(Piece movedPiece)
@@ -329,7 +317,6 @@ namespace Chess.ModelsLogic
                     bool BishopFound = false;
                     bool WinnerPieceFound = false;
                     for(int i = 0;i<8; i++)
-                    {
                         for(int j = 0; j < 8; j++)
                         {
                             Piece p = gameBoard![i, j];
@@ -343,7 +330,6 @@ namespace Chess.ModelsLogic
                                     WinnerPieceFound = true;
                             }
                         }
-                    }
                     if (!WinnerPieceFound && !(KnightFound && BishopFound))
                     {
                         IsGameOver = true;
@@ -357,10 +343,10 @@ namespace Chess.ModelsLogic
         }
         protected override bool IsCheckmate(bool isWhite, Piece[,] board)
         {
-            if (IsKingInCheck(isWhite, board))
-                if (!HasAnyLegalMove(isWhite, board))
-                    return true;
-            return false;
+            bool result = false;
+            if (IsKingInCheck(isWhite, board) && !HasAnyLegalMove(isWhite, board))
+                result= true;
+            return result;
         }
         protected override void UpdateFbMove()
         {
@@ -427,9 +413,7 @@ namespace Chess.ModelsLogic
                         }           
                     }
                     else
-                    {
                         WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
-                    }                  
                 }                              
             }
             else
@@ -453,71 +437,58 @@ namespace Chess.ModelsLogic
         }
         protected override bool IsKingInCheck(bool isWhite, Piece[,] board)
         {
+            bool result = false;
             int kingRow = -1, kingCol = -1;
             bool found = false;
             for (int i = 0; i < 8 && !found; i++)
-            {
                 for (int j = 0; j < 8; j++)
-                {
                     if (board![i, j] is King k && k.IsWhite == isWhite)
                     {
                         kingRow = i;
                         kingCol = j;
                         found = true;
-                        break;
                     }
-                }
-            }
-            if (found) 
+            if (found)
             {
                 for (int i = 0; i < 8; i++)
-                {
                     for (int j = 0; j < 8; j++)
                     {
                         Piece p = board![i, j];
                         if (p.StringImageSource != null && p.IsWhite != isWhite)
-                        {
                             if (p.IsMoveValid(board!, i, j, kingRow, kingCol))
-                                return true;
-                        }
+                                result= true;
                     }
-                }
-            }        
-            return false;
+            }
+            return result;
         }
         protected override bool HasAnyLegalMove(bool isWhite, Piece[,] board)
         {
+            bool result = false;
             for (int i = 0; i < 8; i++)
-            {
                 for (int j = 0; j < 8; j++)
                 {
                     Piece piece = board![i, j];
-                    if (piece.StringImageSource == null || piece.IsWhite != isWhite)
-                        continue;
-                    for (int rTo = 0; rTo < 8; rTo++)
-                    {
-                        for (int cTo = 0; cTo < 8; cTo++)
-                        {
-                            if (!piece.IsMoveValid(board!, i, j, rTo, cTo))
-                                continue;
-                            Piece fromBackup = board[i, j];
-                            Piece toBackup = board[rTo, cTo];
-                            int oldRow = piece.RowIndex;
-                            int oldCol = piece.ColumnIndex;
-                            board[rTo, cTo] = CreatePiece(piece, rTo, cTo);
-                            board[i, j] = new Pawn(i, j, false, null);
-                            bool kingStillInCheck = IsKingInCheck(isWhite, board);
-                            board[i, j] = fromBackup;
-                            board[rTo, cTo] = toBackup;
-                            piece.RowIndex = oldRow;
-                            piece.ColumnIndex = oldCol;
-                            if (!kingStillInCheck)
-                                return true;
-                        }
-                    }
+                    if (piece.StringImageSource != null && piece.IsWhite == isWhite)
+                        for (int rTo = 0; rTo < 8; rTo++)
+                            for (int cTo = 0; cTo < 8; cTo++)
+                                if (piece.IsMoveValid(board!, i, j, rTo, cTo))
+                                {
+                                    Piece fromBackup = board[i, j];
+                                    Piece toBackup = board[rTo, cTo];
+                                    int oldRow = piece.RowIndex;
+                                    int oldCol = piece.ColumnIndex;
+                                    board[rTo, cTo] = CreatePiece(piece, rTo, cTo);
+                                    board[i, j] = new Pawn(i, j, false, null);
+                                    bool kingStillInCheck = IsKingInCheck(isWhite, board);
+                                    board[i, j] = fromBackup;
+                                    board[rTo, cTo] = toBackup;
+                                    piece.RowIndex = oldRow;
+                                    piece.ColumnIndex = oldCol;
+                                    if (!kingStillInCheck)
+                                        result= true;
+                                }                             
                 }
-            }
-            return false;
+            return result;
         }
         protected override void  CheckCastling(int columnIndex, bool MyMove)
         {
@@ -525,8 +496,10 @@ namespace Chess.ModelsLogic
                 king.HasKingMoved = true;
             if (gameBoard?[MoveFrom[0], MoveFrom[1]] is Rook rook)
             {
-                if (MoveFrom[1] == 0) rook.HasLeftRookMoved = true;
-                else rook.HasRightRookMoved = true;
+                if (MoveFrom[1] == 0) 
+                    rook.HasLeftRookMoved = true;
+                else
+                    rook.HasRightRookMoved = true;
             }
             Piece PieceToMove = gameBoard?[MoveFrom[0], MoveFrom[1]]!;
             if (PieceToMove is King && Math.Abs(MoveFrom[1] - columnIndex) == 2)
@@ -613,29 +586,26 @@ namespace Chess.ModelsLogic
         {
             Piece[,] flipped = new Piece[8, 8];
             for (int i = 0; i < 8; i++)
-            {
                 for (int j = 0; j < 8; j++)
                 {
                     Piece p = original[i, j];
                     int newRow = 7 - i;
                     int newCol = 7 - j;
                     if (p.StringImageSource == null)
-                    {
                         flipped[newRow, newCol] = new Pawn(newRow, newCol, false, null);
-                    }
                     else
-                    {
                         flipped[newRow, newCol] = CreatePiece(p, newRow, newCol);
-                    }
                 }
-            }
             return flipped;
         }
         public override string GameOverMessageTitle(bool IWon, string reason)
         {
+            string result;
             if (reason==Strings.Draw)
-                return Strings.Draw;
-            return IWon ? Strings.YouWon : Strings.YouLost;
+                result= Strings.Draw;
+            else
+                result = IWon ? Strings.YouWon : Strings.YouLost;
+            return result;
         }
         public override string GameOverMessageReason(bool IWon, string reason)
         {        
@@ -674,9 +644,9 @@ namespace Chess.ModelsLogic
         }
         public override void ResignGame()
         {
-            if (!IsGameOver&&IsFull)
+            if (!IsGameOver && IsFull)
             {
-                if(IsHostTurn&&IsHostUser||!IsHostTurn&&!IsHostUser)
+                if(IsHostTurn && IsHostUser || !IsHostTurn && !IsHostUser)
                 {
                     _status.UpdateStatus();
                     IsHostTurn = !IsHostTurn;

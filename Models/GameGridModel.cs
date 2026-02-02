@@ -6,7 +6,7 @@ namespace Chess.Models
     {
         public Piece[,]? BoardPieces;
         public EventHandler<Piece>? ButtonClicked;
-        protected Dictionary<(int row, int col), PieceModel> BoardUIMap = [];
+        protected Dictionary<(int row, int col), Piece> BoardUIMap = [];
         public abstract void InitGrid(Grid board,bool IsHostUser);
         protected abstract void OnButtonClicked(object? sender, EventArgs e);
         protected abstract void UpdateCellUI(int row, int col);

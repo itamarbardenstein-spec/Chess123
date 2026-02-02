@@ -55,21 +55,20 @@
                 TextColor="White" />
         </Border>
         <Button
-    Text="RESIGN"
-    Command="{Binding ResignCommand}"
-    TextColor="#FF4B4B"
-    BackgroundColor="Transparent"
-    BorderColor="#FF4B4B"
-    BorderWidth="2"
-    CornerRadius="25"
-    FontAttributes="Bold"
-    FontFamily="monospace"
-    FontSize="16"
-    HeightRequest="50"
-    WidthRequest="140"
-    HorizontalOptions="Center"
-    Margin="0,10">
-        </Button>
+            Margin="0,10"
+            BackgroundColor="Transparent"
+            BorderColor="#FF4B4B"
+            BorderWidth="2"
+            Command="{Binding ResignCommand}"
+            CornerRadius="25"
+            FontAttributes="Bold"
+            FontFamily="monospace"
+            FontSize="16"
+            HeightRequest="50"
+            HorizontalOptions="Center"
+            Text="RESIGN"
+            TextColor="#FF4B4B"
+            WidthRequest="140" />
         <Label HorizontalOptions="Center" Text="{Binding MyName}" />
     </VerticalStackLayout>
 </ContentPage>
