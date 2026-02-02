@@ -247,17 +247,31 @@ namespace Chess.ModelsLogic
             {
                 int row = move[0];
                 int col = move[1];
-                Ellipse dot = new()
-                {
-                    Fill = Color.FromRgba(0, 0, 0, 0.2),
-                    WidthRequest = 20,
-                    HeightRequest = 20,
-                    HorizontalOptions = LayoutOptions.Center,
-                    VerticalOptions = LayoutOptions.Center,
-                    InputTransparent = true,
-                };
-                ((Grid)this.Parent).Add(dot, col, row);
-            }                 
+                bool isCapture = BoardPieces![row, col].StringImageSource != null;
+                VisualElement indicator;
+                if (isCapture)
+                    indicator = new Ellipse()
+                    {
+                        Stroke = Color.FromRgba(0, 0, 0, 0.2),
+                        StrokeThickness = 5,
+                        WidthRequest = 45,
+                        HeightRequest = 45,
+                        HorizontalOptions = LayoutOptions.Center,
+                        VerticalOptions = LayoutOptions.Center,
+                        InputTransparent = true
+                    };
+                else              
+                    indicator = new Ellipse()
+                    {
+                        Fill = Color.FromRgba(0, 0, 0, 0.2),
+                        WidthRequest = 20,
+                        HeightRequest = 20,
+                        HorizontalOptions = LayoutOptions.Center,
+                        VerticalOptions = LayoutOptions.Center,
+                        InputTransparent = true
+                    };
+                ((Grid)this.Parent).Add(indicator, col, row);
+            }
         }
         public void ClearDots()
         {         

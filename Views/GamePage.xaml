@@ -30,7 +30,7 @@
                 Text="{Binding OpponentTime}"
                 TextColor="#FF4444" />
         </Border>
-        <Grid
+        <Grid            
             x:Name="grdBoard"
             ColumnSpacing="1"
             HorizontalOptions="Center"
