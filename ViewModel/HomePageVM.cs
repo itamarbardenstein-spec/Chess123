@@ -31,7 +31,7 @@ namespace Chess.ViewModel
             {
                 if (Application.Current != null)
                 {
-                    Application.Current.MainPage = new PuzzlePage();
+                    Application.Current.MainPage = new PuzzleDifficultyPage();
                 }
             });
         }

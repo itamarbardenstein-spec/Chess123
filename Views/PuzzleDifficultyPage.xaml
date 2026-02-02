@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Chess.Views.PuzzleDifficultyPage"
+             Title="PuzzleDifficulty"
+             xmlns:m="clr-namespace:Chess.Models"
+             xmlns:vm="clr-namespace:Chess.ViewModel"
+             x:DataType="vm:PuzzleDifficוtyVM"
+             BackgroundColor="#121212">
+    <VerticalStackLayout Spacing="20" Padding="40" VerticalOptions="Center">
+
+        <Label 
+            Text="SELECT DIFFICULTY"
+            TextColor="#E1E1E1"
+            FontSize="24"
+            FontAttributes="Bold"
+            HorizontalOptions="Center"
+            Margin="0,0,0,30" />
+
+        <Button
+            Text="EASY"
+            Command="{Binding EasyPuzzleCommand}"
+            BackgroundColor="#2E7D32" 
+            TextColor="White"
+            HeightRequest="70"
+            CornerRadius="8"
+            FontSize="20"
+            FontAttributes="Bold" />
+
+        <Button
+            Text="MEDIUM"
+            Command="{Binding MediumPuzzleCommand}"
+            BackgroundColor="#EF6C00"
+            TextColor="White"
+            HeightRequest="70"
+            CornerRadius="8"
+            FontSize="20"
+            FontAttributes="Bold" />
+
+        <Button
+            Text="HARD"
+            Command="{Binding HardPuzzleCommand}"
+            BackgroundColor="#C62828"
+            TextColor="White"
+            HeightRequest="70"
+            CornerRadius="8"
+            FontSize="20"
+            FontAttributes="Bold" />
+
+        <BoxView HeightRequest="1" Color="#333" Margin="0,20" />
+
+        <Button
+            Text="RETURN TO MENU"
+            Command="{Binding HomeCommand}"
+            BackgroundColor="Transparent"
+            TextColor="#AAAAAA"
+            BorderColor="#555555"
+            BorderWidth="2"
+            HeightRequest="60"
+            CornerRadius="25" />
+
+    </VerticalStackLayout>
+</ContentPage>

@@ -6,10 +6,10 @@ namespace Chess.Views;
 public partial class PuzzlePage : ContentPage
 {
     private readonly PuzzlePageVM ppVM;
-    public PuzzlePage()
+    public PuzzlePage(string difficulty)
 	{
 		InitializeComponent();
-        ppVM = new PuzzlePageVM(puzzleBoard);
+        ppVM = new PuzzlePageVM(puzzleBoard, difficulty);
         BindingContext = ppVM;
     }
     protected override void OnAppearing()
