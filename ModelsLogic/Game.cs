@@ -31,16 +31,15 @@ namespace Chess.ModelsLogic
         }
         protected override void OnMessageReceived(long timeLeft)
         {         
-            if (timeLeft == Keys.FinishedSignal)
-                if (!IsGameOver)
-                {
-                    ilr?.Remove();
-                    IsGameOver = true;
-                    GameOverReason = Strings.Time;
-                    if (!string.IsNullOrEmpty(Id))
-                        UpdateFbGameOver();
-                    GameOver?.Invoke(this, new GameOverArgs(false, Strings.Time));
-                }
+            if (timeLeft == Keys.FinishedSignal && !IsGameOver)
+            {
+                ilr?.Remove();
+                IsGameOver = true;
+                GameOverReason = Strings.Time;
+                if (!string.IsNullOrEmpty(Id))
+                    UpdateFbGameOver();
+                GameOver?.Invoke(this, new GameOverArgs(false, Strings.Time));
+            }
             else
             {
                 if (IsHostUser)
