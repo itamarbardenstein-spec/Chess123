@@ -199,14 +199,27 @@ namespace Chess.ModelsLogic
             foreach (IView dot in dotsToRemove)
                 boardGrid.Remove(dot);
         }
-        public void ShowHint()
+        public void ShowHint(int row, int column)
         {
-            BoardPieces![4, 3].BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);
+            Piece uiPiece = BoardUIMap[(row, column)];
+            uiPiece.BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);
         }
-        public void ShowCorrectMove()
+        public void ShowCorrectMove(int fromRow, int fromColumn, int toRow, int toColumn)
         {
-            BoardPieces![4, 3].BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);
-            BoardPieces![2,2].BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);
+            ShowHint(fromRow, fromColumn);
+            ShowHint(toRow, toColumn);
+        }
+        public void ClearBoardHighLights()
+        {
+            for (int i = 0; i < 8; i++)
+                for (int j = 0; j < 8; j++)
+                {
+                    Piece uiPiece = BoardUIMap[(i, j)];
+                    if ((i + j) % 2 == 0)
+                        uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorWhite);
+                    else
+                        uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
+                }
         }
         public override void UpdateDisplay(DisplayMoveArgs e)
         {

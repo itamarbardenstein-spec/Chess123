@@ -11,30 +11,48 @@ namespace Chess.ViewModel
     public partial class PuzzlePageVM
     {
         private readonly PuzzleGrid puzzleGrid = [];
-        private readonly Puzzle puzlle;
+        private readonly Puzzle puzzle;
         public ICommand ShowHintCommand { get; private set; }
         public ICommand HomeCommand { get; private set; }
         public ICommand ShowMoveCommand { get; private set; }
         public PuzzlePageVM(Grid puzzleBoard,string difficulty)
         {
-            puzlle = new Puzzle(difficulty);
-            if (difficulty=="Easy")
+            puzzle = new Puzzle(difficulty);
+            if (difficulty==Strings.Easy)
                 puzzleGrid.InitEasyPuzzleGrid(puzzleBoard);
-            else if(difficulty=="Medium")
+            else if(difficulty==Strings.Medium)
                 puzzleGrid.InitMediumPuzzleGrid(puzzleBoard);
             else
                 puzzleGrid.InitHardPuzzleGrid(puzzleBoard);
             puzzleGrid.ButtonClicked += OnButtonClicked;
-            puzlle.LegalMoves += ShowLegalMoves;
-            puzlle.DisplayChanged += OnDisplayChanged;
-            puzlle.MakeOpponentMove += MakeOpponentMove;
-            puzlle.ClearLegalMovesDots += ClearDots;
-            puzlle.CorrectMove += OnCorrectMove;
-            puzlle.IncorrectMove += OnIncorrectMove;
-            puzlle.CorrectSolution += OnCorrectSolution;
+            puzzle.LegalMoves += ShowLegalMoves;
+            puzzle.DisplayChanged += OnDisplayChanged;
+            puzzle.MakeOpponentMove += MakeOpponentMove;
+            puzzle.ClearLegalMovesDots += ClearDots;
+            puzzle.HighlightCorrectMoveHint += HighlightCorrectMove;
+            puzzle.HighlightHintSquare += HighlightHintSquare;
+            puzzle.CorrectMove += OnCorrectMove;
+            puzzle.IncorrectMove += OnIncorrectMove;
+            puzzle.RemoveHighlight += ClearHighlights;
+            puzzle.CorrectSolution += OnCorrectSolution;
             ShowHintCommand =new Command(ShowHint);
             HomeCommand = new Command(TransferHome);
             ShowMoveCommand=new Command(ShowCorrectMove);
+        }
+
+        private void ClearHighlights(object? sender, EventArgs e)
+        {
+            puzzleGrid.ClearBoardHighLights();
+        }
+
+        private void HighlightHintSquare(object? sender, HighlightSquareArgs e)
+        {
+            puzzleGrid.ShowHint(e.Row,e.Column);
+        }
+
+        private void HighlightCorrectMove(object? sender, DisplayMoveArgs e)
+        {
+            puzzleGrid.ShowCorrectMove(e.FromRow,e.FromColomn,e.ToRow,e.ToColumn);
         }
 
         private void MakeOpponentMove(object? sender, string e)
@@ -54,7 +72,7 @@ namespace Chess.ViewModel
         }
         private void ShowCorrectMove(object obj)
         {
-            puzzleGrid.ShowCorrectMove();
+            puzzle.CorrectMoveSquares();
         }
         private void TransferHome(object obj)
         {
@@ -68,7 +86,7 @@ namespace Chess.ViewModel
         }
         private void ShowHint(object obj)
         {
-            puzzleGrid.ShowHint();
+            puzzle.HintSquare();
         }
 
         private void OnIncorrectMove(object? sender, EventArgs e)
@@ -81,7 +99,7 @@ namespace Chess.ViewModel
         }
         private void OnButtonClicked(object? sender, Piece e)
         {
-            puzlle.OnButtonClicked(e);
+            puzzle.OnButtonClicked(e);
         }
         private void ClearDots(object? sender, EventArgs e)
         {

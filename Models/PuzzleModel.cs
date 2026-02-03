@@ -28,6 +28,9 @@ namespace Chess.Models
         public EventHandler? ClearLegalMovesDots;
         public EventHandler? CorrectMove;
         public EventHandler? CorrectSolution;
+        public EventHandler<HighlightSquareArgs>? HighlightHintSquare;
+        public EventHandler<DisplayMoveArgs>? HighlightCorrectMoveHint;
+        public EventHandler? RemoveHighlight;
         public EventHandler? IncorrectMove;
         public EventHandler<string>? MakeOpponentMove;
         public EventHandler<List<int[]>>? LegalMoves;

@@ -194,6 +194,7 @@ namespace Chess.ModelsLogic
                     CorrectPieceRow = 4;
                     CorrectPieceColumn = 4;
                     MakeOpponentMove?.Invoke(this, Strings.Medium);
+                    RemoveHighlight?.Invoke(this, EventArgs.Empty);
                 }
                 else
                 {
@@ -202,6 +203,7 @@ namespace Chess.ModelsLogic
                     CorrectPieceRow = 5;
                     CorrectPieceColumn = 2;
                     MakeOpponentMove?.Invoke(this, Strings.Hard);
+                    RemoveHighlight?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -235,6 +237,14 @@ namespace Chess.ModelsLogic
                 },
                 _ => throw new Exception()
             };
+        }
+        public void HintSquare()
+        {
+            HighlightHintSquare?.Invoke(this, new HighlightSquareArgs(CorrectPieceRow, CorrectPieceColumn));
+        }
+        public void CorrectMoveSquares()
+        {
+            HighlightCorrectMoveHint?.Invoke(this, new DisplayMoveArgs(CorrectPieceRow, CorrectPieceColumn, CorrectMoveRow, CorrectMoveColumn));
         }
     }
 }

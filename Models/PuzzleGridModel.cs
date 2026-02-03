@@ -5,6 +5,7 @@ namespace Chess.Models
     public abstract class PuzzleGridModel:Grid
     {
         protected Piece[,]? BoardPieces;
+        protected int moveCount = 0;
         protected Dictionary<(int row, int col), Piece> BoardUIMap = [];
         public abstract void InitEasyPuzzleGrid(Grid board);
         public abstract void InitMediumPuzzleGrid(Grid board);
