@@ -1,5 +1,6 @@
 ﻿using Chess.Models;
 using Plugin.CloudFirestore;
+using Plugin.FirebaseAuth;
 namespace Chess.ModelsLogic
 {
     public partial class FbData : FbDataModel
@@ -18,12 +19,12 @@ namespace Chess.ModelsLogic
             dr.SetAsync(obj).ContinueWith(OnComplete);
             return dr.Id;
         }
-        public override IListenerRegistration AddSnapshotListener(string collectonName, Plugin.CloudFirestore.QuerySnapshotHandler OnChange)
+        public override Plugin.CloudFirestore.IListenerRegistration AddSnapshotListener(string collectonName, Plugin.CloudFirestore.QuerySnapshotHandler OnChange)
         {
             ICollectionReference cr = fs.Collection(collectonName);
             return cr.AddSnapshotListener(OnChange);
         }
-        public override IListenerRegistration AddSnapshotListener(string collectonName, string id, Plugin.CloudFirestore.DocumentSnapshotHandler OnChange)
+        public override Plugin.CloudFirestore.IListenerRegistration AddSnapshotListener(string collectonName, string id, Plugin.CloudFirestore.DocumentSnapshotHandler OnChange)
         {
             IDocumentReference cr = fs.Collection(collectonName).Document(id);
             return cr.AddSnapshotListener(OnChange);
@@ -49,6 +50,31 @@ namespace Chess.ModelsLogic
         {
             IDocumentReference dr = fs.Collection(collectonName).Document(id);
             await dr.DeleteAsync().ContinueWith(OnComplete);
+        }
+        public async void SignInWithGoogleAsync(string idToken, Action<System.Threading.Tasks.Task> OnComplete)
+        {
+#if ANDROID
+            try
+            {
+                // 1. יצירת מופע חדש של ה-Wrapper (דרוש עצם כי המתודה אינה סטטית)
+                var googleProvider = new Plugin.FirebaseAuth.GoogleAuthProviderWrapper();
+
+                // 2. הפקת ה-Credential מתוך ה-Token שקיבלנו מגוגל
+                var credential = googleProvider.GetCredential(idToken, null);
+
+                // 3. ביצוע ההתחברות דרך ה-Plugin כדי למנוע שגיאת תאימות טיפוסים
+                await CrossFirebaseAuth.Current.Instance.SignInWithCredentialAsync(credential)
+                    .ContinueWith(OnComplete);
+            }
+            catch (Exception ex)
+            {
+                // טיפול בשגיאה במידה והתהליך נכשל
+                Console.WriteLine($"Google Sign-In Error: {ex.Message}");
+            }
+#else
+            // מניעת שגיאות בפלטפורמות שאינן אנדרואיד (iOS/Windows)
+            await Task.CompletedTask;
+#endif
         }
         public override string DisplayName
         {

@@ -83,5 +83,18 @@
                 </FontImageSource>
             </Button.ImageSource>
         </Button>
+        <Button 
+    Command="{Binding GoogleLoginCommand}" 
+    Text="התחבר עם Google"
+    BackgroundColor="White"
+    TextColor="Black"
+    CornerRadius="20"
+    FontSize="20"
+    HeightRequest="60"
+    Margin="0,15,0,0">
+            <Button.Shadow>
+                <Shadow Brush="Black" Offset="2,2" Opacity="0.3"/>
+            </Button.Shadow>
+        </Button>
     </VerticalStackLayout>
 </ContentPage>

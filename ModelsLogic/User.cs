@@ -68,6 +68,10 @@ namespace Chess.ModelsLogic
         {
             return (!string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Age));
         }
+        public void SignInWithGoogle(string idToken, Action<Task> OnComplete)
+        {
+            this.fbd.SignInWithGoogleAsync(idToken, OnComplete);
+        }
         public User()
         {           
             UserName = Preferences.Get(Keys.UserNameKey, string.Empty);

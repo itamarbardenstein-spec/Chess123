@@ -238,11 +238,11 @@ namespace Chess.ModelsLogic
                 _ => throw new Exception()
             };
         }
-        public void HintSquare()
+        public override void HintSquare()
         {
             HighlightHintSquare?.Invoke(this, new HighlightSquareArgs(CorrectPieceRow, CorrectPieceColumn));
         }
-        public void CorrectMoveSquares()
+        public override void CorrectMoveSquares()
         {
             HighlightCorrectMoveHint?.Invoke(this, new DisplayMoveArgs(CorrectPieceRow, CorrectPieceColumn, CorrectMoveRow, CorrectMoveColumn));
         }

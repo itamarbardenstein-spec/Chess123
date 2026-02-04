@@ -17,6 +17,34 @@ namespace Chess.Platforms.Android
             RegisterTimerMessages();
             StartDeleteFbDocsService();
         }
+        protected override void OnActivityResult(int requestCode, Result resultCode, global::Android.Content.Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+            // בדיקה שהקוד תואם לזה שהגדרנו ב-GoogleAuthService
+            if (requestCode == 1001)
+            {
+                // קבלת המשימה מתוך ה-Intent שהתקבל מגוגל
+                var task = global::Android.Gms.Auth.Api.SignIn.GoogleSignIn.GetSignedInAccountFromIntent(data);
+
+                try
+                {
+                    // ביצוע המרה (Cast) כדי לגשת למאפייני החשבון
+                    var account = (global::Android.Gms.Auth.Api.SignIn.GoogleSignInAccount)task.Result;
+
+                    if (account != null)
+                    {
+                        // שליחת ה-Token בחזרה ל-Service ושחרור ה-await
+                        Chess.Platforms.Android.GoogleAuthService.LoginTcs?.TrySetResult(account.IdToken);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // במקרה של שגיאה (כמו SHA-1 לא תואם), נשלח את השגיאה ל-ViewModel
+                    Chess.Platforms.Android.GoogleAuthService.LoginTcs?.TrySetException(ex);
+                }
+            }
+        }
         private void StartDeleteFbDocsService()
         {
             Intent intent = new(this, typeof(DeleteFbDocsService));
