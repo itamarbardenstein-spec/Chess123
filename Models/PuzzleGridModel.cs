@@ -16,5 +16,10 @@ namespace Chess.Models
         public abstract Piece CreatePiece(Piece original, int row, int col);
         public abstract void UpdateDisplay(DisplayMoveArgs e);
         public abstract void MakeOpponentMove(string difficulty);
+        public abstract void ShowLegalMoves(List<int[]> legalMoves);
+        public abstract void ClearDots();
+        public abstract void ShowHint(int row, int column);
+        public abstract void ShowCorrectMove(int fromRow, int fromColumn, int toRow, int toColumn);
+        public abstract void ClearBoardHighLights();
     }
 }

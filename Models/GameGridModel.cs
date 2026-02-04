@@ -14,5 +14,11 @@ namespace Chess.Models
         public abstract void UpdateDisplay(DisplayMoveArgs e);
         public abstract void Castling(bool right,bool isHostUser,bool MyMove);
         public abstract void Promotion(bool IsHostUser, int Row, int column);
+        public abstract void ShowLegalMoves(List<int[]> legalMoves);
+        public abstract void ClearDots();
+        public abstract void HighlightSquare(int row, int column);
+        public abstract void HighlightMove(int fromRow, int fromColumn, int toRow, int toColumn);
+        public abstract void ClearBoardHighLights();
+        public abstract void ClearSquareHighlight(int row, int col);
     }
 }

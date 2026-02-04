@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:vm="clr-namespace:Chess.ViewModel"
+    xmlns:m="clr-namespace:Chess.Models"
     x:DataType="vm:GameResultPopupVM">
     <VerticalStackLayout
         Padding="30"
@@ -24,7 +25,7 @@
         <Button
             BackgroundColor="#2196F3"
             Command="{Binding HomeCommand}"
-            Text="Home"
+            Text="{x:Static m:Strings.Home}"
             TextColor="White" />
     </VerticalStackLayout>
 </toolkit:Popup>

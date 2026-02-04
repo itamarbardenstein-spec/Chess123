@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Chess.ViewModel"
+    xmlns:m="clr-namespace:Chess.Models"
     Title="GamePage"
     x:DataType="vm:GamePageVM">
     <VerticalStackLayout>
@@ -66,7 +67,7 @@
             FontSize="16"
             HeightRequest="50"
             HorizontalOptions="Center"
-            Text="RESIGN"
+              Text="{x:Static m:Strings.Resign}"
             TextColor="#FF4B4B"
             WidthRequest="140" />
         <Label HorizontalOptions="Center" Text="{Binding MyName}" />

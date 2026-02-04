@@ -240,7 +240,7 @@ namespace Chess.ModelsLogic
                 BoardPieces![row, column] = new Queen(row, column, true, Strings.WhiteQueen);
             UpdateCellUI(row, column);
         }
-        public void ShowLegalMoves(List<int[]> legalMoves)
+        public override void ShowLegalMoves(List<int[]> legalMoves)
         {
             ClearDots();
             foreach (int[] move in legalMoves)
@@ -273,24 +273,24 @@ namespace Chess.ModelsLogic
                 ((Grid)this.Parent).Add(indicator, col, row);
             }
         }
-        public void ClearDots()
+        public override void ClearDots()
         {         
             Grid boardGrid=(Grid)this.Parent;
             List<IView> dotsToRemove = [.. boardGrid.Children.Where(dot => dot is Ellipse)];
             foreach (IView dot in dotsToRemove)
                 boardGrid.Remove(dot);
         }
-        public void HighlightSquare(int row, int column)
+        public override void HighlightSquare(int row, int column)
         {
             Piece uiPiece = BoardUIMap[(row, column)];
             uiPiece.BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);
         }
-        public void HighlightMove(int fromRow, int fromColumn, int toRow, int toColumn)
+        public override void HighlightMove(int fromRow, int fromColumn, int toRow, int toColumn)
         {
             HighlightSquare(fromRow, fromColumn);
             HighlightSquare(toRow, toColumn);
         }
-        public void ClearBoardHighLights()
+        public override void ClearBoardHighLights()
         {
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
@@ -302,7 +302,7 @@ namespace Chess.ModelsLogic
                         uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
                 }                 
         }
-        public void ClearSquareHighlight(int row, int col)
+        public override void ClearSquareHighlight(int row, int col)
         {
             Piece uiPiece = BoardUIMap[(row, col)];
             if ((row + col) % 2 == 0)

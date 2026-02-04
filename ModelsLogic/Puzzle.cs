@@ -207,7 +207,7 @@ namespace Chess.ModelsLogic
                 }
             }
         }
-        private List<int[]> GetLegalMoveList(Piece p)
+        protected override List<int[]> GetLegalMoveList(Piece p)
         {
             List<int[]> legalMoves = [];
             for (int r = 0; r < 8; r++)

@@ -173,7 +173,7 @@ namespace Chess.ModelsLogic
         {
             ButtonClicked?.Invoke(this, (Piece)sender!);
         }
-        public void ShowLegalMoves(List<int[]> legalMoves)
+        public override void ShowLegalMoves(List<int[]> legalMoves)
         {
             ClearDots();
             foreach (int[] move in legalMoves)
@@ -192,24 +192,24 @@ namespace Chess.ModelsLogic
                 ((Grid)this.Parent).Add(dot, col, row);
             }
         }
-        public void ClearDots()
+        public override void ClearDots()
         {
             Grid boardGrid = (Grid)this.Parent;
             List<IView> dotsToRemove = [.. boardGrid.Children.Where(dot => dot is Ellipse)];
             foreach (IView dot in dotsToRemove)
                 boardGrid.Remove(dot);
         }
-        public void ShowHint(int row, int column)
+        public override void ShowHint(int row, int column)
         {
             Piece uiPiece = BoardUIMap[(row, column)];
             uiPiece.BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);
         }
-        public void ShowCorrectMove(int fromRow, int fromColumn, int toRow, int toColumn)
+        public override void ShowCorrectMove(int fromRow, int fromColumn, int toRow, int toColumn)
         {
             ShowHint(fromRow, fromColumn);
             ShowHint(toRow, toColumn);
         }
-        public void ClearBoardHighLights()
+        public override void ClearBoardHighLights()
         {
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)

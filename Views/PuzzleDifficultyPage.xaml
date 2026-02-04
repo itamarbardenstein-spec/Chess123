@@ -10,7 +10,7 @@
     <VerticalStackLayout Spacing="20" Padding="40" VerticalOptions="Center">
 
         <Label 
-            Text="SELECT DIFFICULTY"
+            Text="{x:Static m:Strings.SelectDifficulty}"
             TextColor="#E1E1E1"
             FontSize="24"
             FontAttributes="Bold"
@@ -18,7 +18,7 @@
             Margin="0,0,0,30" />
 
         <Button
-            Text="EASY"
+            Text="{x:Static m:Strings.Easy}"
             Command="{Binding EasyPuzzleCommand}"
             BackgroundColor="#2E7D32" 
             TextColor="White"
@@ -28,7 +28,7 @@
             FontAttributes="Bold" />
 
         <Button
-            Text="MEDIUM"
+            Text="{x:Static m:Strings.Medium}"
             Command="{Binding MediumPuzzleCommand}"
             BackgroundColor="#EF6C00"
             TextColor="White"
@@ -38,7 +38,7 @@
             FontAttributes="Bold" />
 
         <Button
-            Text="HARD"
+            Text="{x:Static m:Strings.Hard}"
             Command="{Binding HardPuzzleCommand}"
             BackgroundColor="#C62828"
             TextColor="White"
@@ -50,7 +50,7 @@
         <BoxView HeightRequest="1" Color="#333" Margin="0,20" />
 
         <Button
-            Text="RETURN TO MENU"
+            Text="{x:Static m:Strings.Home}"
             Command="{Binding HomeCommand}"
             BackgroundColor="Transparent"
             TextColor="#AAAAAA"
