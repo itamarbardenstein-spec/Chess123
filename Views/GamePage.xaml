@@ -31,12 +31,42 @@
                 Text="{Binding OpponentTime}"
                 TextColor="#FF4444" />
         </Border>
+        <FlexLayout BindableLayout.ItemsSource="{Binding OpponentCapturedPieces}"
+            Wrap="Wrap"
+            Direction="Row"
+            HeightRequest="30"
+            Margin="10,2">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+                    <Image Source="{Binding .}" 
+                   WidthRequest="20" 
+                   HeightRequest="20" 
+                   Opacity="0.8" 
+                   Margin="1"/>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </FlexLayout>
         <Grid            
             x:Name="grdBoard"
             ColumnSpacing="1"
             HorizontalOptions="Center"
             RowSpacing="1"
             VerticalOptions="Center" />
+        <FlexLayout BindableLayout.ItemsSource="{Binding MyCapturedPieces}"
+            Wrap="Wrap"
+            Direction="Row"
+            HeightRequest="30"
+            Margin="10,2">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+                    <Image Source="{Binding .}" 
+                   WidthRequest="20" 
+                   HeightRequest="20" 
+                   Opacity="0.8" 
+                   Margin="1"/>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </FlexLayout>
         <Border
             Padding="15,5"
             Background="#252525"

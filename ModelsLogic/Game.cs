@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Plugin.CloudFirestore;
 
 namespace Chess.ModelsLogic
-{   
+{
     public class Game : GameModel
     {
         public override string OpponentName => IsHostUser ? GuestName : HostName;
@@ -30,7 +30,7 @@ namespace Chess.ModelsLogic
             });
         }
         protected override void OnMessageReceived(long timeLeft)
-        {         
+        {
             if (timeLeft == Keys.FinishedSignal && !IsGameOver)
             {
                 ilr?.Remove();
@@ -47,12 +47,12 @@ namespace Chess.ModelsLogic
                 else
                     WhiteTimeLeft = timeLeft;
                 TimeLeftChanged?.Invoke(this, EventArgs.Empty);
-            }           
+            }
         }
         public override void SetDocument(Action<Task> OnComplete)
         {
             Id = fbd.SetDocument(this, Keys.GamesCollection, Id, OnComplete);
-        }        
+        }
         protected override void UpdateStatus()
         {
             _status.CurrentStatus = IsHostUser && IsHostTurn || !IsHostUser && !IsHostTurn ?
@@ -208,21 +208,21 @@ namespace Chess.ModelsLogic
                             ClearSquareHighLight?.Invoke(this, new HighlightSquareArgs(p.RowIndex, p.ColumnIndex));
                             ClickCount = 0;
                         }
-                        else if(p?.StringImageSource!=null && p.IsWhite == gameBoard?[MoveFrom[0], MoveFrom[1]].IsWhite)
+                        else if (p?.StringImageSource != null && p.IsWhite == gameBoard?[MoveFrom[0], MoveFrom[1]].IsWhite)
                         {
                             ClearSquareHighLight?.Invoke(this, new HighlightSquareArgs(MoveFrom[0], MoveFrom[1]));
                             MoveFrom[0] = p.RowIndex;
                             MoveFrom[1] = p.ColumnIndex;
-                            LegalMoves?.Invoke(this, legalMoves);                          
+                            LegalMoves?.Invoke(this, legalMoves);
                             HighlightSquare?.Invoke(this, new HighlightSquareArgs(p.RowIndex, p.ColumnIndex));
-                        }                                      
+                        }
                         else
                         {
                             if (gameBoard![MoveFrom[0], MoveFrom[1]].IsMoveValid(gameBoard, MoveFrom[0], MoveFrom[1], p!.RowIndex, p.ColumnIndex))
                                 Play(p.RowIndex, p.ColumnIndex, true);
                             ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);
                             ClickCount = 0;
-                        }                   
+                        }
                     }
                 }
         }
@@ -252,18 +252,26 @@ namespace Chess.ModelsLogic
         }
         public override void Play(int rowIndex, int columnIndex, bool MyMove)
         {
-            Piece eatenPiece= gameBoard![rowIndex, columnIndex];           
+            Piece eatenPiece = gameBoard![rowIndex, columnIndex];
+            if (eatenPiece.StringImageSource != null)
+            {
+                if (eatenPiece.IsWhite)
+                    WhiteCapturedImages?.Add(eatenPiece.StringImageSource);
+                else
+                    BlackCapturedImages?.Add(eatenPiece.StringImageSource);
+                OnGameChanged?.Invoke(this, EventArgs.Empty);
+            }
             gameBoard![rowIndex, columnIndex] = CreatePiece(gameBoard![MoveFrom[0], MoveFrom[1]], rowIndex, columnIndex);
             gameBoard![MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
-            if(MyMove && IsKingInCheck(gameBoard![rowIndex, columnIndex].IsWhite, FlipBoard(gameBoard)))
+            if (MyMove && IsKingInCheck(gameBoard![rowIndex, columnIndex].IsWhite, FlipBoard(gameBoard)))
             {
                 gameBoard![MoveFrom[0], MoveFrom[1]] = CreatePiece(gameBoard![rowIndex, columnIndex]!, MoveFrom[0], MoveFrom[1]);
-                gameBoard![rowIndex, columnIndex] = eatenPiece;                    
+                gameBoard![rowIndex, columnIndex] = eatenPiece;
             }
             else
             {
                 gameBoard![MoveFrom[0], MoveFrom[1]] = CreatePiece(gameBoard![rowIndex, columnIndex]!, MoveFrom[0], MoveFrom[1]);
-                gameBoard![rowIndex, columnIndex] = eatenPiece;                
+                gameBoard![rowIndex, columnIndex] = eatenPiece;
                 CheckCastling(columnIndex, MyMove);
                 gameBoard![rowIndex, columnIndex] = CreatePiece(gameBoard![MoveFrom[0], MoveFrom[1]]!, rowIndex, columnIndex);
                 gameBoard![MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
@@ -271,7 +279,7 @@ namespace Chess.ModelsLogic
                 DisplayChanged?.Invoke(this, args);
                 if (MyMove && gameBoard![rowIndex, columnIndex] is Pawn && rowIndex == 0)
                 {
-                    gameBoard[rowIndex, columnIndex]= IsHostUser? new Queen(rowIndex, columnIndex, false, Strings.BlackQueen):
+                    gameBoard[rowIndex, columnIndex] = IsHostUser ? new Queen(rowIndex, columnIndex, false, Strings.BlackQueen) :
                                                              new Queen(rowIndex, columnIndex, true, Strings.WhiteQueen);
                     OnPromotionArgs promoArgs = new(rowIndex, columnIndex, IsHostUser);
                     OnPromotion?.Invoke(this, promoArgs);
@@ -284,11 +292,11 @@ namespace Chess.ModelsLogic
                     IsHostTurn = !IsHostTurn;
                     UpdateFbMove();
                     CheckGameOver(gameBoard[rowIndex, columnIndex]);
-                }            
+                }
                 else
                     OnGameChanged?.Invoke(this, EventArgs.Empty);
             }
-        }                            
+        }
         protected override void CheckGameOver(Piece movedPiece)
         {
             if (!IsGameOver)
@@ -315,8 +323,8 @@ namespace Chess.ModelsLogic
                     bool KnightFound = false;
                     bool BishopFound = false;
                     bool WinnerPieceFound = false;
-                    for(int i = 0;i<8; i++)
-                        for(int j = 0; j < 8; j++)
+                    for (int i = 0; i < 8; i++)
+                        for (int j = 0; j < 8; j++)
                         {
                             Piece p = gameBoard![i, j];
                             if (p.StringImageSource != null)
@@ -344,7 +352,7 @@ namespace Chess.ModelsLogic
         {
             bool result = false;
             if (IsKingInCheck(isWhite, board) && !HasAnyLegalMove(isWhite, board))
-                result= true;
+                result = true;
             return result;
         }
         protected override void UpdateFbMove()
@@ -371,15 +379,15 @@ namespace Chess.ModelsLogic
                     GameOverArgs GameOverArgs;
                     if (GameOverReason == Strings.Time)
                         GameOverArgs = new(true, Strings.Time);
-                    else if(GameOverReason==Strings.Checkmate)
+                    else if (GameOverReason == Strings.Checkmate)
                         GameOverArgs = new(false, Strings.Checkmate);
-                    else if(GameOverReason==Strings.Draw)
+                    else if (GameOverReason == Strings.Draw)
                         GameOverArgs = new(false, Strings.Draw);
                     else
                         GameOverArgs = new(true, Strings.Resignation);
                     GameOver?.Invoke(this, GameOverArgs);
                     WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
-                }              
+                }
                 else
                 {
                     IsFull = updatedGame.IsFull;
@@ -406,14 +414,14 @@ namespace Chess.ModelsLogic
                             if (IsHostUser)
                                 gameBoard![MoveTo[0], MoveTo[1]] = new Queen(MoveTo[0], MoveTo[1], true, Strings.WhiteQueen);
                             else
-                                gameBoard![MoveTo[0], MoveTo[1]] = new Queen(MoveTo[0], MoveTo[1],  false, Strings.BlackQueen);
+                                gameBoard![MoveTo[0], MoveTo[1]] = new Queen(MoveTo[0], MoveTo[1], false, Strings.BlackQueen);
                             OnPromotionArgs promoArgs = new(MoveTo[0], MoveTo[1], !IsHostUser);
-                            OnPromotion?.Invoke(this, promoArgs);       
-                        }           
+                            OnPromotion?.Invoke(this, promoArgs);
+                        }
                     }
                     else
                         WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
-                }                              
+                }
             }
             else
             {
@@ -430,7 +438,7 @@ namespace Chess.ModelsLogic
             Dictionary<string, object> dict = new()
             {
                { nameof(IsGameOver), true },
-               { nameof(GameOverReason), GameOverReason },              
+               { nameof(GameOverReason), GameOverReason },
             };
             fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
         }
@@ -455,7 +463,7 @@ namespace Chess.ModelsLogic
                         Piece p = board![i, j];
                         if (p.StringImageSource != null && p.IsWhite != isWhite)
                             if (p.IsMoveValid(board!, i, j, kingRow, kingCol))
-                                result= true;
+                                result = true;
                     }
             }
             return result;
@@ -484,18 +492,18 @@ namespace Chess.ModelsLogic
                                     piece.RowIndex = oldRow;
                                     piece.ColumnIndex = oldCol;
                                     if (!kingStillInCheck)
-                                        result= true;
-                                }                             
+                                        result = true;
+                                }
                 }
             return result;
         }
-        protected override void  CheckCastling(int columnIndex, bool MyMove)
+        protected override void CheckCastling(int columnIndex, bool MyMove)
         {
             if (gameBoard?[MoveFrom[0], MoveFrom[1]] is King king && MyMove)
                 king.HasKingMoved = true;
             if (gameBoard?[MoveFrom[0], MoveFrom[1]] is Rook rook)
             {
-                if (MoveFrom[1] == 0) 
+                if (MoveFrom[1] == 0)
                     rook.HasLeftRookMoved = true;
                 else
                     rook.HasRightRookMoved = true;
@@ -506,14 +514,14 @@ namespace Chess.ModelsLogic
                 bool isKingSide;
                 if (!IsHostUser)
                 {
-                    isKingSide = columnIndex > MoveFrom[1];                   
+                    isKingSide = columnIndex > MoveFrom[1];
                     Castling(isKingSide, IsHostUser, MyMove);
                     CastlingArgs CastleArgs = new(isKingSide, IsHostUser, MyMove);
-                    OnCastling?.Invoke(this, CastleArgs);              
+                    OnCastling?.Invoke(this, CastleArgs);
                 }
                 else
                 {
-                    isKingSide = columnIndex < MoveFrom[1];                  
+                    isKingSide = columnIndex < MoveFrom[1];
                     Castling(!isKingSide, IsHostUser, MyMove);
                     CastlingArgs CastleArgs = new(!isKingSide, IsHostUser, MyMove);
                     OnCastling?.Invoke(this, CastleArgs);
@@ -600,20 +608,20 @@ namespace Chess.ModelsLogic
         public override string GameOverMessageTitle(bool IWon, string reason)
         {
             string result;
-            if (reason==Strings.Draw)
-                result= Strings.Draw;
+            if (reason == Strings.Draw)
+                result = Strings.Draw;
             else
                 result = IWon ? Strings.YouWon : Strings.YouLost;
             return result;
         }
         public override string GameOverMessageReason(bool IWon, string reason)
-        {        
+        {
             string result;
-            if (reason==Strings.Checkmate)
+            if (reason == Strings.Checkmate)
                 result = IWon ? Strings.WinCheckmate : Strings.LoseCheckmate;
-            else if(reason==Strings.Time)
+            else if (reason == Strings.Time)
                 result = IWon ? Strings.WinTime : Strings.LoseTime;
-            else if(reason== Strings.Draw)
+            else if (reason == Strings.Draw)
                 result = Strings.YouDrew;
             else
                 result = IWon ? Strings.OpponentResigned : Strings.YouResigned;
@@ -645,18 +653,35 @@ namespace Chess.ModelsLogic
         {
             if (!IsGameOver && IsFull)
             {
-                if(IsHostTurn && IsHostUser || !IsHostTurn && !IsHostUser)
+                if (IsHostTurn && IsHostUser || !IsHostTurn && !IsHostUser)
                 {
                     _status.UpdateStatus();
                     IsHostTurn = !IsHostTurn;
                     UpdateFbMove();
-                }                                             
+                }
                 IsGameOver = true;
                 GameOverReason = Strings.Resignation;
                 UpdateFbGameOver();
                 GameOverArgs GameOverArgs = new(false, Strings.Resignation);
                 GameOver?.Invoke(this, GameOverArgs);
-            }            
+            }
+        }
+        public List<string>? GetMyCapturedPiecesList(string whichList)
+        {
+            if (IsHostUser)
+            {
+                if (whichList == Strings.Opponents)
+                    return BlackCapturedImages;
+                else
+                    return WhiteCapturedImages;
+            }
+            else
+            {
+                if (whichList == Strings.Opponents)
+                    return WhiteCapturedImages;
+                else
+                    return BlackCapturedImages;
+            }
         }
     }
 }

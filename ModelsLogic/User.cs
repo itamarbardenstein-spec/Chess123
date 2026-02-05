@@ -70,7 +70,7 @@ namespace Chess.ModelsLogic
         }
         public void SignInWithGoogle(string idToken, Action<Task> OnComplete)
         {
-            this.fbd.SignInWithGoogleAsync(idToken, OnComplete);
+            FbData.SignInWithGoogleAsync(idToken, OnComplete);
         }
         public User()
         {           

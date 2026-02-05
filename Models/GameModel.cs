@@ -2,6 +2,7 @@
 using Chess.ModelsLogic;
 using Plugin.CloudFirestore;
 using Plugin.CloudFirestore.Attributes;
+using System.Collections.ObjectModel;
 
 namespace Chess.Models
 {
@@ -53,6 +54,10 @@ namespace Chess.Models
         public abstract string OpponentName { get; }
         [Ignored]
         public string MyName { get; set; } = new User().UserName;
+        [Ignored]
+        public List<string>? WhiteCapturedImages { get; set; } = [];
+        [Ignored]
+        public List<string>? BlackCapturedImages { get; set; }= [];
         [Ignored]
         public string Id { get; set; } = string.Empty;
         [Ignored]

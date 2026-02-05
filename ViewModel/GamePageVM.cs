@@ -1,10 +1,11 @@
-﻿using System.Windows.Input;
-using Chess.Models;
+﻿using Chess.Models;
 using Chess.ModelsLogic;
 using Chess.Views;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Views;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace Chess.ViewModel
 {
@@ -12,17 +13,14 @@ namespace Chess.ViewModel
     {
         private readonly GameGrid grdBoard = [];
         private readonly Game game;
+        public ICommand ResignCommand { get; set; }
         public string MyName => game.MyName;
         public string StatusMessage => game.StatusMessage;
+        public List<string>? OpponentCapturedPieces => game.GetMyCapturedPiecesList(Strings.Opponents)?.ToList();
+        public List<string>? MyCapturedPieces => game.GetMyCapturedPiecesList(Strings.mine)?.ToList();
         public string MyTime => game.IsHostUser ? FormatTime(game.BlackTimeLeft) : FormatTime(game.WhiteTimeLeft);
         public string OpponentTime => game.IsHostUser ? FormatTime(game.WhiteTimeLeft) : FormatTime(game.BlackTimeLeft);
-        public string OpponentName => game.OpponentName;
-        public ICommand ResignCommand { get; set; }
-        private static string FormatTime(long millis)
-        {
-            TimeSpan t = TimeSpan.FromMilliseconds(millis);
-            return $"{t.Minutes:D2}:{t.Seconds:D2}";
-        }
+        public string OpponentName => game.OpponentName;          
         public GamePageVM(Game game, Grid board)
         {
             this.game = game;
@@ -44,6 +42,11 @@ namespace Chess.ViewModel
             grdBoard.ButtonClicked += OnButtonClicked;
             if (!game.IsHostUser)
                 game.UpdateGuestUser(OnComplete);
+        }
+        private static string FormatTime(long millis)
+        {
+            TimeSpan t = TimeSpan.FromMilliseconds(millis);
+            return $"{t.Minutes:D2}:{t.Seconds:D2}";
         }
         private void ClearBoardHighlights(object? sender, EventArgs e)
         {
@@ -115,6 +118,8 @@ namespace Chess.ViewModel
             OnPropertyChanged(nameof(StatusMessage));
             OnPropertyChanged(nameof(OpponentTime));
             OnPropertyChanged(nameof(MyTime));
+            OnPropertyChanged(nameof(MyCapturedPieces));
+            OnPropertyChanged(nameof(OpponentCapturedPieces));
         }
         private void OnComplete(Task task)
         {

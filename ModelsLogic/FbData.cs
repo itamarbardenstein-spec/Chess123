@@ -51,18 +51,14 @@ namespace Chess.ModelsLogic
             IDocumentReference dr = fs.Collection(collectonName).Document(id);
             await dr.DeleteAsync().ContinueWith(OnComplete);
         }
-        public async void SignInWithGoogleAsync(string idToken, Action<System.Threading.Tasks.Task> OnComplete)
+        public static async void SignInWithGoogleAsync(string idToken, Action<System.Threading.Tasks.Task> OnComplete)
         {
 #if ANDROID
             try
             {
-                // 1. יצירת מופע חדש של ה-Wrapper (דרוש עצם כי המתודה אינה סטטית)
                 var googleProvider = new Plugin.FirebaseAuth.GoogleAuthProviderWrapper();
-
-                // 2. הפקת ה-Credential מתוך ה-Token שקיבלנו מגוגל
                 var credential = googleProvider.GetCredential(idToken, null);
 
-                // 3. ביצוע ההתחברות דרך ה-Plugin כדי למנוע שגיאת תאימות טיפוסים
                 await CrossFirebaseAuth.Current.Instance.SignInWithCredentialAsync(credential)
                     .ContinueWith(OnComplete);
             }
