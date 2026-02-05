@@ -7,6 +7,12 @@
     xmlns:m="clr-namespace:Chess.Models"
     Title="GamePage"
     x:DataType="vm:GamePageVM">
+    <ContentPage.Background>
+    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+         <GradientStop Color="DarkOrchid" Offset="0.1" />
+        <GradientStop Color="MidnightBlue" Offset="1.0" />
+    </LinearGradientBrush>
+    </ContentPage.Background> 
     <VerticalStackLayout>
         <Label HorizontalOptions="Center" Text="{Binding OpponentName}" />
         <Label
