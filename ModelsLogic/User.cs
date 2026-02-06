@@ -72,6 +72,14 @@ namespace Chess.ModelsLogic
         {
             FbData.SignInWithGoogleAsync(idToken, OnComplete);
         }
+        public override void ResetEmailPassword()
+        {
+            fbd.ResetEmailPasswordAsync(EmailForReset, OnResetComplete);
+        }
+        protected override void OnResetComplete(Task task)
+        {
+                
+        }
         public User()
         {           
             UserName = Preferences.Get(Keys.UserNameKey, string.Empty);

@@ -8,6 +8,7 @@ namespace Chess.ViewModel
     {
         private readonly IGoogleAuthService _googleService=null;
         public ICommand GoogleLoginCommand { get; }
+        public ICommand ResetEmail => new Command(ResetPass);
         public ICommand ToggleIsPasswordCommand { get; }
         public bool IsPassword { get; set; } = true;
         public ICommand LoginCommand { get; }
@@ -25,6 +26,19 @@ namespace Chess.ViewModel
 #if ANDROID
             _googleService = new Platforms.Android.GoogleAuthService();
 #endif
+        }
+        public string EmailForReset
+        {
+            get => user.EmailForReset;
+            set
+            {
+                user.EmailForReset = value;
+            }
+        }
+        private void ResetPass()
+        {
+            user.EmailForReset = EmailForReset;
+            user.ResetEmailPassword();
         }
         private async void GoogleLogin()
         {

@@ -12,7 +12,7 @@
             <Label
                 FontSize="24"
                 HorizontalOptions="Center"
-                Text="{x:Static m:Strings.PuzzleTitle}" />
+                Text="{x:Static m:Strings.Puz   zleTitle}" />
 
             <Grid
                 x:Name="puzzleBoard"

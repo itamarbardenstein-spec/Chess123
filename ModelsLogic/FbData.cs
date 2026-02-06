@@ -51,6 +51,11 @@ namespace Chess.ModelsLogic
             IDocumentReference dr = fs.Collection(collectonName).Document(id);
             await dr.DeleteAsync().ContinueWith(OnComplete);
         }
+        public override async void ResetEmailPasswordAsync(string email, Action<Task> OnComplete)
+        {
+            await facl.ResetEmailPasswordAsync(email).ContinueWith(OnComplete);
+        }
+
         public static async void SignInWithGoogleAsync(string idToken, Action<System.Threading.Tasks.Task> OnComplete)
         {
 #if ANDROID

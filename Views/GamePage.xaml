@@ -8,104 +8,90 @@
     Title="GamePage"
     x:DataType="vm:GamePageVM">
     <ContentPage.Background>
-    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-         <GradientStop Color="DarkOrchid" Offset="0.1" />
+    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="MidnightBlue" Offset="0.0" />
+            <GradientStop Color="SteelBlue" Offset="0.5" />
         <GradientStop Color="MidnightBlue" Offset="1.0" />
     </LinearGradientBrush>
-    </ContentPage.Background> 
-    <VerticalStackLayout>
-        <Label HorizontalOptions="Center" Text="{Binding OpponentName}" />
-        <Label
-            Margin="25"
-            HorizontalOptions="Center"
-            Text="{Binding StatusMessage}" />
-        <Border
-            Padding="15,5"
-            Background="#333333"
-            HorizontalOptions="Center"
-            MaximumWidthRequest="200"
-            Stroke="#555555"
-            StrokeThickness="2">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10" />
-            </Border.StrokeShape>
-            <Label
+    </ContentPage.Background>
+    <VerticalStackLayout Padding="10" Spacing="0" VerticalOptions="Center">
+
+        <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,8" VerticalOptions="End">
+            <HorizontalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center">
+                <VerticalStackLayout Spacing="0">
+                    <Label Text="{Binding OpponentName}" FontAttributes="Bold" FontSize="14" TextColor="White" />
+                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HeightRequest="18">
+                        <HorizontalStackLayout BindableLayout.ItemsSource="{Binding OpponentCapturedPieces}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding .}" WidthRequest="16" HeightRequest="16" Opacity="0.8" Margin="0,0,1,0"/>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </HorizontalStackLayout>
+                    </ScrollView>
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+
+            <Border Grid.Column="1" Background="#333333" Padding="10,5" Stroke="#555555" StrokeThickness="1">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <Label Text="{Binding OpponentTime}" FontSize="24" FontFamily="monospace" TextColor="#FF4444" />
+            </Border>
+        </Grid>
+
+        <Label Text="{Binding StatusMessage}" 
+               HorizontalOptions="Center" 
+               TextColor="White" 
+               FontSize="14" 
+               FontAttributes="Italic" 
+               Margin="0,5" 
+               Opacity="0.9" />
+
+        <Grid x:Name="grdBoard" 
+              ColumnSpacing="0" 
+              RowSpacing="0" 
+              HorizontalOptions="Center" 
+              VerticalOptions="Center"
+              BackgroundColor="#B58863" />
+
+        <Grid ColumnDefinitions="*, Auto" Margin="0,8,0,0" VerticalOptions="Start">
+            <HorizontalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center">
+                <VerticalStackLayout Spacing="0">
+                    <Label Text="{Binding MyName}" FontAttributes="Bold" FontSize="14" TextColor="White" />
+                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HeightRequest="18">
+                        <HorizontalStackLayout BindableLayout.ItemsSource="{Binding MyCapturedPieces}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding .}" WidthRequest="16" HeightRequest="16" Opacity="0.8" Margin="0,0,1,0"/>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </HorizontalStackLayout>
+                    </ScrollView>
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+
+            <Border Grid.Column="1" Background="#252525" Padding="10,5" Stroke="#2196F3" StrokeThickness="2">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="5" />
+                </Border.StrokeShape>
+                <Label Text="{Binding MyTime}" FontSize="24" FontFamily="monospace" TextColor="White" />
+            </Border>
+        </Grid>
+
+        <Button Text="RESIGN"
+                Command="{Binding ResignCommand}"
+                FontSize="16"
                 FontAttributes="Bold"
-                FontFamily="monospace"
-                FontSize="32"
+                TextColor="#FF4B4B"
+                BackgroundColor="Transparent"
+                BorderColor="#FF4B4B"
+                BorderWidth="2"
+                HeightRequest="44"
+                WidthRequest="130"
+                CornerRadius="22" 
                 HorizontalOptions="Center"
-                Text="{Binding OpponentTime}"
-                TextColor="#FF4444" />
-        </Border>
-        <FlexLayout BindableLayout.ItemsSource="{Binding OpponentCapturedPieces}"
-            Wrap="Wrap"
-            Direction="Row"
-            HeightRequest="30"
-            Margin="10,2">
-            <BindableLayout.ItemTemplate>
-                <DataTemplate>
-                    <Image Source="{Binding .}" 
-                   WidthRequest="20" 
-                   HeightRequest="20" 
-                   Opacity="0.8" 
-                   Margin="1"/>
-                </DataTemplate>
-            </BindableLayout.ItemTemplate>
-        </FlexLayout>
-        <Grid            
-            x:Name="grdBoard"
-            ColumnSpacing="1"
-            HorizontalOptions="Center"
-            RowSpacing="1"
-            VerticalOptions="Center" />
-        <FlexLayout BindableLayout.ItemsSource="{Binding MyCapturedPieces}"
-            Wrap="Wrap"
-            Direction="Row"
-            HeightRequest="30"
-            Margin="10,2">
-            <BindableLayout.ItemTemplate>
-                <DataTemplate>
-                    <Image Source="{Binding .}" 
-                   WidthRequest="20" 
-                   HeightRequest="20" 
-                   Opacity="0.8" 
-                   Margin="1"/>
-                </DataTemplate>
-            </BindableLayout.ItemTemplate>
-        </FlexLayout>
-        <Border
-            Padding="15,5"
-            Background="#252525"
-            HorizontalOptions="Center"
-            MaximumWidthRequest="200"
-            Stroke="#2196F3"
-            StrokeThickness="3">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10" />
-            </Border.StrokeShape>
-            <Label
-                FontAttributes="Bold"
-                FontFamily="monospace"
-                FontSize="32"
-                HorizontalOptions="Center"
-                Text="{Binding MyTime}"
-                TextColor="White" />
-        </Border>
-        <Button
-            Margin="0,10"
-            BackgroundColor="Transparent"
-            BorderColor="#FF4B4B"
-            BorderWidth="2"
-            Command="{Binding ResignCommand}"
-            CornerRadius="25"
-            FontAttributes="Bold"
-            FontFamily="monospace"
-            FontSize="16"
-            HeightRequest="50"
-            HorizontalOptions="Center"
-              Text="{x:Static m:Strings.Resign}"
-            TextColor="#FF4B4B"
-            WidthRequest="140" />
-        <Label HorizontalOptions="Center" Text="{Binding MyName}" />
+                Margin="0,25" />
+
     </VerticalStackLayout>
 </ContentPage>
