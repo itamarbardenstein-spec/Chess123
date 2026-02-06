@@ -41,11 +41,11 @@
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate>
                                     <Image
-                                        Margin="0,0,1,0"
-                                        HeightRequest="16"
+                                        Margin="0,0,0,0"
+                                        HeightRequest="22"
                                         Opacity="0.8"
                                         Source="{Binding .}"
-                                        WidthRequest="16" />
+                                        WidthRequest="22" />
                                 </DataTemplate>
                             </BindableLayout.ItemTemplate>
                         </HorizontalStackLayout>
@@ -110,10 +110,10 @@
                                 <DataTemplate>
                                     <Image
                                         Margin="0,0,1,0"
-                                        HeightRequest="16"
+                                        HeightRequest="25"
                                         Opacity="0.8"
                                         Source="{Binding .}"
-                                        WidthRequest="16" />
+                                        WidthRequest="25" />
                                 </DataTemplate>
                             </BindableLayout.ItemTemplate>
                         </HorizontalStackLayout>

@@ -36,7 +36,6 @@
                 </Border.StrokeShape>
 
                 <VerticalStackLayout Spacing="15">
-
                     <Border Stroke="#55FFFFFF" StrokeThickness="1" StrokeShape="RoundRectangle 10" BackgroundColor="#33000000" Padding="5,0">
                         <Entry Placeholder="{x:Static m:Strings.UserName}"
                                Text="{Binding UserName}"
