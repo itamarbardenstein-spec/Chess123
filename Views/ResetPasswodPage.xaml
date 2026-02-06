@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Chess.Views.ResetPasswodPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:m="clr-namespace:Chess.Models"
+    xmlns:vm="clr-namespace:Chess.ViewModel"
+    Title="ResetPasswodPage"
+    x:DataType="vm:ResetPasswodPageVM">
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="DarkOrchid" Offset="0.1" />
+            <GradientStop Color="MidnightBlue" Offset="1.0" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+
+    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="30" Spacing="20">
+
+        <Image Source="lock_icon.png" 
+               HeightRequest="80" 
+               HorizontalOptions="Center" 
+               Margin="0,0,0,10" />
+
+        <Label Text="Forgot Password?" 
+               TextColor="White" 
+               FontSize="28" 
+               FontAttributes="Bold" 
+               HorizontalOptions="Center" />
+
+        <Label Text="Enter your email address and we'll send you a link to reset your password." 
+               TextColor="LightGray" 
+               FontSize="14" 
+               HorizontalOptions="Center" 
+               HorizontalTextAlignment="Center"
+               Margin="0,0,0,20" />
+
+        <Border Padding="20" BackgroundColor="#22FFFFFF" StrokeThickness="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="15" />
+            </Border.StrokeShape>
+
+            <VerticalStackLayout Spacing="15">
+                <Entry Placeholder="{x:Static m:Strings.Email}"
+                       Text="{Binding EmailForReset}"
+                       TextColor="White"
+                       PlaceholderColor="#CCCCCC"
+                       Keyboard="Email"
+                       HeightRequest="50"
+                       BackgroundColor="#33000000" />
+
+                <Button Text="{x:Static m:Strings.ResetPassword}"
+                        Command="{Binding ResetEmail}"
+                        BackgroundColor="DarkTurquoise"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        CornerRadius="25"
+                        HeightRequest="50"
+                        FontSize="16" />
+            </VerticalStackLayout>
+        </Border>
+
+        <Button Text="Back to Login" 
+                BackgroundColor="Transparent" 
+                TextColor="White" 
+                FontSize="14"
+                Command="{Binding BackToLoginCommand}"
+                HorizontalOptions="Center" />
+
+    </VerticalStackLayout>
+</ContentPage>

@@ -78,7 +78,7 @@ namespace Chess.ModelsLogic
         }
         protected override void OnResetComplete(Task task)
         {
-                
+            
         }
         public User()
         {           

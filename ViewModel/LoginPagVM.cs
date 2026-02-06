@@ -7,8 +7,8 @@ namespace Chess.ViewModel
     internal partial class LoginPagVM : ObservableObject
     {
         private readonly IGoogleAuthService _googleService=null;
-        public ICommand GoogleLoginCommand { get; }
-        public ICommand ResetEmail => new Command(ResetPass);
+        public ICommand GoogleLoginCommand { get; }    
+        public ICommand ForgotPaswordCommand { get; }    
         public ICommand ToggleIsPasswordCommand { get; }
         public bool IsPassword { get; set; } = true;
         public ICommand LoginCommand { get; }
@@ -21,24 +21,22 @@ namespace Chess.ViewModel
         {
             LoginCommand = new Command(Login, CanLogin);
             ToggleIsPasswordCommand = new Command(ToggleIsPassword);
+            ForgotPaswordCommand = new Command(ForgotPassword);
             user.OnAuthCompleted += OnAuthComplete;
             GoogleLoginCommand = new Command(GoogleLogin);
 #if ANDROID
             _googleService = new Platforms.Android.GoogleAuthService();
 #endif
         }
-        public string EmailForReset
+        private void ForgotPassword(object obj)
         {
-            get => user.EmailForReset;
-            set
+            MainThread.InvokeOnMainThreadAsync(() =>
             {
-                user.EmailForReset = value;
-            }
-        }
-        private void ResetPass()
-        {
-            user.EmailForReset = EmailForReset;
-            user.ResetEmailPassword();
+                if (Application.Current != null)
+                {
+                    Application.Current.MainPage = new ResetPasswodPage();
+                }
+            });
         }
         private async void GoogleLogin()
         {

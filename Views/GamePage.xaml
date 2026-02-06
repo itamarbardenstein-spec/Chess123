@@ -3,28 +3,49 @@
     x:Class="Chess.Views.GamePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:vm="clr-namespace:Chess.ViewModel"
     xmlns:m="clr-namespace:Chess.Models"
+    xmlns:vm="clr-namespace:Chess.ViewModel"
     Title="GamePage"
     x:DataType="vm:GamePageVM">
     <ContentPage.Background>
-    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-            <GradientStop Color="MidnightBlue" Offset="0.0" />
-            <GradientStop Color="SteelBlue" Offset="0.5" />
-        <GradientStop Color="MidnightBlue" Offset="1.0" />
-    </LinearGradientBrush>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Offset="0.0" Color="MidnightBlue" />
+            <GradientStop Offset="0.5" Color="SteelBlue" />
+            <GradientStop Offset="1.0" Color="MidnightBlue" />
+        </LinearGradientBrush>
     </ContentPage.Background>
-    <VerticalStackLayout Padding="10" Spacing="0" VerticalOptions="Center">
+    <VerticalStackLayout
+        Padding="10"
+        Spacing="0"
+        VerticalOptions="Center">
 
-        <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,8" VerticalOptions="End">
-            <HorizontalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center">
+        <Grid
+            Margin="0,0,0,8"
+            ColumnDefinitions="*, Auto"
+            VerticalOptions="End">
+            <HorizontalStackLayout
+                Grid.Column="0"
+                Spacing="8"
+                VerticalOptions="Center">
                 <VerticalStackLayout Spacing="0">
-                    <Label Text="{Binding OpponentName}" FontAttributes="Bold" FontSize="14" TextColor="White" />
-                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HeightRequest="18">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        Text="{Binding OpponentName}"
+                        TextColor="White" />
+                    <ScrollView
+                        HeightRequest="18"
+                        HorizontalScrollBarVisibility="Never"
+                        Orientation="Horizontal">
                         <HorizontalStackLayout BindableLayout.ItemsSource="{Binding OpponentCapturedPieces}">
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate>
-                                    <Image Source="{Binding .}" WidthRequest="16" HeightRequest="16" Opacity="0.8" Margin="0,0,1,0"/>
+                                    <Image
+                                        Margin="0,0,1,0"
+                                        HeightRequest="16"
+                                        Opacity="0.8"
+                                        Source="{Binding .}"
+                                        WidthRequest="16" />
                                 </DataTemplate>
                             </BindableLayout.ItemTemplate>
                         </HorizontalStackLayout>
@@ -32,38 +53,67 @@
                 </VerticalStackLayout>
             </HorizontalStackLayout>
 
-            <Border Grid.Column="1" Background="#333333" Padding="10,5" Stroke="#555555" StrokeThickness="1">
+            <Border
+                Grid.Column="1"
+                Padding="10,5"
+                Background="#333333"
+                Stroke="#555555"
+                StrokeThickness="1">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="5" />
                 </Border.StrokeShape>
-                <Label Text="{Binding OpponentTime}" FontSize="24" FontFamily="monospace" TextColor="#FF4444" />
+                <Label
+                    FontFamily="monospace"
+                    FontSize="24"
+                    Text="{Binding OpponentTime}"
+                    TextColor="#FF4444" />
             </Border>
         </Grid>
 
-        <Label Text="{Binding StatusMessage}" 
-               HorizontalOptions="Center" 
-               TextColor="White" 
-               FontSize="14" 
-               FontAttributes="Italic" 
-               Margin="0,5" 
-               Opacity="0.9" />
+        <Label
+            Margin="0,5"
+            FontAttributes="Italic"
+            FontSize="14"
+            HorizontalOptions="Center"
+            Opacity="0.9"
+            Text="{Binding StatusMessage}"
+            TextColor="White" />
 
-        <Grid x:Name="grdBoard" 
-              ColumnSpacing="0" 
-              RowSpacing="0" 
-              HorizontalOptions="Center" 
-              VerticalOptions="Center"
-              BackgroundColor="#B58863" />
+        <Grid
+            x:Name="grdBoard"
+            BackgroundColor="#B58863"
+            ColumnSpacing="0"
+            HorizontalOptions="Center"
+            RowSpacing="0"
+            VerticalOptions="Center" />
 
-        <Grid ColumnDefinitions="*, Auto" Margin="0,8,0,0" VerticalOptions="Start">
-            <HorizontalStackLayout Grid.Column="0" Spacing="8" VerticalOptions="Center">
+        <Grid
+            Margin="0,8,0,0"
+            ColumnDefinitions="*, Auto"
+            VerticalOptions="Start">
+            <HorizontalStackLayout
+                Grid.Column="0"
+                Spacing="8"
+                VerticalOptions="Center">
                 <VerticalStackLayout Spacing="0">
-                    <Label Text="{Binding MyName}" FontAttributes="Bold" FontSize="14" TextColor="White" />
-                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HeightRequest="18">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        Text="{Binding MyName}"
+                        TextColor="White" />
+                    <ScrollView
+                        HeightRequest="18"
+                        HorizontalScrollBarVisibility="Never"
+                        Orientation="Horizontal">
                         <HorizontalStackLayout BindableLayout.ItemsSource="{Binding MyCapturedPieces}">
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate>
-                                    <Image Source="{Binding .}" WidthRequest="16" HeightRequest="16" Opacity="0.8" Margin="0,0,1,0"/>
+                                    <Image
+                                        Margin="0,0,1,0"
+                                        HeightRequest="16"
+                                        Opacity="0.8"
+                                        Source="{Binding .}"
+                                        WidthRequest="16" />
                                 </DataTemplate>
                             </BindableLayout.ItemTemplate>
                         </HorizontalStackLayout>
@@ -71,27 +121,37 @@
                 </VerticalStackLayout>
             </HorizontalStackLayout>
 
-            <Border Grid.Column="1" Background="#252525" Padding="10,5" Stroke="#2196F3" StrokeThickness="2">
+            <Border
+                Grid.Column="1"
+                Padding="10,5"
+                Background="#252525"
+                Stroke="#2196F3"
+                StrokeThickness="2">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="5" />
                 </Border.StrokeShape>
-                <Label Text="{Binding MyTime}" FontSize="24" FontFamily="monospace" TextColor="White" />
+                <Label
+                    FontFamily="monospace"
+                    FontSize="24"
+                    Text="{Binding MyTime}"
+                    TextColor="White" />
             </Border>
         </Grid>
 
-        <Button Text="RESIGN"
-                Command="{Binding ResignCommand}"
-                FontSize="16"
-                FontAttributes="Bold"
-                TextColor="#FF4B4B"
-                BackgroundColor="Transparent"
-                BorderColor="#FF4B4B"
-                BorderWidth="2"
-                HeightRequest="44"
-                WidthRequest="130"
-                CornerRadius="22" 
-                HorizontalOptions="Center"
-                Margin="0,25" />
+        <Button
+            Margin="0,25"
+            BackgroundColor="Transparent"
+            BorderColor="#FF4B4B"
+            BorderWidth="2"
+            Command="{Binding ResignCommand}"
+            CornerRadius="22"
+            FontAttributes="Bold"
+            FontSize="16"
+            HeightRequest="44"
+            HorizontalOptions="Center"
+            Text="RESIGN"
+            TextColor="#FF4B4B"
+            WidthRequest="130" />
 
     </VerticalStackLayout>
 </ContentPage>
