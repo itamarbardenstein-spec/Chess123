@@ -1,4 +1,5 @@
 ﻿using Chess.Models;
+using Chess.NewFolder;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 namespace Chess.ModelsLogic
@@ -78,6 +79,7 @@ namespace Chess.ModelsLogic
         }
         protected override void OnResetComplete(Task task)
         {
+            OnPasswordResetCompleted?.Invoke(this, EventArgs.Empty);
             
         }
         public User()

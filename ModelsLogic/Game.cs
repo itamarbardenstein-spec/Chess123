@@ -17,7 +17,7 @@ namespace Chess.ModelsLogic
             IsHostUser = true;
             Time = selectedGameTime.Time;
             UpdateStatus();
-            long totalMillis = Time * 60 * 1000;
+            long totalMillis = Time * Keys.FromHourToMilliSeconds;
             WhiteTimeLeft = totalMillis;
             BlackTimeLeft = totalMillis;
             InitGameBoard();
@@ -220,7 +220,9 @@ namespace Chess.ModelsLogic
                         {
                             if (gameBoard![MoveFrom[0], MoveFrom[1]].IsMoveValid(gameBoard, MoveFrom[0], MoveFrom[1], p!.RowIndex, p.ColumnIndex))
                                 Play(p.RowIndex, p.ColumnIndex, true);
-                            ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);
+                            else
+                                ClearSquareHighLight?.Invoke(this, new HighlightSquareArgs(MoveFrom[0], MoveFrom[1]));
+                            ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);                        
                             ClickCount = 0;
                         }
                     }

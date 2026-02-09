@@ -9,62 +9,75 @@
     x:DataType="vm:ResetPasswodPageVM">
     <ContentPage.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="DarkOrchid" Offset="0.1" />
-            <GradientStop Color="MidnightBlue" Offset="1.0" />
+            <GradientStop Offset="0.1" Color="DarkOrchid" />
+            <GradientStop Offset="1.0" Color="MidnightBlue" />
         </LinearGradientBrush>
     </ContentPage.Background>
 
-    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="30" Spacing="20">
+    <VerticalStackLayout
+        Padding="30"
+        HorizontalOptions="Center"
+        Spacing="20"
+        VerticalOptions="Center">
 
-        <Image Source="lock_icon.png" 
-               HeightRequest="80" 
-               HorizontalOptions="Center" 
-               Margin="0,0,0,10" />
+        <Image
+            Margin="0,0,0,10"
+            HeightRequest="80"
+            HorizontalOptions="Center"
+            Source="lock_icon.png" />
 
-        <Label Text="Forgot Password?" 
-               TextColor="White" 
-               FontSize="28" 
-               FontAttributes="Bold" 
-               HorizontalOptions="Center" />
+        <Label
+            FontAttributes="Bold"
+            FontSize="28"
+            HorizontalOptions="Center"
+            Text="Forgot Password?"
+            TextColor="White" />
 
-        <Label Text="Enter your email address and we'll send you a link to reset your password." 
-               TextColor="LightGray" 
-               FontSize="14" 
-               HorizontalOptions="Center" 
-               HorizontalTextAlignment="Center"
-               Margin="0,0,0,20" />
+        <Label
+            Margin="0,0,0,20"
+            FontSize="14"
+            HorizontalOptions="Center"
+            HorizontalTextAlignment="Center"
+            Text="Enter your email address and we'll send you a link to reset your password."
+            TextColor="LightGray" />
 
-        <Border Padding="20" BackgroundColor="#22FFFFFF" StrokeThickness="0">
+        <Border
+            Padding="20"
+            BackgroundColor="#22FFFFFF"
+            StrokeThickness="0">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="15" />
             </Border.StrokeShape>
 
             <VerticalStackLayout Spacing="15">
-                <Entry Placeholder="{x:Static m:Strings.Email}"
-                       Text="{Binding EmailForReset}"
-                       TextColor="White"
-                       PlaceholderColor="#CCCCCC"
-                       Keyboard="Email"
-                       HeightRequest="50"
-                       BackgroundColor="#33000000" />
+                <Entry
+                    BackgroundColor="#33000000"
+                    HeightRequest="50"
+                    Keyboard="Email"
+                    Placeholder="{x:Static m:Strings.Email}"
+                    PlaceholderColor="#CCCCCC"
+                    Text="{Binding EmailForReset}"
+                    TextColor="White" />
 
-                <Button Text="{x:Static m:Strings.ResetPassword}"
-                        Command="{Binding ResetEmail}"
-                        BackgroundColor="DarkTurquoise"
-                        TextColor="White"
-                        FontAttributes="Bold"
-                        CornerRadius="25"
-                        HeightRequest="50"
-                        FontSize="16" />
+                <Button
+                    BackgroundColor="DarkTurquoise"
+                    Command="{Binding ResetEmail}"
+                    CornerRadius="25"
+                    FontAttributes="Bold"
+                    FontSize="16"
+                    HeightRequest="50"
+                    Text="{x:Static m:Strings.ResetPassword}"
+                    TextColor="White" />
             </VerticalStackLayout>
         </Border>
 
-        <Button Text="Back to Login" 
-                BackgroundColor="Transparent" 
-                TextColor="White" 
-                FontSize="14"
-                Command="{Binding BackToLoginCommand}"
-                HorizontalOptions="Center" />
+        <Button
+            BackgroundColor="Transparent"
+            Command="{Binding BackToLoginCommand}"
+            FontSize="14"
+            HorizontalOptions="Center"
+            Text="Back to Login"
+            TextColor="White" />
 
     </VerticalStackLayout>
 </ContentPage>

@@ -15,15 +15,26 @@ namespace Chess.ModelsLogic
             {
                 int step = Math.Sign(toColumn - fromColumn);
                 if (toColumn == 6 || toColumn == 5)
+                {
                     if (board[fromRow, 7] is Rook rightRook && !rightRook.HasRightRookMoved)
+                    {
                         if (PathClear(board, fromRow, fromColumn, fromRow, 7, 0, step))
-                            result= true;
-                else if (toColumn == 2 || toColumn == 1)
-                    if (board[fromRow, 0] is Rook leftRook && !leftRook.HasLeftRookMoved)
-                        if (PathClear(board, fromRow, fromColumn, fromRow, 0, 0, step))
-                            result= true;
+                            result = true;
+                    }                       
+                }
+                else
+                {
+                    if (toColumn == 2 || toColumn == 1)
+                    {
+                        if (board[fromRow, 0] is Rook leftRook && !leftRook.HasLeftRookMoved)
+                        {
+                            if (PathClear(board, fromRow, fromColumn, toRow, 0, 0, step))
+                                result = true;
+                        }                           
+                    }                        
+                }                   
             }
-            else if( rowsMoved <= 1 && columnsMoved <= 1 && (board[toRow, toColumn].StringImageSource == null || board[toRow, toColumn].IsWhite != king.IsWhite))
+            else if(rowsMoved <= 1 && columnsMoved <= 1 && (board[toRow, toColumn].StringImageSource == null || board[toRow, toColumn].IsWhite != king.IsWhite))
                 result= true;
             return result;
         }

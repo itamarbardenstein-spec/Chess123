@@ -6,6 +6,7 @@ namespace Chess.Models
     {
         protected FbData fbd = new();
         public EventHandler? OnAuthCompleted;
+        public EventHandler? OnPasswordResetCompleted;
         public string UserName { get; set; } = string.Empty;
         public bool IsRegistered => (!string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Age));
         public string Password { get; set; } = string.Empty;

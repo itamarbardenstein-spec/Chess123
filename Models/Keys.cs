@@ -14,5 +14,6 @@
         public const long TimerTotalTime = 31000;
         public const long TimerInterval = 1000;
         public const long FinishedSignal = -1000;
+        public const int FromHourToMilliSeconds = 60 * 1000;
     }
 }

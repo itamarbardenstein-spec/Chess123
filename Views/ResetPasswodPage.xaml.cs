@@ -1,5 +1,4 @@
 using Chess.ViewModel;
-
 namespace Chess.Views;
 
 public partial class ResetPasswodPage : ContentPage
