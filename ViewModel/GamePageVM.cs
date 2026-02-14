@@ -16,8 +16,8 @@ namespace Chess.ViewModel
         public ICommand ResignCommand { get; set; }
         public string MyName => game.MyName;
         public string StatusMessage => game.StatusMessage;
-        public List<string>? OpponentCapturedPieces => game.GetMyCapturedPiecesList(Strings.Opponents)?.ToList();
-        public List<string>? MyCapturedPieces => game.GetMyCapturedPiecesList(Strings.mine)?.ToList();
+        public List<CapturedPieceGroup>? OpponentCapturedPieces => game.GetGroupedCapturedPieces(false);
+        public List<CapturedPieceGroup>? MyCapturedPieces => game.GetGroupedCapturedPieces(true);
         public string MyTime => game.IsHostUser ? FormatTime(game.BlackTimeLeft) : FormatTime(game.WhiteTimeLeft);
         public string OpponentTime => game.IsHostUser ? FormatTime(game.WhiteTimeLeft) : FormatTime(game.BlackTimeLeft);
         public string OpponentName => game.OpponentName;          

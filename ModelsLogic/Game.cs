@@ -668,22 +668,37 @@ namespace Chess.ModelsLogic
                 GameOver?.Invoke(this, GameOverArgs);
             }
         }
-        public List<string>? GetMyCapturedPiecesList(string whichList)
+        public override List<string>? GetMyCapturedPiecesList(bool MyList)
         {
             if (IsHostUser)
             {
-                if (whichList == Strings.Opponents)
+                if (!MyList)
                     return BlackCapturedImages;
                 else
                     return WhiteCapturedImages;
             }
             else
             {
-                if (whichList == Strings.Opponents)
+                if (!MyList)
                     return WhiteCapturedImages;
                 else
                     return BlackCapturedImages;
             }
+        }
+        public List<CapturedPieceGroup>? GetGroupedCapturedPieces(bool myList)
+        {
+            // משתמשים בפונקציה הקיימת כדי לקבל את רשימת המחרוזות
+            List<string>? rawList = GetMyCapturedPiecesList(myList);
+            if (rawList == null) return null;
+            return rawList
+                .GroupBy(img => img)
+                .Select(g => new CapturedPieceGroup
+                {
+                    ImageSource = g.Key,
+                    Count = g.Count()
+                })
+                .OrderBy(x => x.ImageSource)
+                .ToList();
         }
     }
 }

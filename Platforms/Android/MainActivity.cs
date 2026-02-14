@@ -17,7 +17,7 @@ namespace Chess.Platforms.Android
             RegisterTimerMessages();
             StartDeleteFbDocsService();
         }
-        protected override void OnActivityResult(int requestCode, Result resultCode, global::Android.Content.Intent data)
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent? data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
 

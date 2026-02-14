@@ -100,6 +100,7 @@ namespace Chess.Models
         public abstract void ResignGame();
         protected abstract void Castling(bool right, bool isHostUser, bool MyMove);
         protected abstract void CheckCastling(int columnIndex, bool MyMove);
-        protected abstract void CheckGameOver(Piece movedPiece);   
+        protected abstract void CheckGameOver(Piece movedPiece);
+        public abstract List<string>? GetMyCapturedPiecesList(bool MyList);
     }
 }
