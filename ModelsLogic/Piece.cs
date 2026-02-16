@@ -8,22 +8,28 @@ namespace Chess.ModelsLogic
         public Piece() { }
         protected override bool PathClear(Piece[,] board, int startRow, int startColumn, int endRow, int endColumn, int rowDirection, int columnDirection)
         {
+            bool result = true;
             int rowCheck = startRow + rowDirection;
             int columnCheck = startColumn + columnDirection;
             while (rowCheck != endRow || columnCheck != endColumn)
             {
                 if (board[rowCheck, columnCheck].StringImageSource != null)
-                    return false;
+                    result = false;
                 rowCheck += rowDirection;
                 columnCheck += columnDirection;
             }
-            Piece start = board[startRow, startColumn];
-            Piece end = board[endRow, endColumn];
-            if (start is King && (endColumn == 0 || endColumn == 7))
+            if (result)
             {
-                return end is Rook && end.IsWhite == start.IsWhite;
-            }
-            return end.StringImageSource == null || end.IsWhite != start.IsWhite;
+                Piece start = board[startRow, startColumn];
+                Piece end = board[endRow, endColumn];
+                if (start is King && (endColumn == 0 || endColumn == 7))
+                {
+                    result = end is Rook && end.IsWhite == start.IsWhite;
+                }
+                else
+                    result = end.StringImageSource == null || end.IsWhite != start.IsWhite;
+            }  
+            return result;
         }
     }
 }

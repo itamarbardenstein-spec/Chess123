@@ -12,7 +12,7 @@ namespace Chess.ModelsLogic
                 int rowDirection = Math.Sign(toRow - fromRow);
                 int columnDirection = Math.Sign(toColumn - fromColumn);
                 if(PathClear(board, fromRow, fromColumn, toRow, toColumn, rowDirection, columnDirection))
-                    result=true;
+                    result = true;
             }
             return result;
         }

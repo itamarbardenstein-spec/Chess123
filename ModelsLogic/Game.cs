@@ -670,35 +670,36 @@ namespace Chess.ModelsLogic
         }
         public override List<string>? GetMyCapturedPiecesList(bool MyList)
         {
+            List<string>? result;
             if (IsHostUser)
             {
                 if (!MyList)
-                    return BlackCapturedImages;
+                    result = BlackCapturedImages;
                 else
-                    return WhiteCapturedImages;
+                    result = WhiteCapturedImages;
             }
             else
             {
                 if (!MyList)
-                    return WhiteCapturedImages;
+                    result = WhiteCapturedImages;
                 else
-                    return BlackCapturedImages;
+                    result = BlackCapturedImages;
             }
+            return result;
         }
-        public List<CapturedPieceGroup>? GetGroupedCapturedPieces(bool myList)
+        public override List<CapturedPieceGroup>? GetGroupedCapturedPieces(bool myList)
         {
-            // משתמשים בפונקציה הקיימת כדי לקבל את רשימת המחרוזות
+            List<CapturedPieceGroup>? result = null;
             List<string>? rawList = GetMyCapturedPiecesList(myList);
-            if (rawList == null) return null;
-            return rawList
-                .GroupBy(img => img)
-                .Select(g => new CapturedPieceGroup
+            if (rawList != null)
+                result = [.. rawList.GroupBy(img => img)
+                    .Select(cpg => new CapturedPieceGroup
                 {
-                    ImageSource = g.Key,
-                    Count = g.Count()
+                    ImageSource = cpg.Key,
+                    Count = cpg.Count()
                 })
-                .OrderBy(x => x.ImageSource)
-                .ToList();
+                .OrderBy(x => x.ImageSource)];
+            return result;
         }
     }
 }

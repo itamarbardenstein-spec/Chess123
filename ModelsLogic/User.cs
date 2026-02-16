@@ -63,16 +63,17 @@ namespace Chess.ModelsLogic
         }    
         public override bool CanLogin()
         {
-            return (!string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Email));
+            return !string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Email);
         }
         public override bool CanRegister()
         {
-            return (!string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Age));
+            return !string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Age);
         }
-        public void SignInWithGoogle(string idToken, Action<Task> OnComplete)
+        public static void SignInWithGoogle(string idToken, Action<Task> OnComplete)
         {
             FbData.SignInWithGoogleAsync(idToken, OnComplete);
         }
+
         public override void ResetEmailPassword()
         {
             fbd.ResetEmailPasswordAsync(EmailForReset, OnResetComplete);

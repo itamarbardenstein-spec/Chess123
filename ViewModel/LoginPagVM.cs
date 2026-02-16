@@ -1,14 +1,16 @@
-﻿using System.Windows.Input;
-using Chess.Models;
+﻿using Chess.Models;
 using Chess.ModelsLogic;
 using Chess.Views;
+using System.Windows.Input;
 namespace Chess.ViewModel
 {
-    internal partial class LoginPagVM : ObservableObject
+    public partial class LoginPagVM : ObservableObject
     {
-        private readonly IGoogleAuthService _googleService=null;
-        public ICommand GoogleLoginCommand { get; }    
-        public ICommand ForgotPaswordCommand { get; }    
+#if ANDROID
+        private readonly Platforms.Android.GoogleAuthService? _googleService = null;
+#endif
+        public ICommand GoogleLoginCommand { get; }
+        public ICommand ForgotPaswordCommand { get; }
         public ICommand ToggleIsPasswordCommand { get; }
         public bool IsPassword { get; set; } = true;
         public ICommand LoginCommand { get; }
@@ -16,7 +18,7 @@ namespace Chess.ViewModel
         public bool CanLogin()
         {
             return user.CanLogin();
-        }    
+        }
         public LoginPagVM()
         {
             LoginCommand = new Command(Login, CanLogin);
@@ -44,12 +46,11 @@ namespace Chess.ViewModel
             {
 #if ANDROID
                 // שלב א': פתיחת חלונית גוגל וקבלת הטוקן
-                string idToken = await _googleService.AuthenticateAsync();
-
+                string idToken = await _googleService!.AuthenticateAsync();
                 if (!string.IsNullOrEmpty(idToken))
                 {
                     // שלב ב': שליחת הטוקן ל-Firebase דרך המודל User
-                    user.SignInWithGoogle(idToken, (task) =>
+                    User.SignInWithGoogle(idToken, (task) =>
                     {
                         if (task.IsCompletedSuccessfully)
                         {
@@ -100,7 +101,7 @@ namespace Chess.ViewModel
         {
             IsPassword = !IsPassword;
             OnPropertyChanged(nameof(IsPassword));
-        }     
+        }
         public string UserName
         {
             get => user.UserName;

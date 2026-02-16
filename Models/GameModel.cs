@@ -102,5 +102,6 @@ namespace Chess.Models
         protected abstract void CheckCastling(int columnIndex, bool MyMove);
         protected abstract void CheckGameOver(Piece movedPiece);
         public abstract List<string>? GetMyCapturedPiecesList(bool MyList);
+        public abstract List<CapturedPieceGroup>? GetGroupedCapturedPieces(bool myList);
     }
 }
