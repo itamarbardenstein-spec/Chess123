@@ -7,6 +7,7 @@ namespace Chess.Models
         protected FbData fbd = new();
         public EventHandler? OnAuthCompleted;
         public EventHandler? OnPasswordResetCompleted;
+        public EventHandler<string>? ShowToastAlert;
         public string UserName { get; set; } = string.Empty;
         public bool IsRegistered => (!string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(Password) && !string.IsNullOrWhiteSpace(Email) && !string.IsNullOrWhiteSpace(Age));
         public string Password { get; set; } = string.Empty;
@@ -23,5 +24,7 @@ namespace Chess.Models
         public abstract string GetFirebaseErrorMessage(string msg);
         public abstract void ResetEmailPassword();
         protected abstract void OnResetComplete(Task task);
+        public abstract void GoogleLogin();
+        public abstract void SignInWithGoogle(string idToken, Action<Task> OnComplete);
     }
 }

@@ -1,14 +1,13 @@
 ﻿using Chess.Models;
 using Chess.ModelsLogic;
 using Chess.Views;
+using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
 using System.Windows.Input;
 namespace Chess.ViewModel
 {
     public partial class LoginPagVM : ObservableObject
     {
-#if ANDROID
-        private readonly Platforms.Android.GoogleAuthService? _googleService = null;
-#endif
         public ICommand GoogleLoginCommand { get; }
         public ICommand ForgotPaswordCommand { get; }
         public ICommand ToggleIsPasswordCommand { get; }
@@ -17,7 +16,7 @@ namespace Chess.ViewModel
         private readonly User user = new();
         public bool CanLogin()
         {
-            return user.CanLogin();
+            return !IsBusy && user.CanLogin();
         }
         public LoginPagVM()
         {
@@ -25,10 +24,20 @@ namespace Chess.ViewModel
             ToggleIsPasswordCommand = new Command(ToggleIsPassword);
             ForgotPaswordCommand = new Command(ForgotPassword);
             user.OnAuthCompleted += OnAuthComplete;
+            user.ShowToastAlert += ShowToastAlert;
             GoogleLoginCommand = new Command(GoogleLogin);
-#if ANDROID
-            _googleService = new Platforms.Android.GoogleAuthService();
-#endif
+        }
+
+        private void ShowToastAlert(object? sender, string msg)
+        {
+            isBusy = false;
+            OnPropertyChanged(nameof(isBusy));
+            MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Toast.Make(msg, ToastDuration.Long).Show();
+            });
+            isBusy = false;
+            OnPropertyChanged(nameof(isBusy));
         }
         private void ForgotPassword(object obj)
         {
@@ -40,48 +49,9 @@ namespace Chess.ViewModel
                 }
             });
         }
-        private async void GoogleLogin()
-        {
-            try
-            {
-#if ANDROID
-                // שלב א': פתיחת חלונית גוגל וקבלת הטוקן
-                string idToken = await _googleService!.AuthenticateAsync();
-                if (!string.IsNullOrEmpty(idToken))
-                {
-                    // שלב ב': שליחת הטוקן ל-Firebase דרך המודל User
-                    User.SignInWithGoogle(idToken, (task) =>
-                    {
-                        if (task.IsCompletedSuccessfully)
-                        {
-                            // שלב ג': הצלחה - מעבר לדף הבית (חייב לרוץ על ה-MainThread)
-                            MainThread.BeginInvokeOnMainThread(() =>
-                            {
-                                if (Application.Current != null)
-                                {
-                                    Application.Current.MainPage = new HomePage();
-                                }
-                            });
-                        }
-                        else
-                        {
-                            // טיפול בכישלון התחברות ל-Firebase
-                            MainThread.BeginInvokeOnMainThread(async () =>
-                            {
-                                await Application.Current!.MainPage!.DisplayAlert("שגיאה", "ההתחברות ל-Firebase נכשלה", "אישור");
-                            });
-                        }
-                    });
-                }
-#else
-                await Application.Current!.MainPage!.DisplayAlert("Info", "Google Login זמין כרגע רק באנדרואיד", "OK");
-#endif
-            }
-            catch (Exception ex)
-            {
-                // המשתמש ביטל את החלונית או שגיאה אחרת
-                await Application.Current!.MainPage!.DisplayAlert("Login Error", ex.Message, "OK");
-            }
+        private void GoogleLogin()
+        {          
+            user.GoogleLogin();
         }
         private void OnAuthComplete(object? sender, EventArgs e)
         {
@@ -95,6 +65,9 @@ namespace Chess.ViewModel
         }
         private void Login()
         {
+            if(IsBusy)
+                return;
+            IsBusy = true;
             user.Login();
         }
         private void ToggleIsPassword()
@@ -108,6 +81,17 @@ namespace Chess.ViewModel
             set
             {
                 user.UserName = value;
+                (LoginCommand as Command)?.ChangeCanExecute();
+            }
+        }
+        private bool isBusy;
+        public bool IsBusy
+        {
+            get => isBusy;
+            set
+            {
+                isBusy = value;
+                OnPropertyChanged();
                 (LoginCommand as Command)?.ChangeCanExecute();
             }
         }

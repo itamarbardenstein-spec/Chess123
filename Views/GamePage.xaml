@@ -8,7 +8,6 @@
     xmlns:logic="clr-namespace:Chess.ModelsLogic"
     Title="GamePage"
     x:DataType="vm:GamePageVM">
-
     <ContentPage.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
             <GradientStop Offset="0.0" Color="MidnightBlue" />

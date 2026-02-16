@@ -20,28 +20,18 @@ namespace Chess.Platforms.Android
         protected override void OnActivityResult(int requestCode, Result resultCode, Intent? data)
         {
             base.OnActivityResult(requestCode, resultCode, data);
-
-            // בדיקה שהקוד תואם לזה שהגדרנו ב-GoogleAuthService
             if (requestCode == 1001)
             {
-                // קבלת המשימה מתוך ה-Intent שהתקבל מגוגל
-                var task = global::Android.Gms.Auth.Api.SignIn.GoogleSignIn.GetSignedInAccountFromIntent(data);
-
+                global::Android.Gms.Tasks.Task task = global::Android.Gms.Auth.Api.SignIn.GoogleSignIn.GetSignedInAccountFromIntent(data);
                 try
                 {
-                    // ביצוע המרה (Cast) כדי לגשת למאפייני החשבון
-                    var account = (global::Android.Gms.Auth.Api.SignIn.GoogleSignInAccount)task.Result;
-
+                    global::Android.Gms.Auth.Api.SignIn.GoogleSignInAccount account = (global::Android.Gms.Auth.Api.SignIn.GoogleSignInAccount)task.Result;
                     if (account != null)
-                    {
-                        // שליחת ה-Token בחזרה ל-Service ושחרור ה-await
-                        Chess.Platforms.Android.GoogleAuthService.LoginTcs?.TrySetResult(account.IdToken);
-                    }
+                        GoogleAuthService.LoginTcs?.TrySetResult(account.IdToken);
                 }
                 catch (Exception ex)
                 {
-                    // במקרה של שגיאה (כמו SHA-1 לא תואם), נשלח את השגיאה ל-ViewModel
-                    Chess.Platforms.Android.GoogleAuthService.LoginTcs?.TrySetException(ex);
+                    GoogleAuthService.LoginTcs?.TrySetException(ex);
                 }
             }
         }
@@ -61,7 +51,6 @@ namespace Chess.Platforms.Android
                 OnMessageReceived(m.Value);
             });
         }
-
         private void OnMessageReceived(bool value)
         {
             if (value)
@@ -70,7 +59,6 @@ namespace Chess.Platforms.Android
                 mTimer = null;
             }
         }
-
         private void OnMessageReceived(TimerSettings value)
         {
             mTimer = new MyTimer(value.TotalTimeInMilliseconds, value.IntervalInMilliseconds);
