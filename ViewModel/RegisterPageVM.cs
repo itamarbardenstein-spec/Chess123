@@ -1,9 +1,9 @@
-﻿using System.Windows.Input;
-using Chess.Models;
+﻿using Chess.Models;
 using Chess.ModelsLogic;
 using Chess.Views;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using System.Windows.Input;
 
 namespace Chess.ViewModel
 {
@@ -15,13 +15,23 @@ namespace Chess.ViewModel
         private readonly User user = new();
         public bool CanRegister()
         {
-            return user.CanRegister();
+            return !IsBusy && user.CanRegister();
         }
         public RegisterPageVM()
         {
             RegisterCommand = new Command(Register, CanRegister);
             ToggleIsPasswordCommand = new Command(ToggleIsPassword);
             user.OnAuthCompleted += OnAuthComplete;
+            user.ShowToastAlert += ShowToastAlert;
+        }
+        private void ShowToastAlert(object? sender, string msg)
+        {
+            isBusy = false;
+            OnPropertyChanged(nameof(isBusy));
+            MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Toast.Make(msg, ToastDuration.Long).Show();
+            });
         }
         private void OnAuthComplete(object? sender, EventArgs e)
         {
@@ -39,8 +49,12 @@ namespace Chess.ViewModel
             OnPropertyChanged(nameof(IsPassword));
         }
         private void Register()
-        {            
-            user.Register();
+        {
+            if (!IsBusy)
+            {
+                IsBusy = true;
+                user.Register();
+            }               
         }        
         public string UserName
         {
@@ -77,6 +91,17 @@ namespace Chess.ViewModel
                 user.Age = value;
                 (RegisterCommand as Command)?.ChangeCanExecute();
             }
-        }      
+        }
+        private bool isBusy;
+        public bool IsBusy
+        {
+            get => isBusy;
+            set
+            {
+                isBusy = value;
+                OnPropertyChanged();
+                (RegisterCommand as Command)?.ChangeCanExecute();
+            }
+        }
     }
 }

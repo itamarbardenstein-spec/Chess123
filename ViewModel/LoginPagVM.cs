@@ -36,8 +36,6 @@ namespace Chess.ViewModel
             {
                 Toast.Make(msg, ToastDuration.Long).Show();
             });
-            isBusy = false;
-            OnPropertyChanged(nameof(isBusy));
         }
         private void ForgotPassword(object obj)
         {
@@ -65,10 +63,11 @@ namespace Chess.ViewModel
         }
         private void Login()
         {
-            if(IsBusy)
-                return;
-            IsBusy = true;
-            user.Login();
+            if (!IsBusy)
+            {
+                IsBusy = true;
+                user.Login();
+            }                         
         }
         private void ToggleIsPassword()
         {

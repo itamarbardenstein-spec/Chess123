@@ -1,8 +1,5 @@
 ﻿using Chess.Models;
-using Chess.NewFolder;
 using Chess.Views;
-using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core;
 namespace Chess.ModelsLogic
 {
     public class User : UserModels
