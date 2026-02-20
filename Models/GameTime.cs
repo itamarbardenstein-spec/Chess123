@@ -2,8 +2,11 @@
 {
     public class GameTime
     {
+        #region Properties
         public int Time { get; set; }
-        public string DisplayName => $"{Time} min";
+        public string DisplayName => $"{Time} {Strings.Minutes}";
+        #endregion
+        #region Constructors
         public GameTime(int time)
         {
             Time = time;
@@ -12,5 +15,6 @@
         {
             Time = 5;
         }
+        #endregion
     }
 }

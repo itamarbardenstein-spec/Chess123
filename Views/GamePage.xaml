@@ -3,9 +3,9 @@
     x:Class="Chess.Views.GamePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:logic="clr-namespace:Chess.ModelsLogic"
     xmlns:m="clr-namespace:Chess.Models"
     xmlns:vm="clr-namespace:Chess.ViewModel"
-    xmlns:logic="clr-namespace:Chess.ModelsLogic"
     Title="GamePage"
     x:DataType="vm:GamePageVM">
     <ContentPage.Background>
@@ -36,38 +36,41 @@
                         Text="{Binding OpponentName}"
                         TextColor="White" />
 
-                    <ScrollView Orientation="Horizontal" 
-                                HeightRequest="35" 
-                                HorizontalScrollBarVisibility="Never">
-                        <HorizontalStackLayout BindableLayout.ItemsSource="{Binding OpponentCapturedPieces}" 
-                                               Spacing="8">
+                    <ScrollView
+                        HeightRequest="35"
+                        HorizontalScrollBarVisibility="Never"
+                        Orientation="Horizontal">
+                        <HorizontalStackLayout BindableLayout.ItemsSource="{Binding OpponentCapturedPieces}" Spacing="8">
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate x:DataType="logic:CapturedPieceGroup">
-                                    <Grid WidthRequest="30" HeightRequest="30">
-                                        <Image Source="{Binding ImageSource}" 
-                                               Aspect="AspectFit"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center"
-                                               HeightRequest="28" 
-                                               WidthRequest="28" 
-                                               Opacity="0.9" />
+                                    <Grid HeightRequest="30" WidthRequest="30">
+                                        <Image
+                                            Aspect="AspectFit"
+                                            HeightRequest="28"
+                                            HorizontalOptions="Center"
+                                            Opacity="0.9"
+                                            Source="{Binding ImageSource}"
+                                            VerticalOptions="Center"
+                                            WidthRequest="28" />
 
-                                        <Border BackgroundColor="#FF4444"
-                                                StrokeThickness="0"
-                                                StrokeShape="RoundRectangle 8"
-                                                VerticalOptions="End"
-                                                HorizontalOptions="End"
-                                                TranslationX="2"
-                                                TranslationY="2"
-                                                Padding="3,0"
-                                                MinimumWidthRequest="16"
-                                                IsVisible="{Binding ShowCount}">
-                                            <Label Text="{Binding Count}"
-                                                   TextColor="White"
-                                                   FontSize="10"
-                                                   FontAttributes="Bold"
-                                                   HorizontalOptions="Center"
-                                                   VerticalOptions="Center" />
+                                        <Border
+                                            Padding="3,0"
+                                            BackgroundColor="#FF4444"
+                                            HorizontalOptions="End"
+                                            IsVisible="{Binding ShowCount}"
+                                            MinimumWidthRequest="16"
+                                            StrokeShape="RoundRectangle 8"
+                                            StrokeThickness="0"
+                                            TranslationX="2"
+                                            TranslationY="2"
+                                            VerticalOptions="End">
+                                            <Label
+                                                FontAttributes="Bold"
+                                                FontSize="10"
+                                                HorizontalOptions="Center"
+                                                Text="{Binding Count}"
+                                                TextColor="White"
+                                                VerticalOptions="Center" />
                                         </Border>
                                     </Grid>
                                 </DataTemplate>
@@ -125,38 +128,41 @@
                         FontSize="14"
                         Text="{Binding MyName}"
                         TextColor="White" />
-                    <ScrollView Orientation="Horizontal" 
-                                HeightRequest="35" 
-                                HorizontalScrollBarVisibility="Never">
-                        <HorizontalStackLayout BindableLayout.ItemsSource="{Binding MyCapturedPieces}" 
-                                               Spacing="8">
+                    <ScrollView
+                        HeightRequest="35"
+                        HorizontalScrollBarVisibility="Never"
+                        Orientation="Horizontal">
+                        <HorizontalStackLayout BindableLayout.ItemsSource="{Binding MyCapturedPieces}" Spacing="8">
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate x:DataType="logic:CapturedPieceGroup">
-                                    <Grid WidthRequest="30" HeightRequest="30">
-                                        <Image Source="{Binding ImageSource}" 
-                                               Aspect="AspectFit"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center"
-                                               HeightRequest="28" 
-                                               WidthRequest="28" 
-                                               Opacity="0.9" />
+                                    <Grid HeightRequest="30" WidthRequest="30">
+                                        <Image
+                                            Aspect="AspectFit"
+                                            HeightRequest="28"
+                                            HorizontalOptions="Center"
+                                            Opacity="0.9"
+                                            Source="{Binding ImageSource}"
+                                            VerticalOptions="Center"
+                                            WidthRequest="28" />
 
-                                        <Border BackgroundColor="#FF4444"
-                                                StrokeThickness="0"
-                                                StrokeShape="RoundRectangle 8"
-                                                VerticalOptions="End"
-                                                HorizontalOptions="End"
-                                                TranslationX="2"
-                                                TranslationY="2"
-                                                Padding="3,0"
-                                                MinimumWidthRequest="16"
-                                                IsVisible="{Binding ShowCount}">
-                                            <Label Text="{Binding Count}"
-                                                   TextColor="White"
-                                                   FontSize="10"
-                                                   FontAttributes="Bold"
-                                                   HorizontalOptions="Center"
-                                                   VerticalOptions="Center" />
+                                        <Border
+                                            Padding="3,0"
+                                            BackgroundColor="#FF4444"
+                                            HorizontalOptions="End"
+                                            IsVisible="{Binding ShowCount}"
+                                            MinimumWidthRequest="16"
+                                            StrokeShape="RoundRectangle 8"
+                                            StrokeThickness="0"
+                                            TranslationX="2"
+                                            TranslationY="2"
+                                            VerticalOptions="End">
+                                            <Label
+                                                FontAttributes="Bold"
+                                                FontSize="10"
+                                                HorizontalOptions="Center"
+                                                Text="{Binding Count}"
+                                                TextColor="White"
+                                                VerticalOptions="Center" />
                                         </Border>
                                     </Grid>
                                 </DataTemplate>

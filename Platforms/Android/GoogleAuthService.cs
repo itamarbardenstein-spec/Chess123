@@ -6,7 +6,10 @@ namespace Chess.Platforms.Android
 {
     public class GoogleAuthService
     {
+        #region Properties
         public static TaskCompletionSource<string>? LoginTcs { get; set; }
+        #endregion
+        #region Public Methods
         public static async Task<string> AuthenticateAsync()    
         {
             LoginTcs = new TaskCompletionSource<string>();
@@ -20,5 +23,6 @@ namespace Chess.Platforms.Android
             Platform.CurrentActivity?.StartActivityForResult(intent, 1001);
             return await LoginTcs.Task;
         }
+        #endregion
     }
 }

@@ -10,11 +10,16 @@ namespace Chess.ViewModel
 {
     public partial class PuzzlePageVM
     {
+        #region Fields
         private readonly PuzzleGrid puzzleGrid = [];
         private readonly Puzzle puzzle;
+        #endregion
+        #region Commands
         public ICommand ShowHintCommand { get; private set; }
         public ICommand HomeCommand { get; private set; }
         public ICommand ShowMoveCommand { get; private set; }
+        #endregion
+        #region Constructor
         public PuzzlePageVM(Grid puzzleBoard,string difficulty)
         {
             puzzle = new Puzzle(difficulty);
@@ -35,26 +40,24 @@ namespace Chess.ViewModel
             puzzle.IncorrectMove += OnIncorrectMove;
             puzzle.RemoveHighlight += ClearHighlights;
             puzzle.CorrectSolution += OnCorrectSolution;
-            ShowHintCommand =new Command(ShowHint);
+            ShowHintCommand = new Command(ShowHint);
             HomeCommand = new Command(TransferHome);
-            ShowMoveCommand=new Command(ShowCorrectMove);
+            ShowMoveCommand = new Command(ShowCorrectMove);
         }
-
+        #endregion
+        #region Private Methods
         private void ClearHighlights(object? sender, EventArgs e)
         {
             puzzleGrid.ClearBoardHighLights();
         }
-
         private void HighlightHintSquare(object? sender, HighlightSquareArgs e)
         {
             puzzleGrid.ShowHint(e.Row,e.Column);
         }
-
         private void HighlightCorrectMove(object? sender, DisplayMoveArgs e)
         {
             puzzleGrid.ShowCorrectMove(e.FromRow,e.FromColomn,e.ToRow,e.ToColumn);
         }
-
         private void MakeOpponentMove(object? sender, string e)
         {
             puzzleGrid.MakeOpponentMove(e);
@@ -65,7 +68,6 @@ namespace Chess.ViewModel
             string title = Strings.CorrectSolutionTitle;
             Application.Current?.MainPage?.ShowPopup(new CorrectMovePopup(title, reason));
         }
-
         private void OnDisplayChanged(object? sender, DisplayMoveArgs e)
         {
             puzzleGrid.UpdateDisplay(e);
@@ -79,16 +81,13 @@ namespace Chess.ViewModel
             MainThread.InvokeOnMainThreadAsync(() =>
             {
                 if (Application.Current != null)
-                {
                     Application.Current.MainPage = new HomePage();
-                }
             });
         }
         private void ShowHint(object obj)
         {
             puzzle.HintSquare();
         }
-
         private void OnIncorrectMove(object? sender, EventArgs e)
         {
             Toast.Make(Strings.IncorrectMoveMessage, ToastDuration.Short).Show();
@@ -109,5 +108,6 @@ namespace Chess.ViewModel
         {
             puzzleGrid.ShowLegalMoves(e);
         }
+        #endregion
     }
 }

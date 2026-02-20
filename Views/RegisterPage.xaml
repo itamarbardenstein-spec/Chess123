@@ -5,95 +5,95 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:m="clr-namespace:Chess.Models"
     xmlns:vm="clr-namespace:Chess.ViewModel"
-    x:DataType="vm:RegisterPageVM"
-    Title="RegisterPage">
+    Title="RegisterPage"
+    x:DataType="vm:RegisterPageVM">
     <VerticalStackLayout
         Padding="30"
         Spacing="25"
         VerticalOptions="Center">
-        <Label  
-            FontAttributes="Bold"  
-            FontSize="60"  
-            TextColor="Black"  
-            HorizontalOptions="Center" 
-            Text="{x:Static m:Strings.Register}" />
-        <Label 
-            FontAttributes="Bold"             
-            FontFamily="MaterialSymbols"            
-            FontSize="45"             
-            TextColor="DarkCyan"        
+        <Label
+            FontAttributes="Bold"
+            FontSize="60"
             HorizontalOptions="Center"
-            Text="{StaticResource IconEncrypted_add_circle}" />
-        <Border  
-            Padding="10"                 
-            Stroke="DarkCyan"                
-            StrokeShape="RoundRectangle 15" 
+            Text="{x:Static m:Strings.Register}"
+            TextColor="Black" />
+        <Label
+            FontAttributes="Bold"
+            FontFamily="MaterialSymbols"
+            FontSize="45"
+            HorizontalOptions="Center"
+            Text="{StaticResource IconEncrypted_add_circle}"
+            TextColor="DarkCyan" />
+        <Border
+            Padding="10"
+            Stroke="DarkCyan"
+            StrokeShape="RoundRectangle 15"
             StrokeThickness="1">
-            <Entry 
+            <Entry
+                Margin="6"
                 FontSize="18"
-                Placeholder="{x:Static m:Strings.UserName}" 
-                Text="{Binding UserName}" 
-                Margin="6"/>
+                Placeholder="{x:Static m:Strings.UserName}"
+                Text="{Binding UserName}" />
         </Border>
-        <Border               
-            Padding="1"                    
-            Stroke="DarkCyan"                    
-            StrokeShape="RoundRectangle 15"     
+        <Border
+            Padding="1"
+            Stroke="DarkCyan"
+            StrokeShape="RoundRectangle 15"
             StrokeThickness="1">
             <Grid
                 Padding="10"
                 ColumnDefinitions="*,Auto"
                 VerticalOptions="Center">
-                <Entry 
+                <Entry
                     FontSize="18"
-                    Placeholder="{x:Static m:Strings.Password}" 
-                    Text="{Binding Password}" 
-                    IsPassword="{Binding IsPassword}" />
+                    IsPassword="{Binding IsPassword}"
+                    Placeholder="{x:Static m:Strings.Password}"
+                    Text="{Binding Password}" />
                 <Button
-                    BackgroundColor="Transparent"         
-                    BorderWidth="0"          
-                    Command="{Binding ToggleIsPasswordCommand}"           
-                    FontFamily="MaterialSymbols"           
-                    FontSize="24"           
-                    Style="{StaticResource IconButtonStyle}"
+                    BackgroundColor="Transparent"
+                    BorderWidth="0"
+                    Command="{Binding ToggleIsPasswordCommand}"
+                    FontFamily="MaterialSymbols"
+                    FontSize="24"
                     HorizontalOptions="End"
+                    Style="{StaticResource IconButtonStyle}"
                     Text="{Binding IsPassword, Converter={StaticResource passwordIconConvert}}"
                     TextColor="DarkCyan"
                     VerticalOptions="Center" />
             </Grid>
         </Border>
-        <Border               
-            Padding="10"                    
-            Stroke="DarkCyan"                    
-            StrokeShape="RoundRectangle 15"     
+        <Border
+            Padding="10"
+            Stroke="DarkCyan"
+            StrokeShape="RoundRectangle 15"
             StrokeThickness="1">
-            <Entry 
+            <Entry
+                Margin="6"
                 FontSize="18"
-                Placeholder="{x:Static m:Strings.Email}" 
-                Text="{Binding Email}" 
-                Margin="6"/>
+                Placeholder="{x:Static m:Strings.Email}"
+                Text="{Binding Email}" />
         </Border>
-        <Border               
-            Padding="10"                    
-            Stroke="DarkCyan"                    
-            StrokeShape="RoundRectangle 15"     
+        <Border
+            Padding="10"
+            Stroke="DarkCyan"
+            StrokeShape="RoundRectangle 15"
             StrokeThickness="1">
-            <Entry 
+            <Entry
                 FontSize="18"
-                Placeholder="{x:Static m:Strings.Age}" 
+                Placeholder="{x:Static m:Strings.Age}"
                 Text="{Binding Age}" />
         </Border>
-        <Button 
-            Command="{Binding RegisterCommand}" 
-            Text="{x:Static m:Strings.Register}"
+        <Button
+            Command="{Binding RegisterCommand}"
             CornerRadius="20"
             FontSize="30"
             HeightRequest="70"
+            Text="{x:Static m:Strings.Register}"
             TextColor="White">
             <Button.ImageSource>
                 <FontImageSource Glyph="{StaticResource IconPerson_add}">
-                <FontImageSource.FontFamily>MaterialSymbols</FontImageSource.FontFamily>
-            </FontImageSource>
+                    <FontImageSource.FontFamily>MaterialSymbols</FontImageSource.FontFamily>
+                </FontImageSource>
             </Button.ImageSource>
         </Button>
     </VerticalStackLayout>

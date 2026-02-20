@@ -4,6 +4,7 @@ namespace Chess.ModelsLogic
 {
     public partial class Puzzle : PuzzleModel
     {
+        #region Constructor
         public Puzzle(string difficulty)
         {
             if (difficulty == Strings.Easy)
@@ -13,6 +14,8 @@ namespace Chess.ModelsLogic
             else
                 InitHardPuzzleBoard();
         }
+        #endregion
+        #region Public Methods
         public override void InitEasyPuzzleBoard()
         {
             currentDifficulty = Strings.Easy;
@@ -24,29 +27,24 @@ namespace Chess.ModelsLogic
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
                     gameBoard[i, j] = new Pawn(i, j, false, null);
-
             gameBoard[0, 0] = new Rook(0, 0, false, Strings.BlackRook);
             gameBoard[0, 2] = new Bishop(0, 2, false, Strings.BlackBishop);
             gameBoard[0, 3] = new King(0, 3, false, Strings.BlackKing);
             gameBoard[0, 5] = new Bishop(0, 5, false, Strings.BlackBishop);
             gameBoard[0, 6] = new Knight(0, 6, false, Strings.BlackKnight);
             gameBoard[0, 7] = new Rook(0, 7, false, Strings.BlackRook);
-
             for (int i = 0; i < 8; i++)
                 if (i != 3 && i != 4)
                     gameBoard[1, i] = new Pawn(1, i, false, Strings.BlackPawn);
-
             gameBoard[2, 1] = new Knight(2, 1, false, Strings.BlackKnight);
             gameBoard[3, 4] = new Queen(3, 4, false, Strings.BlackQueen);
             gameBoard[4, 3] = new Knight(4, 3, true, Strings.WhiteKnight);
             gameBoard[4, 4] = new Pawn(4, 4, false, Strings.BlackPawn);
             gameBoard[5, 2] = new Pawn(5, 2, true, Strings.WhitePawn);
             gameBoard[6, 3] = new Queen(6, 3, true, Strings.WhiteQueen);
-
             for (int i = 0; i < 8; i++)
                 if (i != 2 && i != 3 && i != 4)
                     gameBoard[6, i] = new Pawn(6, i, true, Strings.WhitePawn);
-
             gameBoard[7, 0] = new Rook(7, 0, true, Strings.WhiteRook);
             gameBoard[7, 1] = new Knight(7, 1, true, Strings.WhiteKnight);
             gameBoard[7, 2] = new Bishop(7, 2, true, Strings.WhiteBishop);
@@ -65,7 +63,6 @@ namespace Chess.ModelsLogic
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
                     gameBoard![i, j] = new Pawn(i, j, false, null);
-
             gameBoard![0, 1] = new King(0, 1, false, Strings.BlackKing);
             gameBoard[0, 3] = new Rook(0, 3, false, Strings.BlackRook);
             gameBoard[1, 0] = new Pawn(1, 0, false, Strings.BlackPawn);
@@ -207,15 +204,6 @@ namespace Chess.ModelsLogic
                 }
             }
         }
-        protected override List<int[]> GetLegalMoveList(Piece p)
-        {
-            List<int[]> legalMoves = [];
-            for (int r = 0; r < 8; r++)
-                for (int c = 0; c < 8; c++)
-                    if (gameBoard![p.RowIndex, p.ColumnIndex].IsMoveValid(gameBoard!, p.RowIndex, p.ColumnIndex, r, c))                    
-                            legalMoves.Add([r, c]);
-            return legalMoves;
-        }
         public override Piece CreatePiece(Piece original, int row, int col)
         {
             bool isWhite = original.IsWhite;
@@ -246,5 +234,17 @@ namespace Chess.ModelsLogic
         {
             HighlightCorrectMoveHint?.Invoke(this, new DisplayMoveArgs(CorrectPieceRow, CorrectPieceColumn, CorrectMoveRow, CorrectMoveColumn));
         }
+        #endregion
+        #region Private Methods
+        protected override List<int[]> GetLegalMoveList(Piece p)
+        {
+            List<int[]> legalMoves = [];
+            for (int r = 0; r < 8; r++)
+                for (int c = 0; c < 8; c++)
+                    if (gameBoard![p.RowIndex, p.ColumnIndex].IsMoveValid(gameBoard!, p.RowIndex, p.ColumnIndex, r, c))                    
+                            legalMoves.Add([r, c]);
+            return legalMoves;
+        }
+        #endregion
     }
 }

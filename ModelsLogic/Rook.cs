@@ -1,11 +1,12 @@
-﻿using Chess.Models;
-
-namespace Chess.ModelsLogic
+﻿namespace Chess.ModelsLogic
 {
     public partial class Rook(int row, int column, bool isWhite, string? image) : Piece(row, column, isWhite, image)
-    {     
+    {
+        #region Properties
         public bool HasRightRookMoved { get; set; } = false;
         public bool HasLeftRookMoved { get; set; } = false;
+        #endregion
+        #region Public Methods
         public override bool IsMoveValid(Piece[,] board, int fromRow, int fromColumn, int toRow, int toColumn)
         {
             bool result = false;
@@ -18,5 +19,6 @@ namespace Chess.ModelsLogic
             }
             return result;
         }
+        #endregion
     }
 }

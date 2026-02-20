@@ -8,8 +8,13 @@ namespace Chess.ViewModel
 {
     public partial class MainPageVm: ObservableObject
     {
+        #region Fields
         private readonly Games games = new();
+        #endregion
+        #region Commands
         public ICommand AddGameCommand { get; }
+        #endregion
+        #region Properties
         public bool IsBusy => games.IsBusy;
         public ObservableCollection<GameTime>? GameTimes { get => games.GameTimes; set => games.GameTimes = value; }
         public GameTime SelectedGameTime { get => games.SelectedGameTime; set => games.SelectedGameTime = value; }
@@ -29,6 +34,26 @@ namespace Chess.ViewModel
                 }
             }
         }
+        #endregion
+        #region Constructor
+        public MainPageVm()
+        {
+            AddGameCommand = new Command(AddGame);
+            games.OnGameAdded += OnGameAdded;
+            games.OnGamesChanged += OnGamesChanged;
+        }
+        #endregion
+        #region Public Methods
+        public void AddSnapshotListener()
+        {
+            games.AddSnapshotListener();
+        }
+        public void RemoveSnapshotListener()
+        {
+            games.RemoveSnapshotListener();
+        }
+        #endregion
+        #region Private Methods
         private void AddGame()
         {
             if (!IsBusy)
@@ -36,13 +61,7 @@ namespace Chess.ViewModel
                 games.AddGame();
                 OnPropertyChanged(nameof(IsBusy));
             }                
-        }
-        public MainPageVm()
-        {
-            AddGameCommand = new Command(AddGame);
-            games.OnGameAdded += OnGameAdded;
-            games.OnGamesChanged += OnGamesChanged;
-        }
+        }      
         private void OnGamesChanged(object? sender, EventArgs e)
         {
             OnPropertyChanged(nameof(GamesList));
@@ -55,14 +74,7 @@ namespace Chess.ViewModel
                 Shell.Current.Navigation.PushAsync(new GamePage(game), true);
             });
         }
-        public void AddSnapshotListener()
-        {
-            games.AddSnapshotListener();
-        }
-        public void RemoveSnapshotListener()
-        {
-            games.RemoveSnapshotListener();
-        }
+        #endregion       
     }
 }
 

@@ -5,6 +5,7 @@ namespace Chess.ModelsLogic
 {
     public partial class PuzzleGrid:PuzzleGridModel
     {
+        #region Public Methods
         public override void InitEasyPuzzleGrid(Grid board)
         {
             this.Parent = board;
@@ -17,29 +18,24 @@ namespace Chess.ModelsLogic
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
                     BoardPieces[i, j] = new Pawn(i, j, false, null);
-
             BoardPieces[0, 0] = new Rook(0, 0, false, Strings.BlackRook);
             BoardPieces[0, 2] = new Bishop(0, 2, false, Strings.BlackBishop);
             BoardPieces[0, 3] = new King(0, 3, false, Strings.BlackKing);
             BoardPieces[0, 5] = new Bishop(0, 5, false, Strings.BlackBishop);
             BoardPieces[0, 6] = new Knight(0, 6, false, Strings.BlackKnight);
             BoardPieces[0, 7] = new Rook(0, 7, false, Strings.BlackRook);
-
             for (int i = 0; i < 8; i++)
                 if (i != 3 && i != 4)
                     BoardPieces[1, i] = new Pawn(1, i, false, Strings.BlackPawn);
-
             BoardPieces[2, 1] = new Knight(2, 1, false, Strings.BlackKnight);
             BoardPieces[3, 4] = new Queen(3, 4, false, Strings.BlackQueen);
             BoardPieces[4, 3] = new Knight(4, 3, true, Strings.WhiteKnight);
             BoardPieces [4, 4] = new Pawn(4, 4, false, Strings.BlackPawn);
             BoardPieces[5, 2] = new Pawn(5, 2, true, Strings.WhitePawn);
             BoardPieces[6, 3] = new Queen(6, 3, true, Strings.WhiteQueen);
-
             for (int i = 0; i < 8; i++)
                 if (i != 2 && i != 3 && i != 4)
                     BoardPieces[6, i] = new Pawn(6, i, true, Strings.WhitePawn);
-
             BoardPieces[7, 0] = new Rook(7, 0, true, Strings.WhiteRook);
             BoardPieces[7, 1] = new Knight(7, 1, true, Strings.WhiteKnight);
             BoardPieces[7, 2] = new Bishop(7, 2, true, Strings.WhiteBishop);
@@ -47,18 +43,14 @@ namespace Chess.ModelsLogic
             BoardPieces[7, 5] = new Bishop(7, 5, true, Strings.WhiteBishop);
             BoardPieces[7, 7] = new Rook(7, 7, true, Strings.WhiteRook);
             for (int i = 0; i < 8; i++)
-            {
                 for (int j = 0; j < 8; j++)
                 {
                     Piece p = BoardPieces[i, j];
-                    p.BackgroundColor = (i + j) % 2 == 0
-                        ? Color.FromArgb(Strings.BoardColorWhite)
-                        : Color.FromArgb(Strings.BoardColorBlack);
+                    p.BackgroundColor = (i + j) % 2 == 0 ? Color.FromArgb(Strings.BoardColorWhite): Color.FromArgb(Strings.BoardColorBlack);
                     p.Clicked += OnButtonClicked;
                     ((Grid)this.Parent).Add(p, j, i);
                     BoardUIMap[(i, j)] = p;
                 }
-            }
         }
         public override void InitMediumPuzzleGrid(Grid board)
         {
@@ -72,7 +64,6 @@ namespace Chess.ModelsLogic
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
                     BoardPieces[i, j] = new Pawn(i, j, false, null);
-
             BoardPieces[0, 1] = new King(0, 1, false, Strings.BlackKing);   
             BoardPieces[0, 3] = new Rook(0, 3, false, Strings.BlackRook);  
             BoardPieces[1, 0] = new Pawn(1, 0, false, Strings.BlackPawn); 
@@ -91,7 +82,6 @@ namespace Chess.ModelsLogic
             BoardPieces[6, 6] = new King(6, 6, true, Strings.WhiteKing);   
             BoardPieces[7, 3] = new Rook(7, 3, true, Strings.WhiteRook);   
             for (int i = 0; i < 8; i++)
-            {
                 for (int j = 0; j < 8; j++)
                 {
                     Piece p = BoardPieces[i, j];
@@ -102,7 +92,6 @@ namespace Chess.ModelsLogic
                     ((Grid)this.Parent).Add(p, j, i);
                     BoardUIMap[(i, j)] = p;
                 }
-            }
         }        
         public override void InitHardPuzzleGrid(Grid board)
         {
@@ -139,7 +128,6 @@ namespace Chess.ModelsLogic
             BoardPieces[6, 5] = new Pawn(6, 5, true, Strings.WhitePawn);      
             BoardPieces[7, 2] = new King(7, 2, true, Strings.WhiteKing);      
             for (int i = 0; i < 8; i++)
-            {
                 for (int j = 0; j < 8; j++)
                 {
                     Piece p = BoardPieces[i, j];
@@ -150,7 +138,6 @@ namespace Chess.ModelsLogic
                     ((Grid)this.Parent).Add(p, j, i);
                     BoardUIMap[(i, j)] = p;
                 }
-            }
         }
         public override void MakeOpponentMove(string difficulty)
         {
@@ -168,11 +155,7 @@ namespace Chess.ModelsLogic
                 UpdateCellUI(2, 6);
                 UpdateCellUI(0, 5);
             }
-        }
-        protected override void OnButtonClicked(object? sender, EventArgs e)
-        {
-            ButtonClicked?.Invoke(this, (Piece)sender!);
-        }
+        }       
         public override void ShowLegalMoves(List<int[]> legalMoves)
         {
             ClearDots();
@@ -227,24 +210,7 @@ namespace Chess.ModelsLogic
             BoardPieces![e.FromRow, e.FromColomn] = new Pawn(e.FromRow, e.FromColomn, false, null);
             UpdateCellUI(e.FromRow, e.FromColomn);
             UpdateCellUI(e.ToRow, e.ToColumn);
-        }
-        protected override void UpdateCellUI(int row, int col)
-        {
-            Piece uiPiece = BoardUIMap[(row, col)];
-            Piece modelPiece = BoardPieces![row, col];
-            if (modelPiece.StringImageSource == null)
-            {
-                uiPiece.StringImageSource = null;
-                uiPiece.Source = null;
-                uiPiece.IsWhite = false;
-            }
-            else
-            {
-                uiPiece.StringImageSource = modelPiece.StringImageSource;
-                uiPiece.Source = modelPiece.StringImageSource;
-                uiPiece.IsWhite = modelPiece.IsWhite;
-            }
-        }
+        }      
         public override Piece CreatePiece(Piece original, int row, int col)
         {
             bool isWhite = original.IsWhite;
@@ -267,5 +233,29 @@ namespace Chess.ModelsLogic
                 _ => throw new Exception()
             };
         }
+        #endregion
+        #region Private Methods
+        protected override void OnButtonClicked(object? sender, EventArgs e)
+        {
+            ButtonClicked?.Invoke(this, (Piece)sender!);
+        }
+        protected override void UpdateCellUI(int row, int col)
+        {
+            Piece uiPiece = BoardUIMap[(row, col)];
+            Piece modelPiece = BoardPieces![row, col];
+            if (modelPiece.StringImageSource == null)
+            {
+                uiPiece.StringImageSource = null;
+                uiPiece.Source = null;
+                uiPiece.IsWhite = false;
+            }
+            else
+            {
+                uiPiece.StringImageSource = modelPiece.StringImageSource;
+                uiPiece.Source = modelPiece.StringImageSource;
+                uiPiece.IsWhite = modelPiece.IsWhite;
+            }
+        }
+        #endregion
     }
 }

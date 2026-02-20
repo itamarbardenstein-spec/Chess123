@@ -9,61 +9,24 @@ namespace Chess.ViewModel
 {
     public partial class RegisterPageVM: ObservableObject
     {
-        public ICommand ToggleIsPasswordCommand { get; }
-        public bool IsPassword { get; set; } = true;
-        public ICommand RegisterCommand { get; }
+        #region Fields
         private readonly User user = new();
-        public bool CanRegister()
-        {
-            return !IsBusy && user.CanRegister();
-        }
-        public RegisterPageVM()
-        {
-            RegisterCommand = new Command(Register, CanRegister);
-            ToggleIsPasswordCommand = new Command(ToggleIsPassword);
-            user.OnAuthCompleted += OnAuthComplete;
-            user.ShowToastAlert += ShowToastAlert;
-        }
-        private void ShowToastAlert(object? sender, string msg)
-        {
-            isBusy = false;
-            OnPropertyChanged(nameof(isBusy));
-            MainThread.InvokeOnMainThreadAsync(() =>
-            {
-                Toast.Make(msg, ToastDuration.Long).Show();
-            });
-        }
-        private void OnAuthComplete(object? sender, EventArgs e)
-        {
-            MainThread.InvokeOnMainThreadAsync(() =>
-            {
-                if (Application.Current != null)
-                {
-                    Application.Current.MainPage = new HomePage();
-                }
-            });
-        }
-        private void ToggleIsPassword()
-        {
-            IsPassword = !IsPassword;
-            OnPropertyChanged(nameof(IsPassword));
-        }
-        private void Register()
-        {
-            if (!IsBusy)
-            {
-                IsBusy = true;
-                user.Register();
-            }               
-        }        
+        private bool isBusy;
+        #endregion
+        #region Commands
+        public ICommand ToggleIsPasswordCommand { get; }
+        public ICommand RegisterCommand { get; }
+        #endregion
+        #region Properties
+        public bool IsPassword { get; set; } = true;
         public string UserName
         {
             get => user.UserName;
             set
-            {                              
-                 user.UserName = value;
-                 (RegisterCommand as Command)?.ChangeCanExecute();                            
-            }            
+            {
+                user.UserName = value;
+                (RegisterCommand as Command)?.ChangeCanExecute();
+            }
         }
         public string Password
         {
@@ -92,7 +55,6 @@ namespace Chess.ViewModel
                 (RegisterCommand as Command)?.ChangeCanExecute();
             }
         }
-        private bool isBusy;
         public bool IsBusy
         {
             get => isBusy;
@@ -103,5 +65,53 @@ namespace Chess.ViewModel
                 (RegisterCommand as Command)?.ChangeCanExecute();
             }
         }
+        #endregion
+        #region Constructor
+        public RegisterPageVM()
+        {
+            RegisterCommand = new Command(Register, CanRegister);
+            ToggleIsPasswordCommand = new Command(ToggleIsPassword);
+            user.OnAuthCompleted += OnAuthComplete;
+            user.ShowToastAlert += ShowToastAlert;
+        }
+        #endregion
+        #region Public Methods
+        public bool CanRegister()
+        {
+            return !IsBusy && user.CanRegister();
+        }
+        #endregion
+        #region Private Methods
+        private void ShowToastAlert(object? sender, string msg)
+        {
+            isBusy = false;
+            OnPropertyChanged(nameof(isBusy));
+            MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Toast.Make(msg, ToastDuration.Long).Show();
+            });
+        }
+        private void OnAuthComplete(object? sender, EventArgs e)
+        {
+            MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                if (Application.Current != null)
+                    Application.Current.MainPage = new HomePage();
+            });
+        }
+        private void ToggleIsPassword()
+        {
+            IsPassword = !IsPassword;
+            OnPropertyChanged(nameof(IsPassword));
+        }
+        private void Register()
+        {
+            if (!IsBusy)
+            {
+                IsBusy = true;
+                user.Register();
+            }               
+        }
+        #endregion
     }
 }

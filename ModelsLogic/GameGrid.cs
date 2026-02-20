@@ -4,6 +4,7 @@ namespace Chess.ModelsLogic
 {
     public partial class GameGrid : GameGridModel
     {
+        #region Public Methods
         public override void InitGrid(Grid board, bool IsHostUser)
         {
             this.Parent = board;
@@ -103,10 +104,6 @@ namespace Chess.ModelsLogic
                     BoardUIMap[(i, j)] = p;
                 }
         }
-        protected override void OnButtonClicked(object? sender, EventArgs e)
-        {
-            ButtonClicked?.Invoke(this, (Piece)sender!);
-        }
         public override void UpdateDisplay(DisplayMoveArgs e)
         {
             ClearBoardHighLights();         
@@ -115,23 +112,6 @@ namespace Chess.ModelsLogic
             UpdateCellUI(e.FromRow, e.FromColomn);
             UpdateCellUI(e.ToRow, e.ToColumn);
             HighlightMove(e.FromRow, e.FromColomn, e.ToRow, e.ToColumn);
-        }
-        protected override void UpdateCellUI(int row, int col)
-        {
-            Piece uiPiece =BoardUIMap[(row, col)];
-            Piece modelPiece = BoardPieces![row, col];
-            if (modelPiece.StringImageSource == null)
-            {
-                uiPiece.StringImageSource = null;
-                uiPiece.Source = null;
-                uiPiece.IsWhite = false;
-            }
-            else
-            {
-                uiPiece.StringImageSource = modelPiece.StringImageSource;
-                uiPiece.Source = modelPiece.StringImageSource;
-                uiPiece.IsWhite = modelPiece.IsWhite;
-            }
         }
         public override Piece CreatePiece(Piece original, int row, int col)
         {
@@ -260,7 +240,7 @@ namespace Chess.ModelsLogic
                         VerticalOptions = LayoutOptions.Center,
                         InputTransparent = true
                     };
-                else              
+                else
                     indicator = new Ellipse()
                     {
                         Fill = Color.FromRgba(0, 0, 0, 0.2),
@@ -274,8 +254,8 @@ namespace Chess.ModelsLogic
             }
         }
         public override void ClearDots()
-        {         
-            Grid boardGrid=(Grid)this.Parent;
+        {
+            Grid boardGrid = (Grid)this.Parent;
             List<IView> dotsToRemove = [.. boardGrid.Children.Where(dot => dot is Ellipse)];
             foreach (IView dot in dotsToRemove)
                 boardGrid.Remove(dot);
@@ -300,7 +280,7 @@ namespace Chess.ModelsLogic
                         uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorWhite);
                     else
                         uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
-                }                 
+                }
         }
         public override void ClearSquareHighlight(int row, int col)
         {
@@ -312,5 +292,29 @@ namespace Chess.ModelsLogic
             if (BoardPieces![row, col] != null)
                 BoardPieces[row, col].BackgroundColor = uiPiece.BackgroundColor;
         }
+        #endregion
+        #region Private Methods
+        protected override void OnButtonClicked(object? sender, EventArgs e)
+        {
+            ButtonClicked?.Invoke(this, (Piece)sender!);
+        }
+        protected override void UpdateCellUI(int row, int col)
+        {
+            Piece uiPiece =BoardUIMap[(row, col)];
+            Piece modelPiece = BoardPieces![row, col];
+            if (modelPiece.StringImageSource == null)
+            {
+                uiPiece.StringImageSource = null;
+                uiPiece.Source = null;
+                uiPiece.IsWhite = false;
+            }
+            else
+            {
+                uiPiece.StringImageSource = modelPiece.StringImageSource;
+                uiPiece.Source = modelPiece.StringImageSource;
+                uiPiece.IsWhite = modelPiece.IsWhite;
+            }
+        }
+        #endregion
     }
 }

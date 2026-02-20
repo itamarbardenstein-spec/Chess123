@@ -5,15 +5,17 @@ using Android.Runtime;
 using Chess.Models;
 using Plugin.CloudFirestore;
 using Chess.ModelsLogic;
-
 namespace Chess.Platforms.Android
 {
     [Service]
     public class DeleteFbDocsService : Service
     {
+        #region Fields
         private bool isRunning = true;
         private readonly FbData fbd = new();
         [return: GeneratedEnum]
+        #endregion
+        #region Public Methods
         public override StartCommandResult OnStartCommand(Intent? intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
             ThreadStart threadStart = new(DeleteFbDocs);
@@ -21,6 +23,18 @@ namespace Chess.Platforms.Android
             thread.Start();
             return base.OnStartCommand(intent, flags, startId);
         }
+        public override IBinder? OnBind(Intent? intent)
+        {
+            // Not used
+            return null;
+        }
+        public override void OnDestroy()
+        {
+            isRunning = false;
+            base.OnDestroy();
+        }
+        #endregion
+        #region Private Methods
         private void DeleteFbDocs()
         {
             while (isRunning)
@@ -35,16 +49,6 @@ namespace Chess.Platforms.Android
             foreach (IDocumentSnapshot doc in qs.Documents)
                 fbd.DeleteDocument(Keys.GamesCollection, doc.Id, (task) => { });
         }
-
-        public override IBinder? OnBind(Intent? intent)
-        {
-            // Not used
-            return null;
-        }
-        public override void OnDestroy()
-        {
-            isRunning = false;
-            base.OnDestroy();
-        }
+        #endregion
     }
 }

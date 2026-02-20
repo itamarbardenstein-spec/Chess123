@@ -4,28 +4,33 @@ using Chess.Views;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Views;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 namespace Chess.ViewModel
 {
     public partial class GamePageVM : ObservableObject
     {
+        #region Fields
         private readonly GameGrid grdBoard = [];
         private readonly Game game;
+        #endregion
+        #region Commands
         public ICommand ResignCommand { get; set; }
+        #endregion
+        #region Properties
         public string MyName => game.MyName;
         public string StatusMessage => game.StatusMessage;
         public List<CapturedPieceGroup>? OpponentCapturedPieces => game.GetGroupedCapturedPieces(false);
         public List<CapturedPieceGroup>? MyCapturedPieces => game.GetGroupedCapturedPieces(true);
         public string MyTime => game.IsHostUser ? FormatTime(game.BlackTimeLeft) : FormatTime(game.WhiteTimeLeft);
         public string OpponentTime => game.IsHostUser ? FormatTime(game.WhiteTimeLeft) : FormatTime(game.BlackTimeLeft);
-        public string OpponentName => game.OpponentName;          
+        public string OpponentName => game.OpponentName;
+        #endregion
+        #region Constructor
         public GamePageVM(Game game, Grid board)
         {
             this.game = game;
             ResignCommand = new Command(ResignGame);
-            game.InvalidMove += InvalidMove;
             game.OnGameChanged += OnGameChanged; 
             game.OnGameDeleted += OnGameDeleted;
             game.LegalMoves += ShowLegalMoves;
@@ -43,6 +48,18 @@ namespace Chess.ViewModel
             if (!game.IsHostUser)
                 game.UpdateGuestUser(OnComplete);
         }
+        #endregion
+        #region Public Methods
+        public void AddSnapshotListener()
+        {
+            game.AddSnapshotListener();
+        }
+        public void RemoveSnapshotListener()
+        {
+            game.RemoveSnapshotListener();
+        }
+        #endregion
+        #region Private Methods
         private static string FormatTime(long millis)
         {
             TimeSpan t = TimeSpan.FromMilliseconds(millis);
@@ -89,14 +106,7 @@ namespace Chess.ViewModel
         private void OnTimeLeftChanged(object? sender, EventArgs e)
         {
             OnPropertyChanged(nameof(MyTime));
-        }
-        private void InvalidMove(object? sender, EventArgs e)
-        {
-            MainThread.InvokeOnMainThreadAsync(() =>
-            {
-                Toast.Make(Strings.InvalidMove, ToastDuration.Long, 14).Show();
-            });
-        }
+        }      
         private void OnGameDeleted(object? sender, EventArgs e)
         {
             MainThread.InvokeOnMainThreadAsync(() =>
@@ -126,13 +136,6 @@ namespace Chess.ViewModel
             if (!task.IsCompletedSuccessfully)
                 Toast.Make(Strings.JoinGameErr, ToastDuration.Long).Show();
         }
-        public void AddSnapshotListener()
-        {
-            game.AddSnapshotListener();
-        }
-        public void RemoveSnapshotListener()
-        {
-            game.RemoveSnapshotListener();
-        }
+#endregion
     }
 }

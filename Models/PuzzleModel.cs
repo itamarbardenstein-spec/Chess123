@@ -4,6 +4,7 @@ namespace Chess.Models
 {
     public abstract class PuzzleModel
     {
+        #region Fields
         protected Piece[,]? gameBoard;
         protected int ClickCount = 0;
         protected int MoveFromRow = 0;
@@ -17,6 +18,8 @@ namespace Chess.Models
         protected int CorrectMoveColumn = 0;
         protected int CorrectPieceRow = 0;
         protected int CorrectPieceColumn = 0;
+        #endregion
+        #region Events
         public EventHandler? ClearLegalMovesDots;
         public EventHandler? CorrectMove;
         public EventHandler? CorrectSolution;
@@ -27,6 +30,8 @@ namespace Chess.Models
         public EventHandler<string>? MakeOpponentMove;
         public EventHandler<List<int[]>>? LegalMoves;
         public EventHandler<DisplayMoveArgs>? DisplayChanged;
+        #endregion
+        #region Public Methods
         public abstract void OnButtonClicked(Piece p);
         public abstract Piece CreatePiece(Piece original, int row, int col);
         public abstract void InitEasyPuzzleBoard();
@@ -34,11 +39,12 @@ namespace Chess.Models
         public abstract void Play(int rowIndex, int columnIndex);
         public abstract void InitHardPuzzleBoard();
         public abstract bool CheckMove();
-        public abstract void CheckSolution();
-        protected abstract List<int[]> GetLegalMoveList(Piece p);
+        public abstract void CheckSolution();       
         public abstract void HintSquare();
         public abstract void CorrectMoveSquares();
-
-
+        #endregion
+        #region Private Methods
+        protected abstract List<int[]> GetLegalMoveList(Piece p);
+        #endregion
     }
 }

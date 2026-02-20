@@ -4,6 +4,7 @@ namespace Chess.ModelsLogic
 {
     public class Games : GamesModel
     {
+        #region Public Methods
         public override void AddGame()
         {
             IsBusy = true;
@@ -13,11 +14,6 @@ namespace Chess.ModelsLogic
             };
             _currentGame.SetDocument(OnComplete);
         }
-        protected override void OnComplete(Task task)
-        {
-            IsBusy = false;
-            OnGameAdded?.Invoke(this, _currentGame!);
-        }
         public override void AddSnapshotListener()
         {
             ilr = fbd.AddSnapshotListener(Keys.GamesCollection, OnChange!);
@@ -25,6 +21,13 @@ namespace Chess.ModelsLogic
         public override void RemoveSnapshotListener()
         {
             ilr?.Remove();
+        }
+        #endregion
+        #region Private Methods
+        protected override void OnComplete(Task task)
+        {
+            IsBusy = false;
+            OnGameAdded?.Invoke(this, _currentGame!);
         }
         protected override void OnChange(IQuerySnapshot snapshot, Exception error)
         {
@@ -45,5 +48,6 @@ namespace Chess.ModelsLogic
             }
             OnGamesChanged?.Invoke(this, EventArgs.Empty);
         }
+        #endregion
     }
 }

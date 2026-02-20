@@ -1,6 +1,4 @@
-﻿using Chess.Models;
-
-namespace Chess.ModelsLogic
+﻿namespace Chess.ModelsLogic
 {
     public partial class Bishop(int row, int column, bool isWhite, string? image) : Piece(row, column, isWhite, image)
     {

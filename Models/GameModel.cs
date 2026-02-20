@@ -1,16 +1,13 @@
-﻿
-using Chess.ModelsLogic;
+﻿using Chess.ModelsLogic;
 using Plugin.CloudFirestore;
 using Plugin.CloudFirestore.Attributes;
-using System.Collections.ObjectModel;
-
 namespace Chess.Models
 {
     public abstract class GameModel
     {
+        #region Fields
         protected Piece[,]? gameBoard;
         protected int ClickCount = 0;
-        protected abstract GameStatus Status { get; }
         protected enum Actions { Changed, Deleted }
         protected Actions action = Actions.Changed;
         protected TimerSettings timerSettings = new(Keys.TimerTotalTime, Keys.TimerInterval);
@@ -18,12 +15,12 @@ namespace Chess.Models
         protected IListenerRegistration? ilr;
         [Ignored]
         public GameStatus _status = new();
+        #endregion
+        #region Events
         [Ignored]
         public EventHandler? OnGameChanged;
         [Ignored]
         public EventHandler? TimeLeftChanged;
-        [Ignored]
-        public EventHandler? InvalidMove;
         [Ignored]
         public EventHandler? KingIsInCheck;      
         [Ignored]
@@ -46,40 +43,55 @@ namespace Chess.Models
         public EventHandler<CastlingArgs>? OnCastling;
         [Ignored]
         public EventHandler<GameOverArgs>? GameOver;
+        #endregion
+        #region Properties
+        protected abstract GameStatus Status { get; }
         [Ignored]
         public string StatusMessage => Status.StatusMessage;
         [Ignored]
         public string TimeName => $"{Time} min";
         [Ignored]
-        public abstract string OpponentName { get; }
+        public string Id { get; set; } = string.Empty;        
         [Ignored]
         public string MyName { get; set; } = new User().UserName;
         [Ignored]
+        public abstract string OpponentName { get; }
+        [Ignored]
         public List<string>? WhiteCapturedImages { get; set; } = [];
         [Ignored]
-        public List<string>? BlackCapturedImages { get; set; }= [];
-        [Ignored]
-        public string Id { get; set; } = string.Empty;
+        public List<string>? BlackCapturedImages { get; set; }= [];       
         [Ignored]
         public bool IsHostUser { get; set; }
-        public string GuestName { get; set; } = string.Empty;
-        public int Time { get; set; }
-        public bool IsGameOver { get; set; }
-        public DateTime Created { get; set; }
-        public string HostName { get; set; } = string.Empty;
         public bool IsFull { get; set; }
-        public long WhiteTimeLeft { get; set; }
-        public string GameOverReason { get; set; } = string.Empty;
-        public long BlackTimeLeft { get; set; }
+        public bool IsGameOver { get; set; }
         public bool IsHostTurn { get; set; } = false;
+        public DateTime Created { get; set; }
+        public string GuestName { get; set; } = string.Empty;
+        public string HostName { get; set; } = string.Empty;
+        public string GameOverReason { get; set; } = string.Empty;
+        public int Time { get; set; }                
+        public long WhiteTimeLeft { get; set; }
+        public long BlackTimeLeft { get; set; }
         public List<int> MoveFrom { get; set; } = [Keys.NoMove, Keys.NoMove];
         public List<int> MoveTo { get; set; } = [Keys.NoMove, Keys.NoMove];
-        protected abstract void UpdateStatus();
+        #endregion
+        #region Public Methods
         public abstract void Play(int rowIndex, int columnIndex, bool MyMove);
         public abstract void SetDocument(Action<System.Threading.Tasks.Task> OnComplete);
         public abstract void AddSnapshotListener();
         public abstract void RemoveSnapshotListener();
         public abstract void DeleteDocument(Action<System.Threading.Tasks.Task> OnComplete);
+        public abstract void CheckMove(Piece p);
+        public abstract void UpdateGuestUser(Action<Task> OnComplete);
+        public abstract string GameOverMessageTitle(bool IWon, string reason);
+        public abstract string GameOverMessageReason(bool IWon, string reason);
+        public abstract Piece CreatePiece(Piece original, int row, int col);
+        public abstract void InitGameBoard();
+        public abstract void ResignGame();
+        public abstract List<string>? GetMyCapturedPiecesList(bool MyList);
+        public abstract List<CapturedPieceGroup>? GetGroupedCapturedPieces(bool myList);
+        #endregion
+        #region Private Methods
         protected abstract void UpdateFbMove();
         protected abstract void UpdateFbGameOver();
         protected abstract void OnComplete(Task task);
@@ -87,21 +99,15 @@ namespace Chess.Models
         protected abstract void OnChange(IDocumentSnapshot? snapshot, Exception? error);
         protected abstract bool IsKingInCheck(bool isWhite, Piece[,] board);
         protected abstract bool HasAnyLegalMove(bool isWhite, Piece[,] board);
-        public abstract void CheckMove(Piece p);
         protected abstract Piece[,] FlipBoard(Piece[,] original);
         protected abstract void RegisterTimer();
-        protected abstract void OnMessageReceived(long timeLeft);
-        public abstract void UpdateGuestUser(Action<Task> OnComplete);
-        protected abstract void UpdateFbJoinGame(Action<Task> OnComplete);
-        public abstract string GameOverMessageTitle(bool IWon, string reason);
-        public abstract string GameOverMessageReason(bool IWon, string reason);
-        public abstract Piece CreatePiece(Piece original, int row, int col);
-        public abstract void InitGameBoard();
-        public abstract void ResignGame();
+        protected abstract void OnMessageReceived(long timeLeft);      
+        protected abstract void UpdateFbJoinGame(Action<Task> OnComplete);      
         protected abstract void Castling(bool right, bool isHostUser, bool MyMove);
         protected abstract void CheckCastling(int columnIndex, bool MyMove);
-        protected abstract void CheckGameOver(Piece movedPiece);
-        public abstract List<string>? GetMyCapturedPiecesList(bool MyList);
-        public abstract List<CapturedPieceGroup>? GetGroupedCapturedPieces(bool myList);
+        protected abstract void CheckGameOver(Piece movedPiece);       
+        protected abstract List<int[]> GetLegalMoveList(Piece p);
+        protected abstract void UpdateStatus();
+        #endregion
     }
 }

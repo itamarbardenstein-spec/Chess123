@@ -5,6 +5,23 @@ namespace Chess.ModelsLogic
 {
     public partial class FbData : FbDataModel
     {
+        #region Properties
+        public override string DisplayName
+        {
+            get
+            {
+                string dn = string.Empty;
+                if (facl.User != null)
+                    dn = facl.User.Info.DisplayName;
+                return dn;
+            }
+        }
+        public override string UserId
+        {
+            get => facl.User.Uid;
+        }
+        #endregion
+        #region Public Methods
         public override async void CreateUserWithEmailAndPasswordAsync(string email, string password, string name, Action<System.Threading.Tasks.Task> OnComplete)
         {
             await facl.CreateUserWithEmailAndPasswordAsync(email, password, name).ContinueWith(OnComplete);
@@ -55,44 +72,25 @@ namespace Chess.ModelsLogic
         {
             await facl.ResetEmailPasswordAsync(email).ContinueWith(OnComplete);
         }
-
-        public static async void SignInWithGoogleAsync(string idToken, Action<System.Threading.Tasks.Task> OnComplete)
+        public override async void SignInWithGoogleAsync(string idToken, Action<System.Threading.Tasks.Task> OnComplete)
         {
 #if ANDROID
             try
             {
-                var googleProvider = new Plugin.FirebaseAuth.GoogleAuthProviderWrapper();
-                var credential = googleProvider.GetCredential(idToken, null);
-
+                GoogleAuthProviderWrapper googleProvider = new();
+                IAuthCredential credential = googleProvider.GetCredential(idToken, null!);
                 await CrossFirebaseAuth.Current.Instance.SignInWithCredentialAsync(credential)
                     .ContinueWith(OnComplete);
             }
             catch (Exception ex)
             {
-                // טיפול בשגיאה במידה והתהליך נכשל
-                Console.WriteLine($"Google Sign-In Error: {ex.Message}");
+                Console.WriteLine(ex.Message);
             }
 #else
             // מניעת שגיאות בפלטפורמות שאינן אנדרואיד (iOS/Windows)
             await Task.CompletedTask;
 #endif
         }
-        public override string DisplayName
-        {
-            get
-            {
-                string dn = string.Empty;
-                if (facl.User != null)
-                    dn = facl.User.Info.DisplayName;
-                return dn;
-            }
-        }
-        public override string UserId
-        {
-            get
-            {
-                return facl.User.Uid;
-            }
-        }
+        #endregion
     }
 }

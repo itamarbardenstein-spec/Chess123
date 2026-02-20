@@ -4,8 +4,11 @@ namespace Chess.ModelsLogic
 {
     public abstract class Piece:PieceModel
     {
+        #region Constructors
         public Piece(int row, int column, bool isWhite, string? image) : base(row, column, isWhite, image) { }
         public Piece() { }
+        #endregion
+        #region Private Methods
         protected override bool PathClear(Piece[,] board, int startRow, int startColumn, int endRow, int endColumn, int rowDirection, int columnDirection)
         {
             bool result = true;
@@ -23,13 +26,12 @@ namespace Chess.ModelsLogic
                 Piece start = board[startRow, startColumn];
                 Piece end = board[endRow, endColumn];
                 if (start is King && (endColumn == 0 || endColumn == 7))
-                {
                     result = end is Rook && end.IsWhite == start.IsWhite;
-                }
                 else
                     result = end.StringImageSource == null || end.IsWhite != start.IsWhite;
             }  
             return result;
         }
+        #endregion
     }
 }

@@ -6,8 +6,11 @@ namespace Chess.ModelsLogic
 {
     public class Game : GameModel
     {
+        #region Properties
         public override string OpponentName => IsHostUser ? GuestName : HostName;
         protected override GameStatus Status => _status;
+        #endregion
+        #region Constructors
         public Game() { RegisterTimer(); }
         public Game(GameTime selectedGameTime)
         {
@@ -22,41 +25,11 @@ namespace Chess.ModelsLogic
             BlackTimeLeft = totalMillis;
             InitGameBoard();
         }
-        protected override void RegisterTimer()
-        {
-            WeakReferenceMessenger.Default.Register<AppMessage<long>>(this, (r, m) =>
-            {
-                OnMessageReceived(m.Value);
-            });
-        }
-        protected override void OnMessageReceived(long timeLeft)
-        {
-            if (timeLeft == Keys.FinishedSignal && !IsGameOver)
-            {
-                ilr?.Remove();
-                IsGameOver = true;
-                GameOverReason = Strings.Time;
-                if (!string.IsNullOrEmpty(Id))
-                    UpdateFbGameOver();
-                GameOver?.Invoke(this, new GameOverArgs(false, Strings.Time));
-            }
-            else
-            {
-                if (IsHostUser)
-                    BlackTimeLeft = timeLeft;
-                else
-                    WhiteTimeLeft = timeLeft;
-                TimeLeftChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
+        #endregion
+        #region Public Methods
         public override void SetDocument(Action<Task> OnComplete)
         {
             Id = fbd.SetDocument(this, Keys.GamesCollection, Id, OnComplete);
-        }
-        protected override void UpdateStatus()
-        {
-            _status.CurrentStatus = IsHostUser && IsHostTurn || !IsHostUser && !IsHostTurn ?
-            GameStatus.Statuses.Play : GameStatus.Statuses.Wait;
         }
         public override void UpdateGuestUser(Action<Task> OnComplete)
         {
@@ -64,16 +37,6 @@ namespace Chess.ModelsLogic
             IsFull = true;
             UpdateStatus();
             UpdateFbJoinGame(OnComplete);
-        }
-        protected override void UpdateFbJoinGame(Action<Task> OnComplete)
-        {
-            Dictionary<string, object> dict = new()
-            {
-                { nameof(IsFull), IsFull },
-                { nameof(GuestName), GuestName }
-            };
-            action = Actions.Changed;
-            fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
         }
         public override void InitGameBoard()
         {
@@ -171,14 +134,6 @@ namespace Chess.ModelsLogic
             action = Actions.Deleted;
             DeleteDocument(OnComplete);
         }
-        protected override void OnComplete(Task task)
-        {
-            if (task.IsCompletedSuccessfully)
-                if (action == Actions.Deleted)
-                    OnGameDeleted?.Invoke(this, EventArgs.Empty);
-                else
-                    OnGameChanged?.Invoke(this, EventArgs.Empty);
-        }
         public override void DeleteDocument(Action<Task> OnComplete)
         {
             fbd.DeleteDocument(Keys.GamesCollection, Id, OnComplete);
@@ -222,35 +177,11 @@ namespace Chess.ModelsLogic
                                 Play(p.RowIndex, p.ColumnIndex, true);
                             else
                                 ClearSquareHighLight?.Invoke(this, new HighlightSquareArgs(MoveFrom[0], MoveFrom[1]));
-                            ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);                        
+                            ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);
                             ClickCount = 0;
                         }
                     }
                 }
-        }
-        private List<int[]> GetLegalMoveList(Piece p)
-        {
-            List<int[]> legalMoves = [];
-            bool isWhite = p.IsWhite;
-            for (int r = 0; r < 8; r++)
-                for (int c = 0; c < 8; c++)
-                    if (gameBoard![p.RowIndex, p.ColumnIndex].IsMoveValid(gameBoard!, p.RowIndex, p.ColumnIndex, r, c))
-                    {
-                        Piece fromPiece = gameBoard[p.RowIndex, p.ColumnIndex];
-                        Piece toPiece = gameBoard[r, c];
-                        int originalRow = p.RowIndex;
-                        int originalCol = p.ColumnIndex;
-                        gameBoard[r, c] = CreatePiece(fromPiece, r, c);
-                        gameBoard[p.RowIndex, p.ColumnIndex] = new Pawn(p.RowIndex, p.ColumnIndex, false, null);
-                        bool kingInCheck = IsKingInCheck(isWhite, FlipBoard(gameBoard));
-                        gameBoard[p.RowIndex, p.ColumnIndex] = fromPiece;
-                        gameBoard[r, c] = toPiece;
-                        fromPiece.RowIndex = originalRow;
-                        fromPiece.ColumnIndex = originalCol;
-                        if (!kingInCheck)
-                            legalMoves.Add([r, c]);
-                    }
-            return legalMoves;
         }
         public override void Play(int rowIndex, int columnIndex, bool MyMove)
         {
@@ -299,6 +230,176 @@ namespace Chess.ModelsLogic
                     OnGameChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+        public override string GameOverMessageTitle(bool IWon, string reason)
+        {
+            string result;
+            if (reason == Strings.Draw)
+                result = Strings.Draw;
+            else
+                result = IWon ? Strings.YouWon : Strings.YouLost;
+            return result;
+        }
+        public override string GameOverMessageReason(bool IWon, string reason)
+        {
+            string result;
+            if (reason == Strings.Checkmate)
+                result = IWon ? Strings.WinCheckmate : Strings.LoseCheckmate;
+            else if (reason == Strings.Time)
+                result = IWon ? Strings.WinTime : Strings.LoseTime;
+            else if (reason == Strings.Draw)
+                result = Strings.YouDrew;
+            else
+                result = IWon ? Strings.OpponentResigned : Strings.YouResigned;
+            return result;
+        }
+        public override Piece CreatePiece(Piece original, int row, int col)
+        {
+            bool isWhite = original.IsWhite;
+            string? img = original.StringImageSource;
+            return original switch
+            {
+                Pawn => new Pawn(row, col, isWhite, img),
+                Rook r => new Rook(row, col, isWhite, img)
+                {
+                    HasLeftRookMoved = r.HasLeftRookMoved,
+                    HasRightRookMoved = r.HasRightRookMoved
+                },
+                Knight => new Knight(row, col, isWhite, img),
+                Bishop => new Bishop(row, col, isWhite, img),
+                Queen => new Queen(row, col, isWhite, img),
+                King k => new King(row, col, isWhite, img)
+                {
+                    HasKingMoved = k.HasKingMoved
+                },
+                _ => throw new Exception()
+            };
+        }
+        public override void ResignGame()
+        {
+            if (!IsGameOver && IsFull)
+            {
+                if (IsHostTurn && IsHostUser || !IsHostTurn && !IsHostUser)
+                {
+                    _status.UpdateStatus();
+                    IsHostTurn = !IsHostTurn;
+                    UpdateFbMove();
+                }
+                IsGameOver = true;
+                GameOverReason = Strings.Resignation;
+                UpdateFbGameOver();
+                GameOverArgs GameOverArgs = new(false, Strings.Resignation);
+                GameOver?.Invoke(this, GameOverArgs);
+            }
+        }
+        public override List<string>? GetMyCapturedPiecesList(bool MyList)
+        {
+            List<string>? result;
+            if (IsHostUser)
+            {
+                if (!MyList)
+                    result = BlackCapturedImages;
+                else
+                    result = WhiteCapturedImages;
+            }
+            else
+            {
+                if (!MyList)
+                    result = WhiteCapturedImages;
+                else
+                    result = BlackCapturedImages;
+            }
+            return result;
+        }
+        public override List<CapturedPieceGroup>? GetGroupedCapturedPieces(bool myList)
+        {
+            List<CapturedPieceGroup>? result = null;
+            List<string>? rawList = GetMyCapturedPiecesList(myList);
+            if (rawList != null)
+                result = [.. rawList.GroupBy(img => img)
+                    .Select(cpg => new CapturedPieceGroup
+                {
+                    ImageSource = cpg.Key,
+                    Count = cpg.Count()
+                })
+                .OrderBy(x => x.ImageSource)];
+            return result;
+        }
+        #endregion
+        #region Private Methods
+        protected override void RegisterTimer()
+        {
+            WeakReferenceMessenger.Default.Register<AppMessage<long>>(this, (r, m) =>
+            {
+                OnMessageReceived(m.Value);
+            });
+        }
+        protected override void OnMessageReceived(long timeLeft)
+        {
+            if (timeLeft == Keys.FinishedSignal && !IsGameOver)
+            {
+                ilr?.Remove();
+                IsGameOver = true;
+                GameOverReason = Strings.Time;
+                if (!string.IsNullOrEmpty(Id))
+                    UpdateFbGameOver();
+                GameOver?.Invoke(this, new GameOverArgs(false, Strings.Time));
+            }
+            else
+            {
+                if (IsHostUser)
+                    BlackTimeLeft = timeLeft;
+                else
+                    WhiteTimeLeft = timeLeft;
+                TimeLeftChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }       
+        protected override void UpdateStatus()
+        {
+            _status.CurrentStatus = IsHostUser && IsHostTurn || !IsHostUser && !IsHostTurn ?
+            GameStatus.Statuses.Play : GameStatus.Statuses.Wait;
+        }      
+        protected override void UpdateFbJoinGame(Action<Task> OnComplete)
+        {
+            Dictionary<string, object> dict = new()
+            {
+                { nameof(IsFull), IsFull },
+                { nameof(GuestName), GuestName }
+            };
+            action = Actions.Changed;
+            fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
+        }       
+        protected override void OnComplete(Task task)
+        {
+            if (task.IsCompletedSuccessfully)
+                if (action == Actions.Deleted)
+                    OnGameDeleted?.Invoke(this, EventArgs.Empty);
+                else
+                    OnGameChanged?.Invoke(this, EventArgs.Empty);
+        }       
+        protected override List<int[]> GetLegalMoveList(Piece p)
+        {
+            List<int[]> legalMoves = [];
+            bool isWhite = p.IsWhite;
+            for (int r = 0; r < 8; r++)
+                for (int c = 0; c < 8; c++)
+                    if (gameBoard![p.RowIndex, p.ColumnIndex].IsMoveValid(gameBoard!, p.RowIndex, p.ColumnIndex, r, c))
+                    {
+                        Piece fromPiece = gameBoard[p.RowIndex, p.ColumnIndex];
+                        Piece toPiece = gameBoard[r, c];
+                        int originalRow = p.RowIndex;
+                        int originalCol = p.ColumnIndex;
+                        gameBoard[r, c] = CreatePiece(fromPiece, r, c);
+                        gameBoard[p.RowIndex, p.ColumnIndex] = new Pawn(p.RowIndex, p.ColumnIndex, false, null);
+                        bool kingInCheck = IsKingInCheck(isWhite, FlipBoard(gameBoard));
+                        gameBoard[p.RowIndex, p.ColumnIndex] = fromPiece;
+                        gameBoard[r, c] = toPiece;
+                        fromPiece.RowIndex = originalRow;
+                        fromPiece.ColumnIndex = originalCol;
+                        if (!kingInCheck)
+                            legalMoves.Add([r, c]);
+                    }
+            return legalMoves;
+        }        
         protected override void CheckGameOver(Piece movedPiece)
         {
             if (!IsGameOver)
@@ -607,99 +708,6 @@ namespace Chess.ModelsLogic
                 }
             return flipped;
         }
-        public override string GameOverMessageTitle(bool IWon, string reason)
-        {
-            string result;
-            if (reason == Strings.Draw)
-                result = Strings.Draw;
-            else
-                result = IWon ? Strings.YouWon : Strings.YouLost;
-            return result;
-        }
-        public override string GameOverMessageReason(bool IWon, string reason)
-        {
-            string result;
-            if (reason == Strings.Checkmate)
-                result = IWon ? Strings.WinCheckmate : Strings.LoseCheckmate;
-            else if (reason == Strings.Time)
-                result = IWon ? Strings.WinTime : Strings.LoseTime;
-            else if (reason == Strings.Draw)
-                result = Strings.YouDrew;
-            else
-                result = IWon ? Strings.OpponentResigned : Strings.YouResigned;
-            return result;
-        }
-        public override Piece CreatePiece(Piece original, int row, int col)
-        {
-            bool isWhite = original.IsWhite;
-            string? img = original.StringImageSource;
-            return original switch
-            {
-                Pawn => new Pawn(row, col, isWhite, img),
-                Rook r => new Rook(row, col, isWhite, img)
-                {
-                    HasLeftRookMoved = r.HasLeftRookMoved,
-                    HasRightRookMoved = r.HasRightRookMoved
-                },
-                Knight => new Knight(row, col, isWhite, img),
-                Bishop => new Bishop(row, col, isWhite, img),
-                Queen => new Queen(row, col, isWhite, img),
-                King k => new King(row, col, isWhite, img)
-                {
-                    HasKingMoved = k.HasKingMoved
-                },
-                _ => throw new Exception()
-            };
-        }
-        public override void ResignGame()
-        {
-            if (!IsGameOver && IsFull)
-            {
-                if (IsHostTurn && IsHostUser || !IsHostTurn && !IsHostUser)
-                {
-                    _status.UpdateStatus();
-                    IsHostTurn = !IsHostTurn;
-                    UpdateFbMove();
-                }
-                IsGameOver = true;
-                GameOverReason = Strings.Resignation;
-                UpdateFbGameOver();
-                GameOverArgs GameOverArgs = new(false, Strings.Resignation);
-                GameOver?.Invoke(this, GameOverArgs);
-            }
-        }
-        public override List<string>? GetMyCapturedPiecesList(bool MyList)
-        {
-            List<string>? result;
-            if (IsHostUser)
-            {
-                if (!MyList)
-                    result = BlackCapturedImages;
-                else
-                    result = WhiteCapturedImages;
-            }
-            else
-            {
-                if (!MyList)
-                    result = WhiteCapturedImages;
-                else
-                    result = BlackCapturedImages;
-            }
-            return result;
-        }
-        public override List<CapturedPieceGroup>? GetGroupedCapturedPieces(bool myList)
-        {
-            List<CapturedPieceGroup>? result = null;
-            List<string>? rawList = GetMyCapturedPiecesList(myList);
-            if (rawList != null)
-                result = [.. rawList.GroupBy(img => img)
-                    .Select(cpg => new CapturedPieceGroup
-                {
-                    ImageSource = cpg.Key,
-                    Count = cpg.Count()
-                })
-                .OrderBy(x => x.ImageSource)];
-            return result;
-        }
+        #endregion
     }
 }

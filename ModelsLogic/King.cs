@@ -1,10 +1,11 @@
-﻿using Chess.Models;
-
-namespace Chess.ModelsLogic
+﻿namespace Chess.ModelsLogic
 {
     public partial class King(int row, int column, bool isWhite, string? image) : Piece(row, column, isWhite, image)
     {
+        #region Properties
         public bool HasKingMoved { get; set; } = false;
+        #endregion
+        #region Public Methods
         public override bool IsMoveValid(Piece[,] board, int fromRow, int fromColumn, int toRow, int toColumn)
         {
             int rowsMoved = Math.Abs(toRow - fromRow);
@@ -23,8 +24,9 @@ namespace Chess.ModelsLogic
                                 result = true;
             }
             else if(rowsMoved <= 1 && columnsMoved <= 1 && (board[toRow, toColumn].StringImageSource == null || board[toRow, toColumn].IsWhite != king.IsWhite))
-                result= true;
+                result = true;
             return result;
         }
+        #endregion
     }
 }

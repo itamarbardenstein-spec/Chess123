@@ -4,12 +4,15 @@ namespace Chess.Models
 {
     public abstract class GameGridModel:Grid
     {
-        public Piece[,]? BoardPieces;
-        public EventHandler<Piece>? ButtonClicked;
+        #region Fields
+        protected Piece[,]? BoardPieces;
         protected Dictionary<(int row, int col), Piece> BoardUIMap = [];
-        public abstract void InitGrid(Grid board,bool IsHostUser);
-        protected abstract void OnButtonClicked(object? sender, EventArgs e);
-        protected abstract void UpdateCellUI(int row, int col);
+        #endregion
+        #region Events
+        public EventHandler<Piece>? ButtonClicked;
+        #endregion
+        #region Public Methods
+        public abstract void InitGrid(Grid board,bool IsHostUser);    
         public abstract Piece CreatePiece(Piece original, int row, int col);
         public abstract void UpdateDisplay(DisplayMoveArgs e);
         public abstract void Castling(bool right,bool isHostUser,bool MyMove);
@@ -20,5 +23,10 @@ namespace Chess.Models
         public abstract void HighlightMove(int fromRow, int fromColumn, int toRow, int toColumn);
         public abstract void ClearBoardHighLights();
         public abstract void ClearSquareHighlight(int row, int col);
+        #endregion
+        #region Private Methods
+        protected abstract void OnButtonClicked(object? sender, EventArgs e);
+        protected abstract void UpdateCellUI(int row, int col);
+        #endregion
     }
 }
