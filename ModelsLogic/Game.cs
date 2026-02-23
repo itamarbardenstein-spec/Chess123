@@ -27,17 +27,6 @@ namespace Chess.ModelsLogic
         }
         #endregion
         #region Public Methods
-        public override void SetDocument(Action<Task> OnComplete)
-        {
-            Id = fbd.SetDocument(this, Keys.GamesCollection, Id, OnComplete);
-        }
-        public override void UpdateGuestUser(Action<Task> OnComplete)
-        {
-            GuestName = MyName;
-            IsFull = true;
-            UpdateStatus();
-            UpdateFbJoinGame(OnComplete);
-        }
         public override void InitGameBoard()
         {
             gameBoard = new Piece[8, 8];
@@ -124,6 +113,17 @@ namespace Chess.ModelsLogic
                     if (gameBoard[i, j] == null)
                         gameBoard[i, j] = new Pawn(i, j, false, null);
         }
+        public override void SetDocument(Action<Task> OnComplete)
+        {
+            Id = fbd.SetDocument(this, Keys.GamesCollection, Id, OnComplete);
+        }
+        public override void UpdateGuestUser(Action<Task> OnComplete)
+        {
+            GuestName = MyName;
+            IsFull = true;
+            UpdateStatus();
+            UpdateFbJoinGame(OnComplete);
+        }      
         public override void AddSnapshotListener()
         {
             ilr = fbd.AddSnapshotListener(Keys.GamesCollection, Id, OnChange);
@@ -133,11 +133,7 @@ namespace Chess.ModelsLogic
             ilr?.Remove();
             action = Actions.Deleted;
             DeleteDocument(OnComplete);
-        }
-        public override void DeleteDocument(Action<Task> OnComplete)
-        {
-            fbd.DeleteDocument(Keys.GamesCollection, Id, OnComplete);
-        }
+        }        
         public override void CheckMove(Piece p)
         {
             List<int[]> legalMoves = GetLegalMoveList(p);
@@ -182,8 +178,63 @@ namespace Chess.ModelsLogic
                         }
                     }
                 }
+        }        
+        public override string GameOverMessageTitle(bool IWon, string reason)
+        {
+            string result;
+            if (reason == Strings.Draw)
+                result = Strings.Draw;
+            else
+                result = IWon ? Strings.YouWon : Strings.YouLost;
+            return result;
         }
-        public override void Play(int rowIndex, int columnIndex, bool MyMove)
+        public override string GameOverMessageReason(bool IWon, string reason)
+        {
+            string result;
+            if (reason == Strings.Checkmate)
+                result = IWon ? Strings.WinCheckmate : Strings.LoseCheckmate;
+            else if (reason == Strings.Time)
+                result = IWon ? Strings.WinTime : Strings.LoseTime;
+            else if (reason == Strings.Draw)
+                result = Strings.YouDrew;
+            else
+                result = IWon ? Strings.OpponentResigned : Strings.YouResigned;
+            return result;
+        }
+        public override void ResignGame()
+        {
+            if (!IsGameOver && IsFull)
+            {
+                if (IsHostTurn && IsHostUser || !IsHostTurn && !IsHostUser)
+                {
+                    _status.UpdateStatus();
+                    IsHostTurn = !IsHostTurn;
+                    UpdateFbMove();
+                }
+                IsGameOver = true;
+                GameOverReason = Strings.Resignation;
+                UpdateFbGameOver();
+                GameOverArgs GameOverArgs = new(false, Strings.Resignation);
+                GameOver?.Invoke(this, GameOverArgs);
+            }
+        }
+        public override List<CapturedPieceGroup>? GetGroupedCapturedPieces(bool myList)
+        {
+            List<CapturedPieceGroup>? result = null;
+            List<string>? rawList = GetMyCapturedPiecesList(myList);
+            if (rawList != null)
+                result = [.. rawList.GroupBy(img => img)
+                    .Select(cpg => new CapturedPieceGroup
+                {
+                    ImageSource = cpg.Key,
+                    Count = cpg.Count()
+                })
+                .OrderBy(x => x.ImageSource)];
+            return result;
+        }
+        #endregion
+        #region Private Methods        
+        protected override void Play(int rowIndex, int columnIndex, bool MyMove)
         {
             Piece eatenPiece = gameBoard![rowIndex, columnIndex];
             if (eatenPiece.StringImageSource != null)
@@ -230,29 +281,18 @@ namespace Chess.ModelsLogic
                     OnGameChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public override string GameOverMessageTitle(bool IWon, string reason)
+        protected override void RegisterTimer()
         {
-            string result;
-            if (reason == Strings.Draw)
-                result = Strings.Draw;
-            else
-                result = IWon ? Strings.YouWon : Strings.YouLost;
-            return result;
+            WeakReferenceMessenger.Default.Register<AppMessage<long>>(this, (r, m) =>
+            {
+                OnMessageReceived(m.Value);
+            });
         }
-        public override string GameOverMessageReason(bool IWon, string reason)
+        protected override void DeleteDocument(Action<Task> OnComplete)
         {
-            string result;
-            if (reason == Strings.Checkmate)
-                result = IWon ? Strings.WinCheckmate : Strings.LoseCheckmate;
-            else if (reason == Strings.Time)
-                result = IWon ? Strings.WinTime : Strings.LoseTime;
-            else if (reason == Strings.Draw)
-                result = Strings.YouDrew;
-            else
-                result = IWon ? Strings.OpponentResigned : Strings.YouResigned;
-            return result;
+            fbd.DeleteDocument(Keys.GamesCollection, Id, OnComplete);
         }
-        public override Piece CreatePiece(Piece original, int row, int col)
+        protected override Piece CreatePiece(Piece original, int row, int col)
         {
             bool isWhite = original.IsWhite;
             string? img = original.StringImageSource;
@@ -274,24 +314,7 @@ namespace Chess.ModelsLogic
                 _ => throw new Exception()
             };
         }
-        public override void ResignGame()
-        {
-            if (!IsGameOver && IsFull)
-            {
-                if (IsHostTurn && IsHostUser || !IsHostTurn && !IsHostUser)
-                {
-                    _status.UpdateStatus();
-                    IsHostTurn = !IsHostTurn;
-                    UpdateFbMove();
-                }
-                IsGameOver = true;
-                GameOverReason = Strings.Resignation;
-                UpdateFbGameOver();
-                GameOverArgs GameOverArgs = new(false, Strings.Resignation);
-                GameOver?.Invoke(this, GameOverArgs);
-            }
-        }
-        public override List<string>? GetMyCapturedPiecesList(bool MyList)
+        protected override List<string>? GetMyCapturedPiecesList(bool MyList)
         {
             List<string>? result;
             if (IsHostUser)
@@ -309,29 +332,6 @@ namespace Chess.ModelsLogic
                     result = BlackCapturedImages;
             }
             return result;
-        }
-        public override List<CapturedPieceGroup>? GetGroupedCapturedPieces(bool myList)
-        {
-            List<CapturedPieceGroup>? result = null;
-            List<string>? rawList = GetMyCapturedPiecesList(myList);
-            if (rawList != null)
-                result = [.. rawList.GroupBy(img => img)
-                    .Select(cpg => new CapturedPieceGroup
-                {
-                    ImageSource = cpg.Key,
-                    Count = cpg.Count()
-                })
-                .OrderBy(x => x.ImageSource)];
-            return result;
-        }
-        #endregion
-        #region Private Methods
-        protected override void RegisterTimer()
-        {
-            WeakReferenceMessenger.Default.Register<AppMessage<long>>(this, (r, m) =>
-            {
-                OnMessageReceived(m.Value);
-            });
         }
         protected override void OnMessageReceived(long timeLeft)
         {

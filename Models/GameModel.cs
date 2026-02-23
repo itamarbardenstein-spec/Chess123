@@ -75,25 +75,25 @@ namespace Chess.Models
         public List<int> MoveFrom { get; set; } = [Keys.NoMove, Keys.NoMove];
         public List<int> MoveTo { get; set; } = [Keys.NoMove, Keys.NoMove];
         #endregion
-        #region Public Methods
-        public abstract void Play(int rowIndex, int columnIndex, bool MyMove);
+        #region Public Methods     
+        public abstract void InitGameBoard();
         public abstract void SetDocument(Action<System.Threading.Tasks.Task> OnComplete);
         public abstract void AddSnapshotListener();
-        public abstract void RemoveSnapshotListener();
-        public abstract void DeleteDocument(Action<System.Threading.Tasks.Task> OnComplete);
+        public abstract void RemoveSnapshotListener();       
         public abstract void CheckMove(Piece p);
         public abstract void UpdateGuestUser(Action<Task> OnComplete);
         public abstract string GameOverMessageTitle(bool IWon, string reason);
-        public abstract string GameOverMessageReason(bool IWon, string reason);
-        public abstract Piece CreatePiece(Piece original, int row, int col);
-        public abstract void InitGameBoard();
-        public abstract void ResignGame();
-        public abstract List<string>? GetMyCapturedPiecesList(bool MyList);
+        public abstract string GameOverMessageReason(bool IWon, string reason);       
+        public abstract void ResignGame();        
         public abstract List<CapturedPieceGroup>? GetGroupedCapturedPieces(bool myList);
         #endregion
         #region Private Methods
+        protected abstract List<string>? GetMyCapturedPiecesList(bool MyList);
+        protected abstract void Play(int rowIndex, int columnIndex, bool MyMove);
+        protected abstract void DeleteDocument(Action<System.Threading.Tasks.Task> OnComplete);
         protected abstract void UpdateFbMove();
         protected abstract void UpdateFbGameOver();
+        protected abstract Piece CreatePiece(Piece original, int row, int col);
         protected abstract void OnComplete(Task task);
         protected abstract bool IsCheckmate(bool isWhite, Piece[,] board);
         protected abstract void OnChange(IDocumentSnapshot? snapshot, Exception? error);
