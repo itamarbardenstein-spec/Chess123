@@ -3,7 +3,7 @@ using Microsoft.Maui.Controls.Shapes;
 
 namespace Chess.ModelsLogic
 {
-    public partial class PuzzleGrid:PuzzleGridModel
+    public partial class PuzzleGrid : PuzzleGridModel
     {
         #region Public Methods
         public override void InitEasyPuzzleGrid(Grid board)

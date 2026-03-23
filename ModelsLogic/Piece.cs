@@ -2,7 +2,7 @@
 
 namespace Chess.ModelsLogic
 {
-    public abstract class Piece:PieceModel
+    public abstract class Piece : PieceModel
     {
         #region Constructors
         public Piece(int row, int column, bool isWhite, string? image) : base(row, column, isWhite, image) { }
