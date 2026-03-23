@@ -136,7 +136,7 @@ namespace Chess.ModelsLogic
         }        
         public override void CheckMove(Piece p)
         {
-            List<int[]> legalMoves = GetLegalMoveList(p);
+            GetLegalMoveList(p);
             if (!IsGameOver)
                 if (_status.CurrentStatus == GameStatus.Statuses.Play)
                 {
@@ -376,9 +376,9 @@ namespace Chess.ModelsLogic
                 else
                     OnGameChanged?.Invoke(this, EventArgs.Empty);
         }       
-        protected override List<int[]> GetLegalMoveList(Piece p)
+        protected override void GetLegalMoveList(Piece p)
         {
-            List<int[]> legalMoves = [];
+            legalMoves = [];
             bool isWhite = p.IsWhite;
             for (int r = 0; r < 8; r++)
                 for (int c = 0; c < 8; c++)
@@ -398,7 +398,6 @@ namespace Chess.ModelsLogic
                         if (!kingInCheck)
                             legalMoves.Add([r, c]);
                     }
-            return legalMoves;
         }        
         protected override void CheckGameOver(Piece movedPiece)
         {

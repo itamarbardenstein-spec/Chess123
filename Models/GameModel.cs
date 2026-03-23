@@ -7,6 +7,7 @@ namespace Chess.Models
     {
         #region Fields
         protected Piece[,]? gameBoard;
+        protected List<int[]> legalMoves = [];
         protected int ClickCount = 0;
         protected enum Actions { Changed, Deleted }
         protected Actions action = Actions.Changed;
@@ -106,7 +107,7 @@ namespace Chess.Models
         protected abstract void Castling(bool right, bool isHostUser, bool MyMove);
         protected abstract void CheckCastling(int columnIndex, bool MyMove);
         protected abstract void CheckGameOver(Piece movedPiece);       
-        protected abstract List<int[]> GetLegalMoveList(Piece p);
+        protected abstract void GetLegalMoveList(Piece p);
         protected abstract void UpdateStatus();
         #endregion
     }
