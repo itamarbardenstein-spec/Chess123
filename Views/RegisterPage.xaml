@@ -7,94 +7,152 @@
     xmlns:vm="clr-namespace:Chess.ViewModel"
     Title="RegisterPage"
     x:DataType="vm:RegisterPageVM">
-    <VerticalStackLayout
-        Padding="30"
-        Spacing="25"
-        VerticalOptions="Center">
-        <Label
-            FontAttributes="Bold"
-            FontSize="60"
-            HorizontalOptions="Center"
-            Text="{x:Static m:Strings.Register}"
-            TextColor="Black" />
-        <Label
-            FontAttributes="Bold"
-            FontFamily="MaterialSymbols"
-            FontSize="45"
-            HorizontalOptions="Center"
-            Text="{StaticResource IconEncrypted_add_circle}"
-            TextColor="DarkCyan" />
-        <Border
-            Padding="10"
-            Stroke="DarkCyan"
-            StrokeShape="RoundRectangle 15"
-            StrokeThickness="1">
-            <Entry
-                Margin="6"
-                FontSize="18"
-                Placeholder="{x:Static m:Strings.UserName}"
-                Text="{Binding UserName}" />
-        </Border>
-        <Border
-            Padding="1"
-            Stroke="DarkCyan"
-            StrokeShape="RoundRectangle 15"
-            StrokeThickness="1">
-            <Grid
-                Padding="10"
-                ColumnDefinitions="*,Auto"
-                VerticalOptions="Center">
-                <Entry
-                    FontSize="18"
-                    IsPassword="{Binding IsPassword}"
-                    Placeholder="{x:Static m:Strings.Password}"
-                    Text="{Binding Password}" />
-                <Button
-                    BackgroundColor="Transparent"
-                    BorderWidth="0"
-                    Command="{Binding ToggleIsPasswordCommand}"
-                    FontFamily="MaterialSymbols"
-                    FontSize="24"
-                    HorizontalOptions="End"
-                    Style="{StaticResource IconButtonStyle}"
-                    Text="{Binding IsPassword, Converter={StaticResource passwordIconConvert}}"
-                    TextColor="DarkCyan"
-                    VerticalOptions="Center" />
-            </Grid>
-        </Border>
-        <Border
-            Padding="10"
-            Stroke="DarkCyan"
-            StrokeShape="RoundRectangle 15"
-            StrokeThickness="1">
-            <Entry
-                Margin="6"
-                FontSize="18"
-                Placeholder="{x:Static m:Strings.Email}"
-                Text="{Binding Email}" />
-        </Border>
-        <Border
-            Padding="10"
-            Stroke="DarkCyan"
-            StrokeShape="RoundRectangle 15"
-            StrokeThickness="1">
-            <Entry
-                FontSize="18"
-                Placeholder="{x:Static m:Strings.Age}"
-                Text="{Binding Age}" />
-        </Border>
-        <Button
-            Command="{Binding RegisterCommand}"
-            CornerRadius="20"
-            FontSize="30"
-            HeightRequest="70"
-            Text="{x:Static m:Strings.Register}"
-            TextColor="White">
-            <Button.ImageSource>
-                <FontImageSource Glyph="{StaticResource IconPerson_add}">
-                    <FontImageSource.FontFamily>MaterialSymbols</FontImageSource.FontFamily>
-                </FontImageSource>
-            </Button.ImageSource>
-        </Button>
-    </VerticalStackLayout>
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Offset="0.1" Color="DarkOrchid" />
+            <GradientStop Offset="1.0" Color="MidnightBlue" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="30"
+            Spacing="20"
+            VerticalOptions="Center">
+
+            <Label
+                Margin="0,0,0,10"
+                FontFamily="MaterialSymbols"
+                FontSize="80"
+                HorizontalOptions="Center"
+                Text="{StaticResource IconEncrypted_add_circle}"
+                TextColor="White" />
+
+            <Label
+                FontAttributes="Bold"
+                FontSize="32"
+                HorizontalOptions="Center"
+                Text="{x:Static m:Strings.Register}"
+                TextColor="White" />
+
+            <Border
+                Padding="20"
+                BackgroundColor="#22FFFFFF"
+                StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="15">
+
+                    <Border
+                        Padding="5,0"
+                        BackgroundColor="#33000000"
+                        Stroke="#55FFFFFF"
+                        StrokeShape="RoundRectangle 10"
+                        StrokeThickness="1">
+                        <Entry
+                            HeightRequest="50"
+                            Placeholder="{x:Static m:Strings.UserName}"
+                            PlaceholderColor="#CCC"
+                            Text="{Binding UserName}"
+                            TextColor="White" />
+                    </Border>
+
+                    <Border
+                        Padding="5,0"
+                        BackgroundColor="#33000000"
+                        Stroke="#55FFFFFF"
+                        StrokeShape="RoundRectangle 10"
+                        StrokeThickness="1">
+                        <Entry
+                            HeightRequest="50"
+                            Keyboard="Email"
+                            Placeholder="{x:Static m:Strings.Email}"
+                            PlaceholderColor="#CCC"
+                            Text="{Binding Email}"
+                            TextColor="White" />
+                    </Border>
+
+                    <Border
+                        Padding="5,0"
+                        BackgroundColor="#33000000"
+                        Stroke="#55FFFFFF"
+                        StrokeShape="RoundRectangle 10"
+                        StrokeThickness="1">
+                        <Entry
+                            HeightRequest="50"
+                            Keyboard="Numeric"
+                            Placeholder="{x:Static m:Strings.Age}"
+                            PlaceholderColor="#CCC"
+                            Text="{Binding Age}"
+                            TextColor="White" />
+                    </Border>
+
+                    <Border
+                        Padding="5,0"
+                        BackgroundColor="#33000000"
+                        Stroke="#55FFFFFF"
+                        StrokeShape="RoundRectangle 10"
+                        StrokeThickness="1">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Entry
+                                HeightRequest="50"
+                                IsPassword="{Binding IsPassword}"
+                                Placeholder="{x:Static m:Strings.Password}"
+                                PlaceholderColor="#CCC"
+                                Text="{Binding Password}"
+                                TextColor="White" />
+                            <Button
+                                Grid.Column="1"
+                                BackgroundColor="Transparent"
+                                Command="{Binding ToggleIsPasswordCommand}"
+                                FontFamily="MaterialSymbols"
+                                FontSize="20"
+                                Text="{Binding IsPassword, Converter={StaticResource passwordIconConvert}}"
+                                TextColor="White"
+                                WidthRequest="50" />
+                        </Grid>
+                    </Border>
+
+                    <Button
+                        Margin="0,10,0,0"
+                        BackgroundColor="DarkTurquoise"
+                        Command="{Binding RegisterCommand}"
+                        CornerRadius="27"
+                        FontAttributes="Bold"
+                        FontSize="20"
+                        HeightRequest="55"
+                        Text="{x:Static m:Strings.Register}"
+                        TextColor="White" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label
+                Margin="0,10"
+                HorizontalOptions="Center"
+                Opacity="0.6"
+                Text="OR"
+                TextColor="White" />
+
+            <Button
+                BackgroundColor="White"
+                Command="{Binding GoogleLoginCommand}"
+                CornerRadius="27"
+                FontAttributes="Bold"
+                FontSize="16"
+                HeightRequest="55"
+                Text="Continue with Google"
+                TextColor="#444">
+                <Button.Shadow>
+                    <Shadow
+                        Brush="Black"
+                        Opacity="0.3"
+                        Offset="2,2" />
+                </Button.Shadow>
+            </Button>
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

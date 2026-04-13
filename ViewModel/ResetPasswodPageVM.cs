@@ -27,9 +27,17 @@ namespace Chess.ViewModel
         public ResetPasswodPageVM()
         {
             user.OnPasswordResetCompleted += TrasnferToLogin;
+            user.ShowToastAlert += ShowToastAlert;
         }
         #endregion
         #region Private Methods
+        private void ShowToastAlert(object? sender, string msg)
+        {
+            MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Toast.Make(msg, ToastDuration.Long).Show();
+            });
+        }
         private void TrasnferToLogin(object? sender, EventArgs e)
         {
             MainThread.InvokeOnMainThreadAsync(() =>

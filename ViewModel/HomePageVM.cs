@@ -12,8 +12,7 @@ namespace Chess.ViewModel
         #endregion
         #region Commands
         public ICommand PlayCommand { get; }
-        public ICommand PuzzleCommand { get; }
-        public ICommand InstructionsCommand { get; private set; }
+        public ICommand PuzzleCommand { get; }        
         #endregion
         #region Properties
         public string UserName
@@ -30,13 +29,7 @@ namespace Chess.ViewModel
         {
             PlayCommand = new Command(Play);
             PuzzleCommand = new Command(ShowPuzzle);       
-            InstructionsCommand = new Command(ShowInstructionsPrompt);
-        }
-        #endregion
-        #region Public Methods
-        public static void ShowInstructionsPrompt(object obj)
-        {
-            Application.Current!.MainPage!.DisplayAlert(Strings.Instructions, Strings.InstructionsTxt, Strings.Ok);
+            
         }
         #endregion
         #region Private Methods

@@ -13,6 +13,7 @@ namespace Chess.ViewModel
         #endregion
         #region Commands
         public ICommand AddGameCommand { get; }
+        public ICommand InstructionsCommand { get; private set; }
         #endregion
         #region Properties
         public bool IsBusy => games.IsBusy;
@@ -41,9 +42,14 @@ namespace Chess.ViewModel
             AddGameCommand = new Command(AddGame);
             games.OnGameAdded += OnGameAdded;
             games.OnGamesChanged += OnGamesChanged;
+            InstructionsCommand = new Command(ShowInstructionsPrompt);
         }
         #endregion
         #region Public Methods
+        public static void ShowInstructionsPrompt(object obj)
+        {
+            Application.Current!.MainPage!.DisplayAlert(Strings.Instructions, Strings.InstructionsTxt, Strings.Ok);
+        }
         public void AddSnapshotListener()
         {
             games.AddSnapshotListener();

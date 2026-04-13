@@ -43,28 +43,6 @@
                 HeightRequest="60"
                 Text="{x:Static m:Strings.Puzzle}"
                 TextColor="White" />
-
-            <BoxView
-                Margin="0,5"
-                HeightRequest="1"
-                Color="#BDC3C7" />
-
-            <Label
-                FontSize="16"
-                HorizontalOptions="Center"
-                Text="First time playing?"
-                TextColor="#7F8C8D" />
-
-            <Button
-                BackgroundColor="Transparent"
-                BorderColor="#34495E"
-                BorderWidth="2"
-                Command="{Binding InstructionsCommand}"
-                CornerRadius="10"
-                HeightRequest="55"
-                Text="{x:Static m:Strings.Instructions}"
-                TextColor="#34495E" />
-
         </VerticalStackLayout>
     </Frame>
 </ContentPage>

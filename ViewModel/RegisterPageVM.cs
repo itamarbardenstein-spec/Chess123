@@ -16,6 +16,7 @@ namespace Chess.ViewModel
         #region Commands
         public ICommand ToggleIsPasswordCommand { get; }
         public ICommand RegisterCommand { get; }
+        public ICommand GoogleLoginCommand { get; }
         #endregion
         #region Properties
         public bool IsPassword { get; set; } = true;
@@ -73,6 +74,7 @@ namespace Chess.ViewModel
             ToggleIsPasswordCommand = new Command(ToggleIsPassword);
             user.OnAuthCompleted += OnAuthComplete;
             user.ShowToastAlert += ShowToastAlert;
+            GoogleLoginCommand = new Command(GoogleLogin);
         }
         #endregion
         #region Public Methods
@@ -82,6 +84,10 @@ namespace Chess.ViewModel
         }
         #endregion
         #region Private Methods
+        private void GoogleLogin()
+        {
+            user.GoogleLogin();
+        }
         private void ShowToastAlert(object? sender, string msg)
         {
             isBusy = false;

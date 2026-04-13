@@ -1,5 +1,7 @@
 ﻿using Chess.Models;
 using Chess.Views;
+using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
 namespace Chess.ModelsLogic
 {
     public class User : UserModels
@@ -122,8 +124,11 @@ namespace Chess.ModelsLogic
         }
         protected override void OnResetComplete(Task task)
         {
-            OnPasswordResetCompleted?.Invoke(this, EventArgs.Empty);            
-        }
+            if (task.IsCompletedSuccessfully)
+                OnPasswordResetCompleted?.Invoke(this, EventArgs.Empty);
+            else
+                ShowAlert(Strings.validEmail);
+        }       
         #endregion
     }
 }

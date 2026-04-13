@@ -8,6 +8,12 @@
     x:DataType="vm:MainPageVm"
     BackgroundImageSource="homepagebackgroud.jpg"
     IsBusy="{Binding IsBusy}">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding InstructionsCommand}"
+            Order="Secondary"
+            Text="{x:Static m:Strings.Instructions}" />
+    </ContentPage.ToolbarItems>
     <Shell.TitleView>
         <HorizontalStackLayout FlowDirection="LeftToRight">
             <Label
