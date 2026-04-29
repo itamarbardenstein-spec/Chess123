@@ -128,31 +128,6 @@
                         TextColor="White" />
                 </VerticalStackLayout>
             </Border>
-
-            <Label
-                Margin="0,10"
-                HorizontalOptions="Center"
-                Opacity="0.6"
-                Text="OR"
-                TextColor="White" />
-
-            <Button
-                BackgroundColor="White"
-                Command="{Binding GoogleLoginCommand}"
-                CornerRadius="27"
-                FontAttributes="Bold"
-                FontSize="16"
-                HeightRequest="55"
-                Text="Continue with Google"
-                TextColor="#444">
-                <Button.Shadow>
-                    <Shadow
-                        Brush="Black"
-                        Opacity="0.3"
-                        Offset="2,2" />
-                </Button.Shadow>
-            </Button>
-
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
