@@ -1,10 +1,14 @@
 ﻿using Chess.Models;
 using Microsoft.Maui.Controls.Shapes;
+
 namespace Chess.ModelsLogic
 {
+    /// Logic and UI management for the chess board grid
     public partial class GameGrid : GameGridModel
     {
         #region Public Methods
+
+        /// Initializes the board structure, row/column definitions, and sets initial piece positions based on user role
         public override void InitGrid(Grid board, bool IsHostUser)
         {
             this.Parent = board;
@@ -98,21 +102,25 @@ namespace Chess.ModelsLogic
                     if (BoardPieces[i, j] == null)
                         BoardPieces[i, j] = new Pawn(i, j, false, null);
                     Piece p = BoardPieces[i, j];
-                    p!.BackgroundColor = Color.FromArgb(((i + j) % 2 == 0) ? Strings.BoardColorWhite: Strings.BoardColorBlack);
+                    p!.BackgroundColor = Color.FromArgb(((i + j) % 2 == 0) ? Strings.BoardColorWhite : Strings.BoardColorBlack);
                     p.Clicked += OnButtonClicked;
                     ((Grid)this.Parent).Add(p, j, i);
                     BoardUIMap[(i, j)] = p;
                 }
         }
+
+        /// Updates the visual board state after a move is made
         public override void UpdateDisplay(DisplayMoveArgs e)
         {
-            ClearBoardHighLights();         
+            ClearBoardHighLights();
             BoardPieces![e.ToRow, e.ToColumn] = CreatePiece(BoardPieces![e.FromRow, e.FromColomn]!, e.ToRow, e.ToColumn);
             BoardPieces![e.FromRow, e.FromColomn] = new Pawn(e.FromRow, e.FromColomn, false, null);
             UpdateCellUI(e.FromRow, e.FromColomn);
             UpdateCellUI(e.ToRow, e.ToColumn);
             HighlightMove(e.FromRow, e.FromColomn, e.ToRow, e.ToColumn);
         }
+
+        /// Creates a new instance of a piece at a target location while preserving its current state
         public override Piece CreatePiece(Piece original, int row, int col)
         {
             bool isWhite = original.IsWhite;
@@ -135,6 +143,8 @@ namespace Chess.ModelsLogic
                 _ => throw new Exception()
             };
         }
+
+        /// Handles the visual execution of the castling move for both host and guest perspectives
         public override void Castling(bool right, bool isHostUser, bool MyMove)
         {
             if (right)
@@ -212,6 +222,8 @@ namespace Chess.ModelsLogic
                 }
             }
         }
+
+        /// Visually promotes a pawn to a queen at the end of the board
         public override void Promotion(bool IsHostUser, int row, int column)
         {
             if (IsHostUser)
@@ -220,6 +232,8 @@ namespace Chess.ModelsLogic
                 BoardPieces![row, column] = new Queen(row, column, true, Strings.WhiteQueen);
             UpdateCellUI(row, column);
         }
+
+        /// Displays indicators for all valid moves available for the selected piece
         public override void ShowLegalMoves(List<int[]> legalMoves)
         {
             ClearDots();
@@ -253,6 +267,8 @@ namespace Chess.ModelsLogic
                 ((Grid)this.Parent).Add(indicator, col, row);
             }
         }
+
+        /// Removes all legal move indicators (dots and rings) from the board
         public override void ClearDots()
         {
             Grid boardGrid = (Grid)this.Parent;
@@ -260,16 +276,22 @@ namespace Chess.ModelsLogic
             foreach (IView dot in dotsToRemove)
                 boardGrid.Remove(dot);
         }
+
+        /// Applies a highlight color to a specific square on the grid
         public override void HighlightSquare(int row, int column)
         {
             Piece uiPiece = BoardUIMap[(row, column)];
             uiPiece.BackgroundColor = Color.FromRgba(255, 255, 0, 0.3);
         }
+
+        /// Highlights both the starting and ending squares of the last move
         public override void HighlightMove(int fromRow, int fromColumn, int toRow, int toColumn)
         {
             HighlightSquare(fromRow, fromColumn);
             HighlightSquare(toRow, toColumn);
         }
+
+        /// Resets all squares on the board to their default checkered colors
         public override void ClearBoardHighLights()
         {
             for (int i = 0; i < 8; i++)
@@ -282,6 +304,8 @@ namespace Chess.ModelsLogic
                         uiPiece.BackgroundColor = Color.FromArgb(Strings.BoardColorBlack);
                 }
         }
+
+        /// Restores the original color of a single specific square
         public override void ClearSquareHighlight(int row, int col)
         {
             Piece uiPiece = BoardUIMap[(row, col)];
@@ -292,15 +316,21 @@ namespace Chess.ModelsLogic
             if (BoardPieces![row, col] != null)
                 BoardPieces[row, col].BackgroundColor = uiPiece.BackgroundColor;
         }
+
         #endregion
+
         #region Private Methods
+
+        /// Invokes the click event when a piece or square is tapped
         protected override void OnButtonClicked(object? sender, EventArgs e)
         {
             ButtonClicked?.Invoke(this, (Piece)sender!);
         }
+
+        /// Synchronizes the UI element's image and properties with the logical piece data
         protected override void UpdateCellUI(int row, int col)
         {
-            Piece uiPiece =BoardUIMap[(row, col)];
+            Piece uiPiece = BoardUIMap[(row, col)];
             Piece modelPiece = BoardPieces![row, col];
             if (modelPiece.StringImageSource == null)
             {
@@ -315,6 +345,7 @@ namespace Chess.ModelsLogic
                 uiPiece.IsWhite = modelPiece.IsWhite;
             }
         }
+
         #endregion
     }
 }

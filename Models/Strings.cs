@@ -1,5 +1,6 @@
 ﻿namespace Chess.Models
 {
+    /// Centralized repository for all user-facing strings, error messages, and UI labels
     static class Strings
     {
         public const string Register = "Register";

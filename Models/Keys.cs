@@ -1,5 +1,6 @@
 ﻿namespace Chess.Models
 {
+    /// Centralized storage for application-wide constants, database keys, and configuration values
     internal static class Keys
     {
         public const string UserNameKey = "Username";

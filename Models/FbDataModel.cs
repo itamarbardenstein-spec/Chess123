@@ -1,19 +1,26 @@
 ﻿using Firebase.Auth;
 using Firebase.Auth.Providers;
 using Plugin.CloudFirestore;
+
 namespace Chess.Models
 {
+    /// Base model for handling Firebase Authentication and Firestore database operations
     public abstract partial class FbDataModel
     {
         #region Fields
+        /// Client used for Firebase Authentication services
         protected FirebaseAuthClient facl;
+        /// Interface for Cloud Firestore database operations
         protected IFirestore fs;
         #endregion
+
         #region Properties
         public abstract string DisplayName { get; }
         public abstract string UserId { get; }
         #endregion
+
         #region Constructor
+        /// Initializes Firebase configuration, authentication client, and Firestore instance
         public FbDataModel()
         {
             FirebaseAuthConfig fac = new()
@@ -26,6 +33,7 @@ namespace Chess.Models
             fs = CrossCloudFirestore.Current.Instance;
         }
         #endregion
+
         #region Public Methods
         public abstract void CreateUserWithEmailAndPasswordAsync(string email, string password, string name, Action<System.Threading.Tasks.Task> OnComplete);
         public abstract void SignInWithEmailAndPasswordAsync(string email, string password, Action<System.Threading.Tasks.Task> OnComplete);

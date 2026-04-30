@@ -1,5 +1,6 @@
 ﻿namespace Chess.Models
 {
+    /// Centralized collection of Material Design icon codes used for the application's UI
     internal static class Icons
     {
         public const string Delete = "\ue872";
