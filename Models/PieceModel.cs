@@ -15,7 +15,6 @@ namespace Chess.Models
         /// Indicates if the piece belongs to the white set
         public bool IsWhite { get; set; }
         #endregion
-
         #region Constructors
         /// Initializes a piece with specific coordinates, color, and visual asset
         public PieceModel(int row, int column, bool isWhite, string? image)
@@ -36,11 +35,9 @@ namespace Chess.Models
             WidthRequest = 45;
         }
         #endregion
-
         #region Public Methods
         public abstract bool IsMoveValid(Piece[,] board, int rFrom, int cFrom, int rTo, int cTo);
         #endregion
-
         #region Private Methods
         protected abstract bool PathClear(Piece[,] board, int row, int collumn, int row2, int collumn2, int directionRow, int directionColumn);
         #endregion

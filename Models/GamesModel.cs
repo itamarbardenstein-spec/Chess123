@@ -24,9 +24,9 @@ namespace Chess.Models
         #region Properties
         /// Indicates if a background process or network operation is currently running
         public bool IsBusy { get; set; }
-        /// The game currently being played or viewed by the user
+        /// The game currently being played by the user
         public Game? CurrentGame { get => _currentGame; set => _currentGame = value; }
-        /// List of active games available for display in the UI
+        /// List of active games available 
         public ObservableCollection<Game>? GamesList { get; set; } = [];
         /// Available time presets for creating a new game
         public ObservableCollection<GameTime>? GameTimes { get; set; } = [new GameTime(5), new GameTime(10), new GameTime(20)];

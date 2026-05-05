@@ -2,9 +2,11 @@
 
 namespace Chess.ModelsLogic
 {
+    /// Class representing the chess puzzle logic, including board initialization and solution checking
     public partial class Puzzle : PuzzleModel
     {
         #region Constructor
+        /// Initializes a new puzzle based on the specified difficulty level
         public Puzzle(string difficulty)
         {
             if (difficulty == Strings.Easy)
@@ -16,6 +18,7 @@ namespace Chess.ModelsLogic
         }
         #endregion
         #region Public Methods
+        /// Initializes the board layout and move requirements for an easy puzzle
         public override void InitEasyPuzzleBoard()
         {
             currentDifficulty = Strings.Easy;
@@ -24,9 +27,11 @@ namespace Chess.ModelsLogic
             CorrectPieceRow = 4;
             CorrectPieceColumn = 3;
             gameBoard = new Piece[8, 8];
+            // Initialize board with empty squares (pawns without images)
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
                     gameBoard[i, j] = new Pawn(i, j, false, null);
+            // Place specific pieces for the puzzle scenario
             gameBoard[0, 0] = new Rook(0, 0, false, Strings.BlackRook);
             gameBoard[0, 2] = new Bishop(0, 2, false, Strings.BlackBishop);
             gameBoard[0, 3] = new King(0, 3, false, Strings.BlackKing);
@@ -52,6 +57,7 @@ namespace Chess.ModelsLogic
             gameBoard[7, 5] = new Bishop(7, 5, true, Strings.WhiteBishop);
             gameBoard[7, 7] = new Rook(7, 7, true, Strings.WhiteRook);
         }
+        /// Initializes the board layout and move requirements for a medium puzzle
         public override void InitMediumPuzzleBoard()
         {
             currentDifficulty = Strings.Medium;
@@ -81,6 +87,7 @@ namespace Chess.ModelsLogic
             gameBoard[6, 6] = new King(6, 6, true, Strings.WhiteKing);
             gameBoard[7, 3] = new Rook(7, 3, true, Strings.WhiteRook);
         }
+        /// Initializes the board layout and move requirements for a hard puzzle
         public override void InitHardPuzzleBoard()
         {
             currentDifficulty = Strings.Hard;
@@ -115,11 +122,13 @@ namespace Chess.ModelsLogic
             gameBoard[6, 5] = new Pawn(6, 5, true, Strings.WhitePawn);
             gameBoard[7, 2] = new King(7, 2, true, Strings.WhiteKing);
         }
+        /// Handles the logic when a puzzle board square is clicked
         public override void OnButtonClicked(Piece p)
         {
             if (!solved)
             {
                 List<int[]> legalMoves = GetLegalMoveList(p);
+                // First click: Select piece
                 if (ClickCount == 0)
                 {
                     if (p?.StringImageSource != null && p.IsWhite)
@@ -130,19 +139,23 @@ namespace Chess.ModelsLogic
                         LegalMoves?.Invoke(this, legalMoves);
                     }
                 }
+                // Second click: Handle deselection, changing selection, or making a move
                 else
                 {
+                    // Deselect if same square clicked
                     if (p.RowIndex == MoveFromRow && p.ColumnIndex == MoveFromColumn)
                     {
                         ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);
                         ClickCount = 0;
                     }
+                    // Change selection to another white piece
                     else if (p?.StringImageSource != null && p.IsWhite)
                     {
                         MoveFromRow = p.RowIndex;
                         MoveFromColumn = p.ColumnIndex;
                         LegalMoves?.Invoke(this, legalMoves);
                     }
+                    // Attempt to move to the target square
                     else
                     {
                         if (gameBoard![MoveFromRow, MoveFromColumn].IsMoveValid(gameBoard, MoveFromRow, MoveFromColumn, p!.RowIndex, p.ColumnIndex))
@@ -154,28 +167,34 @@ namespace Chess.ModelsLogic
                 }
             }
         }
+        /// Executes a move and triggers subsequent validation/solution checks
         public override void Play(int rowIndex, int columnIndex)
         {
             MoveToRow = rowIndex;
             MoveToColumn = columnIndex;
+            // Check if the user's move matches the puzzle's required move
             if (!CheckMove())
                 IncorrectMove?.Invoke(this, EventArgs.Empty);
             else
             {
+                // Update board state
                 gameBoard![rowIndex, columnIndex] = CreatePiece(gameBoard![MoveFromRow, MoveFromColumn]!, rowIndex, columnIndex);
                 gameBoard![MoveFromRow, MoveFromColumn] = new Pawn(MoveFromRow, MoveFromColumn, false, null);
                 DisplayMoveArgs args = new(MoveFromRow, MoveFromColumn, rowIndex, columnIndex);
                 DisplayChanged?.Invoke(this, args);
                 moveNumber++;
                 CheckSolution();
-            }               
+            }
         }
+        /// Determines if the current move coordinates match the puzzle solution
         public override bool CheckMove()
         {
             return MoveFromRow == CorrectPieceRow && MoveFromColumn == CorrectPieceColumn && MoveToRow == CorrectMoveRow && MoveToColumn == CorrectMoveColumn;
         }
+        /// Validates the puzzle state and triggers opponent moves or solution completion
         public override void CheckSolution()
         {
+            // Easy puzzles or reaching move limit for complex puzzles ends the game
             if (currentDifficulty == Strings.Easy || moveNumber == 2)
             {
                 CorrectSolution?.Invoke(this, EventArgs.Empty);
@@ -184,6 +203,7 @@ namespace Chess.ModelsLogic
             else
             {
                 CorrectMove?.Invoke(this, EventArgs.Empty);
+                // Setup the next requirement for multi-move puzzles (Medium/Hard)
                 if (currentDifficulty == Strings.Medium)
                 {
                     CorrectMoveRow = 1;
@@ -204,6 +224,7 @@ namespace Chess.ModelsLogic
                 }
             }
         }
+        /// Factory method to create a new instance of a piece based on an existing one
         public override Piece CreatePiece(Piece original, int row, int col)
         {
             bool isWhite = original.IsWhite;
@@ -226,23 +247,26 @@ namespace Chess.ModelsLogic
                 _ => throw new Exception()
             };
         }
+        /// Provides a hint by highlighting the correct piece to move
         public override void HintSquare()
         {
             HighlightHintSquare?.Invoke(this, new HighlightSquareArgs(CorrectPieceRow, CorrectPieceColumn));
         }
+        /// Provides a hint showing the full correct move (start and end squares)
         public override void CorrectMoveSquares()
         {
             HighlightCorrectMoveHint?.Invoke(this, new DisplayMoveArgs(CorrectPieceRow, CorrectPieceColumn, CorrectMoveRow, CorrectMoveColumn));
         }
         #endregion
         #region Private Methods
+        /// Scans the board to find all legal move coordinates for a given piece
         protected override List<int[]> GetLegalMoveList(Piece p)
         {
             List<int[]> legalMoves = [];
             for (int r = 0; r < 8; r++)
                 for (int c = 0; c < 8; c++)
-                    if (gameBoard![p.RowIndex, p.ColumnIndex].IsMoveValid(gameBoard!, p.RowIndex, p.ColumnIndex, r, c))                    
-                            legalMoves.Add([r, c]);
+                    if (gameBoard![p.RowIndex, p.ColumnIndex].IsMoveValid(gameBoard!, p.RowIndex, p.ColumnIndex, r, c))
+                        legalMoves.Add([r, c]);
             return legalMoves;
         }
         #endregion

@@ -4,20 +4,19 @@ using Plugin.CloudFirestore;
 
 namespace Chess.ModelsLogic
 {
+    /// Class representing the core chess game logic and Firestore synchronization
     public class Game : GameModel
     {
         #region Properties
-        /// Returns the opponent's name based on the current user's role
+        /// Gets the opponent's display name based on the current user's role
         public override string OpponentName => IsHostUser ? GuestName : HostName;
-        /// Returns the current status of the game
+        /// Gets the internal status of the current game instance
         protected override GameStatus Status => _status;
         #endregion
-
         #region Constructors
-        /// Default constructor that registers the game to the timer service
+        /// Initializes a new instance and registers the global timer messenger
         public Game() { RegisterTimer(); }
-
-        /// Initializes a new game with a selected time, setting names and the starting board
+        /// Initializes a game with specific time settings and sets initial board state
         public Game(GameTime selectedGameTime)
         {
             RegisterTimer();
@@ -26,20 +25,21 @@ namespace Chess.ModelsLogic
             IsHostUser = true;
             Time = selectedGameTime.Time;
             UpdateStatus();
+            // Convert hours to milliseconds for the countdown timers
             long totalMillis = Time * Keys.FromHourToMilliSeconds;
             WhiteTimeLeft = totalMillis;
             BlackTimeLeft = totalMillis;
             InitGameBoard();
         }
         #endregion
-
         #region Public Methods
-        /// Initializes the board and arranges pieces, assigning Black to the host
+        /// Sets up the initial 8x8 chess board with pieces in their starting positions
         public override void InitGameBoard()
         {
             gameBoard = new Piece[8, 8];
             for (int i = 0; i < 8; i++)
             {
+                // Logic to arrange pieces based on whether the local user is the host
                 if (IsHostUser)
                 {
                     gameBoard![1, i] = new Pawn(1, i, true, Strings.WhitePawn);
@@ -116,19 +116,18 @@ namespace Chess.ModelsLogic
                     }
                 }
             }
+            // Fill remaining empty squares with "empty" pawns to avoid null references
             for (int i = 0; i < 8; i++)
                 for (int j = 0; j < 8; j++)
                     if (gameBoard[i, j] == null)
                         gameBoard[i, j] = new Pawn(i, j, false, null);
         }
-
-        /// Creates or updates the game document in Firestore
+        /// Saves the entire game object to the Firestore games collection
         public override void SetDocument(Action<Task> OnComplete)
         {
             Id = fbd.SetDocument(this, Keys.GamesCollection, Id, OnComplete);
         }
-
-        /// Updates guest user data and joins an existing game
+        /// Updates the game state when a second player joins the match
         public override void UpdateGuestUser(Action<Task> OnComplete)
         {
             GuestName = MyName;
@@ -136,28 +135,26 @@ namespace Chess.ModelsLogic
             UpdateStatus();
             UpdateFbJoinGame(OnComplete);
         }
-
-        /// Adds a real-time listener to the game document in Firestore
+        /// Attaches a real-time listener to track changes from the remote opponent
         public override void AddSnapshotListener()
         {
             ilr = fbd.AddSnapshotListener(Keys.GamesCollection, Id, OnChange);
         }
-
-        /// Removes the listener and deletes the game document from the database
+        /// Detaches the remote listener and marks the game for deletion
         public override void RemoveSnapshotListener()
         {
             ilr?.Remove();
             action = Actions.Deleted;
             DeleteDocument(OnComplete);
         }
-
-        /// Handles piece selection and movement logic, including move validation
+        /// Main handler for user interaction on the chess board squares
         public override void CheckMove(Piece p)
         {
             GetLegalMoveList(p);
             if (!IsGameOver)
                 if (_status.CurrentStatus == GameStatus.Statuses.Play)
                 {
+                    // First click: Select a piece
                     if (ClickCount == 0)
                     {
                         if (p?.StringImageSource != null && (IsHostUser ? (!p.IsWhite) : p.IsWhite))
@@ -169,16 +166,19 @@ namespace Chess.ModelsLogic
                             HighlightSquare?.Invoke(this, new HighlightSquareArgs(p.RowIndex, p.ColumnIndex));
                         }
                     }
+                    // Second click: Move to destination or deselect
                     else
                     {
                         if (p.RowIndex == MoveFrom[0] && p.ColumnIndex == MoveFrom[1])
                         {
+                            // Deselection logic
                             ClearLegalMovesDots?.Invoke(this, EventArgs.Empty);
                             ClearSquareHighLight?.Invoke(this, new HighlightSquareArgs(p.RowIndex, p.ColumnIndex));
                             ClickCount = 0;
                         }
                         else if (p?.StringImageSource != null && p.IsWhite == gameBoard?[MoveFrom[0], MoveFrom[1]].IsWhite)
                         {
+                            // Switch selection to a different own piece
                             ClearSquareHighLight?.Invoke(this, new HighlightSquareArgs(MoveFrom[0], MoveFrom[1]));
                             MoveFrom[0] = p.RowIndex;
                             MoveFrom[1] = p.ColumnIndex;
@@ -187,6 +187,7 @@ namespace Chess.ModelsLogic
                         }
                         else
                         {
+                            // Attempt to move to a new square
                             if (gameBoard![MoveFrom[0], MoveFrom[1]].IsMoveValid(gameBoard, MoveFrom[0], MoveFrom[1], p!.RowIndex, p.ColumnIndex))
                                 Play(p.RowIndex, p.ColumnIndex, true);
                             else
@@ -197,8 +198,7 @@ namespace Chess.ModelsLogic
                     }
                 }
         }
-
-        /// Generates the game over message title based on the result
+        /// Formats the result title shown in the game over dialog
         public override string GameOverMessageTitle(bool IWon, string reason)
         {
             string result;
@@ -208,8 +208,7 @@ namespace Chess.ModelsLogic
                 result = IWon ? Strings.YouWon : Strings.YouLost;
             return result;
         }
-
-        /// Generates the game over reason description
+        /// Formats the detailed reason string shown in the game over dialog
         public override string GameOverMessageReason(bool IWon, string reason)
         {
             string result;
@@ -223,8 +222,7 @@ namespace Chess.ModelsLogic
                 result = IWon ? Strings.OpponentResigned : Strings.YouResigned;
             return result;
         }
-
-        /// Handles player resignation and updates the cloud state
+        /// Processes a player's request to quit the current match
         public override void ResignGame()
         {
             if (!IsGameOver && IsFull)
@@ -242,8 +240,7 @@ namespace Chess.ModelsLogic
                 GameOver?.Invoke(this, GameOverArgs);
             }
         }
-
-        /// Returns a grouped list of captured pieces for the UI
+        /// Organizes captured pieces by image source for UI display groups
         public override List<CapturedPieceGroup>? GetGroupedCapturedPieces(bool myList)
         {
             List<CapturedPieceGroup>? result = null;
@@ -259,12 +256,12 @@ namespace Chess.ModelsLogic
             return result;
         }
         #endregion
-
         #region Private Methods
-        /// Executes a move on the board, handling captures, check, and promotion
+        /// Internal logic to execute a piece movement, including board updates and special rules
         protected override void Play(int rowIndex, int columnIndex, bool MyMove)
         {
             Piece eatenPiece = gameBoard![rowIndex, columnIndex];
+            // Handle piece capture and list updates
             if (eatenPiece.StringImageSource != null)
             {
                 if (eatenPiece.IsWhite)
@@ -273,8 +270,10 @@ namespace Chess.ModelsLogic
                     BlackCapturedImages?.Add(eatenPiece.StringImageSource);
                 OnGameChanged?.Invoke(this, EventArgs.Empty);
             }
+            // Perform move on physical board array
             gameBoard![rowIndex, columnIndex] = CreatePiece(gameBoard![MoveFrom[0], MoveFrom[1]], rowIndex, columnIndex);
             gameBoard![MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
+            // Verification: Revert move if it results in the current player's King being in check
             if (MyMove && IsKingInCheck(gameBoard![rowIndex, columnIndex].IsWhite, FlipBoard(gameBoard)))
             {
                 gameBoard![MoveFrom[0], MoveFrom[1]] = CreatePiece(gameBoard![rowIndex, columnIndex]!, MoveFrom[0], MoveFrom[1]);
@@ -282,6 +281,7 @@ namespace Chess.ModelsLogic
             }
             else
             {
+                // Finalize valid move
                 gameBoard![MoveFrom[0], MoveFrom[1]] = CreatePiece(gameBoard![rowIndex, columnIndex]!, MoveFrom[0], MoveFrom[1]);
                 gameBoard![rowIndex, columnIndex] = eatenPiece;
                 CheckCastling(columnIndex, MyMove);
@@ -289,6 +289,7 @@ namespace Chess.ModelsLogic
                 gameBoard![MoveFrom[0], MoveFrom[1]] = new Pawn(MoveFrom[0], MoveFrom[1], false, null);
                 DisplayMoveArgs args = new(MoveFrom[0], MoveFrom[1], rowIndex, columnIndex);
                 DisplayChanged?.Invoke(this, args);
+                // Handle Pawn promotion to Queen at the end of the board
                 if (MyMove && gameBoard![rowIndex, columnIndex] is Pawn && rowIndex == 0)
                 {
                     gameBoard[rowIndex, columnIndex] = IsHostUser ? new Queen(rowIndex, columnIndex, false, Strings.BlackQueen) :
@@ -309,8 +310,7 @@ namespace Chess.ModelsLogic
                     OnGameChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-
-        /// Registers for global timer update messages
+        /// Sets up the subscription for timer tick messages from the global app service
         protected override void RegisterTimer()
         {
             WeakReferenceMessenger.Default.Register<AppMessage<long>>(this, (r, m) =>
@@ -318,14 +318,12 @@ namespace Chess.ModelsLogic
                 OnMessageReceived(m.Value);
             });
         }
-
-        /// Deletes the game document from Firestore
+        /// Removes the game entry from the Firestore database
         protected override void DeleteDocument(Action<Task> OnComplete)
         {
             fbd.DeleteDocument(Keys.GamesCollection, Id, OnComplete);
         }
-
-        /// Creates a copy of a chess piece while preserving its movement state
+        /// Utility to clone a piece while preserving specific state like move history
         protected override Piece CreatePiece(Piece original, int row, int col)
         {
             bool isWhite = original.IsWhite;
@@ -348,8 +346,7 @@ namespace Chess.ModelsLogic
                 _ => throw new Exception()
             };
         }
-
-        /// Retrieves the captured pieces list for the requested side
+        /// Selects the correct captured pieces list based on user role and perspective
         protected override List<string>? GetMyCapturedPiecesList(bool MyList)
         {
             List<string>? result;
@@ -369,8 +366,7 @@ namespace Chess.ModelsLogic
             }
             return result;
         }
-
-        /// Processes received timer signals and handles "Lost on Time"
+        /// Callback for timer messages; checks for time-out and updates local clock
         protected override void OnMessageReceived(long timeLeft)
         {
             if (timeLeft == Keys.FinishedSignal && !IsGameOver)
@@ -391,15 +387,13 @@ namespace Chess.ModelsLogic
                 TimeLeftChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-
-        /// Updates the local game status (Play or Wait)
+        /// Updates the current turn status locally based on turn and host flags
         protected override void UpdateStatus()
         {
             _status.CurrentStatus = IsHostUser && IsHostTurn || !IsHostUser && !IsHostTurn ?
             GameStatus.Statuses.Play : GameStatus.Statuses.Wait;
         }
-
-        /// Updates Firestore with guest join information
+        /// Specifically updates join-related fields in the cloud database
         protected override void UpdateFbJoinGame(Action<Task> OnComplete)
         {
             Dictionary<string, object> dict = new()
@@ -410,8 +404,7 @@ namespace Chess.ModelsLogic
             action = Actions.Changed;
             fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
         }
-
-        /// Finalizes a Firestore operation and triggers local events
+        /// Standard completion callback for Firestore tasks
         protected override void OnComplete(Task task)
         {
             if (task.IsCompletedSuccessfully)
@@ -420,8 +413,7 @@ namespace Chess.ModelsLogic
                 else
                     OnGameChanged?.Invoke(this, EventArgs.Empty);
         }
-
-        /// Calculates all legal moves for a specific piece while preventing self-check
+        /// Iterates through the board to identify all squares where a piece can legally move
         protected override void GetLegalMoveList(Piece p)
         {
             legalMoves = [];
@@ -430,6 +422,7 @@ namespace Chess.ModelsLogic
                 for (int c = 0; c < 8; c++)
                     if (gameBoard![p.RowIndex, p.ColumnIndex].IsMoveValid(gameBoard!, p.RowIndex, p.ColumnIndex, r, c))
                     {
+                        // Simulate the move to see if it exposes the King to check
                         Piece fromPiece = gameBoard[p.RowIndex, p.ColumnIndex];
                         Piece toPiece = gameBoard[r, c];
                         int originalRow = p.RowIndex;
@@ -437,6 +430,7 @@ namespace Chess.ModelsLogic
                         gameBoard[r, c] = CreatePiece(fromPiece, r, c);
                         gameBoard[p.RowIndex, p.ColumnIndex] = new Pawn(p.RowIndex, p.ColumnIndex, false, null);
                         bool kingInCheck = IsKingInCheck(isWhite, FlipBoard(gameBoard));
+                        // Restore board after simulation
                         gameBoard[p.RowIndex, p.ColumnIndex] = fromPiece;
                         gameBoard[r, c] = toPiece;
                         fromPiece.RowIndex = originalRow;
@@ -445,8 +439,7 @@ namespace Chess.ModelsLogic
                             legalMoves.Add([r, c]);
                     }
         }
-
-        /// Checks if the game has ended via checkmate, stalemate, or draw
+        /// Analyzes board state after a move to detect end-game conditions
         protected override void CheckGameOver(Piece movedPiece)
         {
             if (!IsGameOver)
@@ -470,6 +463,7 @@ namespace Chess.ModelsLogic
                 }
                 else
                 {
+                    // Check for insufficient material for a draw
                     bool KnightFound = false;
                     bool BishopFound = false;
                     bool WinnerPieceFound = false;
@@ -498,8 +492,7 @@ namespace Chess.ModelsLogic
                 }
             }
         }
-
-        /// Determines if a player is in checkmate
+        /// Logical check to determine if the specified King has no escape from Check
         protected override bool IsCheckmate(bool isWhite, Piece[,] board)
         {
             bool result = false;
@@ -507,8 +500,7 @@ namespace Chess.ModelsLogic
                 result = true;
             return result;
         }
-
-        /// Updates Firestore with the latest move and turn data
+        /// Synchronizes move coordinates and turn timer data to Firestore
         protected override void UpdateFbMove()
         {
             Dictionary<string, object> dict = new()
@@ -521,13 +513,13 @@ namespace Chess.ModelsLogic
             };
             fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
         }
-
-        /// Reacts to changes in the Firestore document to synchronize real-time state
+        /// Primary handler for real-time cloud data updates from the opponent
         protected override void OnChange(IDocumentSnapshot? snapshot, Exception? error)
         {
             Game? updatedGame = snapshot?.ToObject<Game>();
             if (updatedGame != null)
             {
+                // Detect remote game-over trigger
                 if (updatedGame.IsGameOver && !IsGameOver)
                 {
                     IsGameOver = true;
@@ -546,6 +538,7 @@ namespace Chess.ModelsLogic
                 }
                 else
                 {
+                    // Update local state to match remote changes
                     IsFull = updatedGame.IsFull;
                     GuestName = updatedGame.GuestName;
                     IsHostTurn = updatedGame.IsHostTurn;
@@ -555,16 +548,19 @@ namespace Chess.ModelsLogic
                     BlackTimeLeft = updatedGame.BlackTimeLeft;
                     UpdateStatus();
                     OnGameChanged?.Invoke(this, EventArgs.Empty);
+                    // If it becomes the local player's turn, apply the remote move and start local timer
                     if (_status.CurrentStatus == GameStatus.Statuses.Play && updatedGame.MoveFrom[0] != Keys.NoMove)
                     {
                         long myCurrentTime = IsHostUser ? BlackTimeLeft : WhiteTimeLeft;
                         TimerSettings currentTimer = new(myCurrentTime, Keys.TimerInterval);
                         WeakReferenceMessenger.Default.Send(new AppMessage<TimerSettings>(currentTimer));
+                        // Flip coordinates as boards are viewed from opposing sides
                         MoveFrom[0] = 7 - MoveFrom[0];
                         MoveTo[0] = 7 - MoveTo[0];
                         MoveFrom[1] = 7 - MoveFrom[1];
                         MoveTo[1] = 7 - MoveTo[1];
                         Play(MoveTo[0], MoveTo[1], false);
+                        // Check if the remote move involved a promotion
                         if (MoveFrom[0] != Keys.NoMove && gameBoard?[MoveTo[0], MoveTo[1]] is Pawn && MoveTo[0] == 7)
                         {
                             if (IsHostUser)
@@ -581,6 +577,7 @@ namespace Chess.ModelsLogic
             }
             else
             {
+                // Handle game document deletion
                 WeakReferenceMessenger.Default.Send(new AppMessage<bool>(true));
                 MainThread.InvokeOnMainThreadAsync(() =>
                 {
@@ -589,8 +586,7 @@ namespace Chess.ModelsLogic
                 });
             }
         }
-
-        /// Updates Firestore with the Game Over state
+        /// Updates the Firestore document with the terminal game state
         protected override void UpdateFbGameOver()
         {
             Dictionary<string, object> dict = new()
@@ -600,13 +596,13 @@ namespace Chess.ModelsLogic
             };
             fbd.UpdateFields(Keys.GamesCollection, Id, dict, OnComplete);
         }
-
-        /// Checks if a King is currently under attack (Check)
+        /// Scans the board to see if any enemy piece can attack the specified King
         protected override bool IsKingInCheck(bool isWhite, Piece[,] board)
         {
             bool result = false;
             int kingRow = -1, kingCol = -1;
             bool found = false;
+            // Locate the King
             for (int i = 0; i < 8 && !found; i++)
                 for (int j = 0; j < 8; j++)
                     if (board![i, j] is King k && k.IsWhite == isWhite)
@@ -617,6 +613,7 @@ namespace Chess.ModelsLogic
                     }
             if (found)
             {
+                // Check all opposing pieces for a valid attack path to King's square
                 for (int i = 0; i < 8; i++)
                     for (int j = 0; j < 8; j++)
                     {
@@ -628,8 +625,7 @@ namespace Chess.ModelsLogic
             }
             return result;
         }
-
-        /// Checks if a player has any possible legal moves remaining
+        /// Determines if there is at least one move that doesn't leave the King in check
         protected override bool HasAnyLegalMove(bool isWhite, Piece[,] board)
         {
             bool result = false;
@@ -659,8 +655,7 @@ namespace Chess.ModelsLogic
                 }
             return result;
         }
-
-        /// Checks and updates Castling eligibility for King and Rooks
+        /// Checks if a King or Rook move should trigger or disable Castling rights
         protected override void CheckCastling(int columnIndex, bool MyMove)
         {
             if (gameBoard?[MoveFrom[0], MoveFrom[1]] is King king && MyMove)
@@ -673,6 +668,7 @@ namespace Chess.ModelsLogic
                     rook.HasRightRookMoved = true;
             }
             Piece PieceToMove = gameBoard?[MoveFrom[0], MoveFrom[1]]!;
+            // Detect castling move (King moving 2 squares) and trigger event
             if (PieceToMove is King && Math.Abs(MoveFrom[1] - columnIndex) == 2)
             {
                 bool isKingSide;
@@ -692,8 +688,7 @@ namespace Chess.ModelsLogic
                 }
             }
         }
-
-        /// Handles the movement of the Rook during a Castling maneuver
+        /// Handles the Castling maneuver
         protected override void Castling(bool right, bool isHostUser, bool MyMove)
         {
             if (right)
@@ -755,7 +750,6 @@ namespace Chess.ModelsLogic
                 }
             }
         }
-
         /// Flips the board 180 degrees to perspective of the opponent
         protected override Piece[,] FlipBoard(Piece[,] original)
         {

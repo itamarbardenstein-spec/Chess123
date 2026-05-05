@@ -28,7 +28,6 @@ namespace Chess.Models
         [Ignored]
         public GameStatus _status = new();
         #endregion
-
         #region Events
         /// Triggered when the remote game data changes
         [Ignored]
@@ -70,7 +69,6 @@ namespace Chess.Models
         [Ignored]
         public EventHandler<GameOverArgs>? GameOver;
         #endregion
-
         #region Properties
         protected abstract GameStatus Status { get; }
         /// Human-readable message based on current game status
@@ -121,7 +119,6 @@ namespace Chess.Models
         /// Ending coordinates of the last move [row, col]
         public List<int> MoveTo { get; set; } = [Keys.NoMove, Keys.NoMove];
         #endregion
-
         #region Public Methods      
         public abstract void InitGameBoard();
         public abstract void SetDocument(Action<System.Threading.Tasks.Task> OnComplete);
@@ -134,7 +131,6 @@ namespace Chess.Models
         public abstract void ResignGame();
         public abstract List<CapturedPieceGroup>? GetGroupedCapturedPieces(bool myList);
         #endregion
-
         #region Private Methods
         protected abstract List<string>? GetMyCapturedPiecesList(bool MyList);
         protected abstract void Play(int rowIndex, int columnIndex, bool MyMove);

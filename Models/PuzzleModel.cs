@@ -33,7 +33,6 @@ namespace Chess.Models
         /// The column coordinate of the piece that MUST be moved for the correct solution
         protected int CorrectPieceColumn = 0;
         #endregion
-
         #region Events
         /// Signals the UI to remove legal move indicators
         public EventHandler? ClearLegalMovesDots;
@@ -56,7 +55,6 @@ namespace Chess.Models
         /// Requests a visual update to move a piece on the board
         public EventHandler<DisplayMoveArgs>? DisplayChanged;
         #endregion
-
         #region Public Methods
         /// Handles the logic when a piece or square is clicked
         public abstract void OnButtonClicked(Piece p);
@@ -79,7 +77,6 @@ namespace Chess.Models
         /// Identifies and signals both the source and destination for the next correct move
         public abstract void CorrectMoveSquares();
         #endregion
-
         #region Private Methods
         /// Calculates all valid moves for a piece according to chess rules
         protected abstract List<int[]> GetLegalMoveList(Piece p);

@@ -9,7 +9,6 @@ namespace Chess.Models
         /// Service for interacting with Firebase Authentication and Firestore
         protected FbData fbd = new();
         #endregion
-
         #region Events
         /// Triggered when a login or registration process finishes successfully
         public EventHandler? OnAuthCompleted;
@@ -18,7 +17,6 @@ namespace Chess.Models
         /// Request to display a brief notification message in the UI
         public EventHandler<string>? ShowToastAlert;
         #endregion
-
         #region Properties
         /// The user's chosen display name
         public string UserName { get; set; } = string.Empty;
@@ -33,7 +31,6 @@ namespace Chess.Models
         /// The user's reported age
         public string Age { get; set; } = string.Empty;
         #endregion
-
         #region Public Methods
         /// Creates a new user account in the authentication system
         public abstract void Register();
@@ -52,7 +49,6 @@ namespace Chess.Models
         /// Completes the authentication process using a Google ID token
         public abstract void SignInWithGoogle(string idToken, Action<Task> OnComplete);
         #endregion
-
         #region Private Methods
         protected abstract void ShowAlert(string msg);
         protected abstract void SaveToPreferences();

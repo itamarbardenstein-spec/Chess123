@@ -25,7 +25,6 @@ namespace Chess.ModelsLogic
             get => facl.User.Uid;
         }
         #endregion
-
         #region Public Methods
         /// Creates a new user record in Firebase Auth and triggers the completion callback
         public override async void CreateUserWithEmailAndPasswordAsync(string email, string password, string name, Action<System.Threading.Tasks.Task> OnComplete)
@@ -95,12 +94,12 @@ namespace Chess.ModelsLogic
 #if ANDROID
             try
             {
-                /// Initialize the specialized provider for Google-specific authentication logic
+                // Initialize the specialized provider for Google-specific authentication logic
                 GoogleAuthProviderWrapper googleProvider = new();
-                /// Exchange the raw OAuth2 ID Token from the client for a standard Firebase Auth credential
+                // Exchange the raw OAuth2 ID Token from the client for a standard Firebase Auth credential
                 IAuthCredential credential = googleProvider.GetCredential(idToken, null!);
-                /// Authenticate into the current Firebase instance using the generated Google credential
-                /// Upon success, this integrates the Google profile data (email, name, photo) into the Firebase User object
+                // Authenticate into the current Firebase instance using the generated Google credential
+                // Upon success, this integrates the Google profile data (email, name, photo) into the Firebase User object
                 await CrossFirebaseAuth.Current.Instance.SignInWithCredentialAsync(credential)
                     .ContinueWith(OnComplete);
             }
