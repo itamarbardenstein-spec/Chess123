@@ -6,7 +6,7 @@ using CommunityToolkit.Maui.Core;
 namespace Chess.ModelsLogic
 {
     /// Manages user authentication, profile data, and Firebase integration
-    public class User : UserModels
+    public class User : UserModel
     {
         #region Fields
 #if ANDROID

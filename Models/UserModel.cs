@@ -3,7 +3,7 @@
 namespace Chess.Models
 {
     /// Base model for handling user authentication, profile data, and identity provider integration
-    public abstract class UserModels
+    public abstract class UserModel
     {
         #region Fields
         /// Service for interacting with Firebase Authentication and Firestore
