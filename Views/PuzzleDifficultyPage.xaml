@@ -6,7 +6,7 @@
     xmlns:m="clr-namespace:Chess.Models"
     xmlns:vm="clr-namespace:Chess.ViewModel"
     Title="PuzzleDifficulty"
-    x:DataType="vm:PuzzleDifficוtyVM"
+    x:DataType="vm:PuzzleDifficוtyPageVM"
     BackgroundColor="#121212">
     <VerticalStackLayout
         Padding="40"

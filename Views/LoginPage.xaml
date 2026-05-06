@@ -6,7 +6,7 @@
     xmlns:m="clr-namespace:Chess.Models"
     xmlns:vm="clr-namespace:Chess.ViewModel"
     Title="LoginPage"
-    x:DataType="vm:LoginPagVM">
+    x:DataType="vm:LoginPageVM">
     <ContentPage.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
             <GradientStop Offset="0.1" Color="DarkOrchid" />

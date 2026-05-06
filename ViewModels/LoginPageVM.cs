@@ -8,7 +8,7 @@ using System.Windows.Input;
 namespace Chess.ViewModel
 {
     /// ViewModel for the Login page, handling traditional and social authentication
-    public partial class LoginPagVM : ObservableObject
+    public partial class LoginPageVM : ObservableObject
     {
         #region Fields
         /// Internal user logic instance for authentication operations
@@ -72,7 +72,7 @@ namespace Chess.ViewModel
         #endregion
         #region Constructor
         /// Initializes authentication commands and hooks into the user logic events
-        public LoginPagVM()
+        public LoginPageVM()
         {
             LoginCommand = new Command(Login, CanLogin);
             ToggleIsPasswordCommand = new Command(ToggleIsPassword);

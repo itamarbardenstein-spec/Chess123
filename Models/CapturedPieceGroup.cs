@@ -1,4 +1,4 @@
-﻿namespace Chess.ModelsLogic
+﻿namespace Chess.Models
 {
     /// Represents a group of captured pieces of the same type and color for UI display
     public class CapturedPieceGroup

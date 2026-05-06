@@ -5,7 +5,7 @@ using Chess.Views;
 namespace Chess.ViewModel
 {
     /// ViewModel for selecting the difficulty level of chess puzzles
-    public class PuzzleDifficוtyVM
+    public class PuzzleDifficוtyPageVM
     {
         #region Commands
         /// Command to start a puzzle session with low difficulty
@@ -19,7 +19,7 @@ namespace Chess.ViewModel
         #endregion
         #region Constructor
         /// Initializes navigation commands for difficulty selection
-        public PuzzleDifficוtyVM()
+        public PuzzleDifficוtyPageVM()
         {
             EasyPuzzleCommand = new Command(SelectEasyPuzzle);
             MediumPuzzleCommand = new Command(SelectMediumPuzzle);

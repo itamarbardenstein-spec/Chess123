@@ -7,6 +7,6 @@ public partial class PuzzleDifficultyPage : ContentPage
 	public PuzzleDifficultyPage()
 	{
 		InitializeComponent();
-		BindingContext = new PuzzleDifficåtyVM();
+		BindingContext = new PuzzleDifficåtyPageVM();
     }
 }
