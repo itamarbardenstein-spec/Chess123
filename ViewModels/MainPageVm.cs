@@ -4,7 +4,7 @@ using Chess.Models;
 using Chess.ModelsLogic;
 using Chess.Views;
 
-namespace Chess.ViewModel
+namespace Chess.ViewModels
 {
     /// ViewModel for the main lobby, managing the list of available games and game creation
     public partial class MainPageVm : ObservableObject

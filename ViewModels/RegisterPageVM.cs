@@ -5,7 +5,7 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using System.Windows.Input;
 
-namespace Chess.ViewModel
+namespace Chess.ViewModels
 {
     /// ViewModel for the registration page, handling new user account creation
     public partial class RegisterPageVM : ObservableObject

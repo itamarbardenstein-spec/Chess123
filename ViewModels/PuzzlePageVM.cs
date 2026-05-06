@@ -6,7 +6,7 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Views;
 
-namespace Chess.ViewModel
+namespace Chess.ViewModels
 {
     /// ViewModel for the puzzle challenge page, managing single-player logic and board interactions
     public partial class PuzzlePageVM

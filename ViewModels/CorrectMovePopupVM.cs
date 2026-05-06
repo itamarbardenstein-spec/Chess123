@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
 using Chess.Views;
 
-namespace Chess.ViewModel
+namespace Chess.ViewModels
 {
     /// ViewModel for the puzzle completion popup, managing results and navigation
     public partial class CorrectMovePopupVM

@@ -1,4 +1,4 @@
-using Chess.ViewModel;
+using Chess.ViewModels;
 namespace Chess.NewFolder;
 public partial class LoginPage : ContentPage
 {

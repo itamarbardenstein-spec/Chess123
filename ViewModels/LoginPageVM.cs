@@ -5,7 +5,7 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using System.Windows.Input;
 
-namespace Chess.ViewModel
+namespace Chess.ViewModels
 {
     /// ViewModel for the Login page, handling traditional and social authentication
     public partial class LoginPageVM : ObservableObject

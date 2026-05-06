@@ -1,7 +1,7 @@
 ﻿using Chess.Views;
 using System.Windows.Input;
 
-namespace Chess.ViewModel
+namespace Chess.ViewModels
 {
     /// ViewModel for the final game result popup, displaying win/loss details and navigation
     public partial class GameResultPopupVM

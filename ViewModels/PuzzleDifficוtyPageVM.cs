@@ -2,7 +2,7 @@
 using Chess.Models;
 using Chess.Views;
 
-namespace Chess.ViewModel
+namespace Chess.ViewModels
 {
     /// ViewModel for selecting the difficulty level of chess puzzles
     public class PuzzleDifficוtyPageVM

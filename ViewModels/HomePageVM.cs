@@ -2,7 +2,7 @@
 using Chess.Views;
 using Chess.ModelsLogic;
 
-namespace Chess.ViewModel
+namespace Chess.ViewModels
 {
     /// ViewModel for the main landing page, handling navigation to game modes and puzzles
     public class HomePageVM

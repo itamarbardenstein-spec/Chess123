@@ -1,5 +1,5 @@
 using Chess.ModelsLogic;
-using Chess.ViewModel;
+using Chess.ViewModels;
 namespace Chess.Views;
 public partial class GamePage : ContentPage
 {

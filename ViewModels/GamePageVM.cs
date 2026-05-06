@@ -6,7 +6,7 @@ using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Views;
 using System.Windows.Input;
 
-namespace Chess.ViewModel
+namespace Chess.ViewModels
 {
     /// ViewModel for the main game page, coordinating between the game logic and the UI board
     public partial class GamePageVM : ObservableObject

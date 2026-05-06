@@ -5,7 +5,7 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using System.Windows.Input;
 
-namespace Chess.ViewModel
+namespace Chess.ViewModels
 {
     /// ViewModel for the password reset page, managing recovery email requests
     public class ResetPasswodPageVM

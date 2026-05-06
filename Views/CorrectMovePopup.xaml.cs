@@ -1,5 +1,5 @@
 
-using Chess.ViewModel;
+using Chess.ViewModels;
 using CommunityToolkit.Maui.Views;
 namespace Chess.Views;
 public partial class CorrectMovePopup : Popup
