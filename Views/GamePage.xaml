@@ -20,7 +20,21 @@
         Padding="10"
         Spacing="0"
         VerticalOptions="Center">
-
+        <Label x:Name="ConnectionStatusLabel"
+    FontFamily="MaterialSymbols" 
+    FontSize="32"
+    VerticalOptions="Start">
+            <Label.Triggers>
+                <DataTrigger TargetType="Label" Binding="{Binding IsConnected}" Value="True">
+                    <Setter Property="Text" Value="{x:Static m:Icons.Wifi}" />
+                    <Setter Property="TextColor" Value="Green" />
+                </DataTrigger>
+                <DataTrigger TargetType="Label" Binding="{Binding IsConnected}" Value="False">
+                    <Setter Property="Text" Value="{x:Static m:Icons.Wifi_off}" />
+                    <Setter Property="TextColor" Value="Red" />
+                </DataTrigger>
+            </Label.Triggers>
+        </Label>
         <Grid
             Margin="0,0,0,8"
             ColumnDefinitions="*, Auto"

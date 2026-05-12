@@ -14,6 +14,7 @@ namespace Chess.ViewModels
         #region Fields
         private readonly GameGrid grdBoard = [];
         private readonly Game game;
+        private readonly ModelsLogic.Connectivity _connectivity = new();
         #endregion
         #region Commands
         /// Command to allow the current player to forfeit the game
@@ -22,6 +23,7 @@ namespace Chess.ViewModels
         #region Properties
         public string MyName => game.MyName;
         public string StatusMessage => game.StatusMessage;
+        public bool IsConnected => _connectivity.IsConnected;
         public List<CapturedPieceGroup>? OpponentCapturedPieces => game.GetGroupedCapturedPieces(false);
         public List<CapturedPieceGroup>? MyCapturedPieces => game.GetGroupedCapturedPieces(true);
         // Returns formatted time strings based on whether the user is the host or guest
@@ -34,6 +36,7 @@ namespace Chess.ViewModels
         public GamePageVM(Game game, Grid board)
         {
             this.game = game;
+            _connectivity.ConnectivityChanged += OnConnectivityChanged;
             ResignCommand = new Command(ResignGame);
             // Wire up logic events to UI update methods
             game.OnGameChanged += OnGameChanged;
@@ -56,6 +59,10 @@ namespace Chess.ViewModels
         }
         #endregion
         #region Public Methods
+        private void OnConnectivityChanged(object? sender, EventArgs e)
+        {
+            OnPropertyChanged(nameof(IsConnected));
+        }
         /// Enables real-time synchronization with the Firebase database
         public void AddSnapshotListener()
         {

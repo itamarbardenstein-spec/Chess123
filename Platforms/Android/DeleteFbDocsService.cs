@@ -28,6 +28,7 @@ namespace Chess.Platforms.Android
         /// Bound service functionality is not implemented for this cleanup task
         public override IBinder? OnBind(Intent? intent)
         {
+            //Not used
             return null;
         }
         /// Stops the background loop and cleans up service resources
