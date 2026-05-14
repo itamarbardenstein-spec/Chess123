@@ -7,13 +7,7 @@ namespace Chess.ModelsLogic
 {
     /// Manages user authentication, profile data, and Firebase integration
     public class User : UserModel
-    {
-        #region Fields
-#if ANDROID
-        /// Android-specific service for Google authentication
-        private readonly Platforms.Android.GoogleAuthService? _googleService = null;
-#endif
-        #endregion
+    {       
         #region Constructor
         /// Initializes a new user by loading saved credentials from local storage
         public User()
@@ -22,9 +16,6 @@ namespace Chess.ModelsLogic
             Password = Preferences.Get(Keys.PasswordKey, string.Empty);
             Email = Preferences.Get(Keys.EmailKey, string.Empty);
             Age = Preferences.Get(Keys.AgeKey, string.Empty);
-#if ANDROID
-            _googleService = new Platforms.Android.GoogleAuthService();
-#endif
         }
         #endregion
         #region Public Methods
